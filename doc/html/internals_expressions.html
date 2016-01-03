@@ -1,0 +1,34 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>5.5. Expressions</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="internals.html" title="Chapter 5. Internals"><link rel="previous" href="internals_patterns.html" title="5.4. Patterns"><link rel="next" href="multiformat_documentation.html" title="5.6. Multi-format Documentation with DocBook"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.5. Expressions</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="internals_patterns.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Internals</th><td width="20%" align="right"> <a accesskey="n" href="multiformat_documentation.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="internals_expressions"></a>5.5. Expressions</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="internals_polynomials"></a>5.5.1. Polynomial solver</h3></div></div><div></div></div><p>
+    Since years there was a polynomial solver builded in the <span class="trademark">POV-Ray</span>&#8482; sources. Unfortunately
+    this tool was only for the intersection calculations in the raytracing engine. My idea was to
+    create a gate between SDL and this existing solver.
+  </p><p>
+    All changes required for this feature are marked with <tt class="function">POLYNOMIAL_SOLVER_PATCH</tt>
+  </p><p>
+    The polynomial solver in SDL was designed only as a gate to an already implemented feature.
+    It was used previously only for the intersection point. Every next intersection point is almost
+    always different from the previous one because it is calculated with different polynomial
+    equations. In the case of the polynomial solver accessed via SDL in its proposed form it is
+    possible that it is called several times: first for the number of roots and next for each root.
+    That's why before the access to old solver polynomials are cached now (only for SDL usage). This
+    is done with the function <tt class="function">buffered_polynomial_solver()</tt> in the
+    <tt class="filename">polysolv.cpp</tt> file. The whole change was splitted into three parts:
+    </p><div class="itemizedlist"><ul type="disc"><li>add two additional tokens to the parser (see <a href="parser.html#internals_tokens" title="5.3.1. Adding tokens">Section 5.3.1, &#8220;Adding tokens&#8221;</a>).</li><li>force parser to call <tt class="function">buffered_polynomial_solver()</tt> with
+        the appropriate parameters from the script</li><li>force VM to call <tt class="function">buffered_polynomial_solver()</tt> with the
+        appropriate parameters from the function engine</li></ul></div><p>
+  </p><p>
+    The complete operations within classic POV-Ray parser was placed inside 
+    <tt class="function">Parse_Num_Factor()</tt> in <tt class="filename">express.cpp</tt>.
+    The order of polynomial is read from the number of parameters there and then 
+    <tt class="function">buffered_polynomial_solver()</tt> is called.
+  </p><p>
+    In case of VM in function engine this was a much more difficult operation.
+    <tt class="function">n_roots</tt> and <tt class="function">nth_root</tt> have variable number of parameters.
+    It is different than other functions works and it required new handling.
+    First new entries were added at beginning of <tt class="function">POVFPU_Opcodes</tt>
+    structure in <tt class="filename">fnpovfpu.cpp</tt>. Then a gate between parser and
+    precompiled opcodes was introduced to <tt class="function">FNCode::compile_call</tt>
+    in <tt class="filename">fncode.cpp</tt> with appropriate calls to dedicated compilers
+    for new functions. Finally runtime code for new opcodes was added to
+    <tt class="function">POVFPU_RunDefault</tt> in <tt class="filename">fnpovfpu.cpp</tt>.
+  </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="internals_patterns.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="internals.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="multiformat_documentation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5.4. Patterns </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 5.6. Multi-format Documentation with DocBook</td></tr></table></div></body></html>

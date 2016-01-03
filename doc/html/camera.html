@@ -1,0 +1,85 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2.3. Camera</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="references.html" title="Chapter 2. MegaPOV References"><link rel="previous" href="expressions.html" title="2.2. Expressions"><link rel="next" href="objects.html" title="2.4. Objects"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.3. Camera</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="expressions.html">Prev</a> </td><th width="60%" align="center">Chapter 2. MegaPOV References</th><td width="20%" align="right"> <a accesskey="n" href="objects.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="camera"></a>2.3. Camera</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="user_defined_camera"></a>2.3.1. <tt class="function">user_defined</tt> camera type</h3></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    Instead of patching <span class="trademark">POV-Ray</span>&#8482; with new camera types MegaPOV provides a tool to define any projection
+    type directly inside the scene scripts. This tool is named <tt class="function">user_defined</tt> camera type. It allows
+    starting camera rays from any point in any direction. Both the location and direction of rays is specified
+    as a set of three functions or as one pigment.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2525188"></a>
+    </p><pre class="synopsis"><tt class="function">camera</tt> {
+  <tt class="function">user_defined</tt>
+  <tt class="function">location</tt> { FUNCTION_VECTOR }
+  <tt class="function">direction</tt> { FUNCTION_VECTOR }
+}
+
+FUNCTION_VECTOR:
+  PIGMENT | 3_USER_DEFINED_FUNCTIONS ...
+
+3_USER_DEFINED_FUNCTIONS:
+  USER_DEFINED_FUNCTION
+  USER_DEFINED_FUNCTION
+  USER_DEFINED_FUNCTION</pre><p>
+  </p><p>
+    In the case of 3 functions used to define location or direction, please remember that those functions operate
+    on screen coordinates (<tt class="function">u</tt> and <tt class="function">v</tt>) in the area &lt;0,0&gt;-&lt;1,1&gt; so that they are independent
+    of the image resolution. If you want to convert the value from the range 0-1 to the range 0-image_width or
+    0-image_height you can use the function <tt class="function">adj_range</tt> from the <tt class="filename">math.inc</tt>
+    include file.
+  </p><p>
+    In the case of a pigment used to define location or direction, please remember that the values of the pigment
+    are taken from the area &lt;0,0,0&gt;-&lt;1,1,0&gt;.
+  </p><div class="example"><a name="id2525286"></a><p class="title"><b>Example 2.8. Alternative forms of <tt class="function">user_defined</tt> camera type definition</b></p><p>
+      Let's imagine we want to recreate the orthographic camera using a user_defined camera:
+      </p><pre class="programlisting"><tt class="function">camera</tt>{
+  <tt class="function">orthographic</tt>
+  <tt class="function">location</tt> &lt;.5,.5,0&gt;
+  <tt class="function">direction</tt> <tt class="function">z</tt>
+  <tt class="function">up</tt> <tt class="function">y</tt>
+  <tt class="function">right</tt> <tt class="function">x</tt>
+}</pre><p>
+    </p><p>
+      Written as a set of functions it would be:
+      </p><pre class="programlisting"><tt class="function">camera</tt>{
+  <tt class="function">user_defined</tt>
+  <tt class="function">location</tt>{
+    <tt class="function">function</tt>{<tt class="function">u</tt>}
+    <tt class="function">function</tt>{<tt class="function">v</tt>}
+    <tt class="function">function</tt>{0}
+  }
+  <tt class="function">direction</tt>{
+    <tt class="function">function</tt>{0}
+    <tt class="function">function</tt>{0}
+    <tt class="function">function</tt>{1}
+  }
+}</pre><p>
+    </p><p>
+      Defined with pigments it would be:
+      </p><pre class="programlisting"><tt class="function">camera</tt>{
+  <tt class="function">user_defined</tt>
+  <tt class="function">location</tt>{
+    <tt class="function">pigment</tt>{
+      <tt class="function">gradient</tt> <tt class="function">x</tt>
+      <tt class="function">pigment_map</tt>{
+        [0 <tt class="function">gradient</tt> <tt class="function">y</tt> <tt class="function">color_map</tt>{[0 <tt class="function">rgb</tt> 0][1 <tt class="function">rgb</tt> <tt class="function">x</tt>]}]
+        [1 <tt class="function">gradient</tt> <tt class="function">y</tt> <tt class="function">color_map</tt>{[0 <tt class="function">rgb</tt> <tt class="function">y</tt>][1 <tt class="function">rgb</tt> <tt class="function">x</tt>+<tt class="function">y</tt>]}]
+      }
+    }
+  }
+  <tt class="function">direction</tt>{
+    <tt class="function">pigment</tt>{<tt class="function">rgb</tt> <tt class="function">z</tt>}
+  }
+}</pre><p>
+    </p><p>
+      Of course if it can make the script shorter, you can mix notations. You can use both functions
+      and pigments in one camera definition:
+      </p><pre class="programlisting"><tt class="function">camera</tt>{
+  <tt class="function">user_defined</tt>
+  <tt class="function">location</tt>{
+    <tt class="function">function</tt>{<tt class="function">u</tt>}
+    <tt class="function">function</tt>{<tt class="function">v</tt>}
+    <tt class="function">function</tt>{0}
+  }
+  <tt class="function">direction</tt>{
+    <tt class="function">pigment</tt>{<tt class="function">rgb</tt> <tt class="function">z</tt>}
+  }
+}</pre><p>
+    </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="expressions.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="references.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="objects.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.2. Expressions </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.4. Objects</td></tr></table></div></body></html>

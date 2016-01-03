@@ -1,0 +1,35 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>3.6. The 'tone_mapping.inc' include file</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="include.html" title="Chapter 3. MegaPOV Include files"><link rel="previous" href="inc_pprocess.inc.html" title="3.5. The 'pprocess.inc' include file"><link rel="next" href="tutorials.html" title="Chapter 4. Tutorials"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.6. The 'tone_mapping.inc' include file</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="inc_pprocess.inc.html">Prev</a> </td><th width="60%" align="center">Chapter 3. MegaPOV Include files</th><td width="20%" align="right"> <a accesskey="n" href="tutorials.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tone_mapping.inc"></a>3.6. The '<tt class="filename">tone_mapping.inc</tt>' include file</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><p>
+    This part describes the <tt class="filename">tone_mapping.inc</tt>
+    include file that comes with MegaPOV and contains
+    macros for common tone mapping functions.
+  </p><p>
+    For how the tone mapping patch works in general see <a href="global_settings.html#tone_mapping" title="2.7.2. Custom tone mapping function">Section 2.7.2, &#8220;Custom tone mapping function&#8221;</a>.
+    The macros are supposed to be called in <tt class="function">global_settings</tt>{}.  Like:
+    </p><pre class="programlisting"><tt class="function">#include</tt> "<tt class="filename">tone_mapping.inc</tt>"
+
+<tt class="function">global_settings</tt> { 
+  Clip_Colors() 
+}</pre><p>
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2580683"></a>3.6.1. The <tt class="function">Clip_Colors()</tt> macro</h3></div></div><div></div></div><a class="indexterm" name="id2581838"></a><p>
+      This macro applies a hard clipping of color values at 
+      <tt class="function">1.0</tt> before antialiasing.  Using this results
+      in the <span class="trademark">POV-Ray</span>&#8482; 3.5 behavior.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2581870"></a>3.6.2. The <tt class="function">Film_Exposure()</tt> macro</h3></div></div><div></div></div><a class="indexterm" name="id2581883"></a><p>
+      This macro generates the same function that is used in the 
+      film exposure simulation patch (see <a href="global_settings.html#film_exposure" title="2.7.1. Film exposure simulation">Section 2.7.1, &#8220;Film exposure simulation&#8221;</a>).
+    </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><tt class="function">Exposure</tt> - exponent for the exposure curve</li><li><tt class="function">Exposure_Gain</tt> - gain for the exposure curve</li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2581938"></a>3.6.3. The <tt class="function">Film_Exposure_Invert()</tt> macro</h3></div></div><div></div></div><a class="indexterm" name="id2581953"></a><p>
+      This macro generates a film exposure tone mapping curve and the inversion of it.
+      This results in a linear output like without tone mapping but the antialiasing is applied for
+      the exponential mapping function.
+    </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><tt class="function">Exposure</tt> - exponent for the exposure curve</li><li><tt class="function">Exposure_Gain</tt> - gain for the exposure curve</li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2582003"></a>3.6.4. The <tt class="function">Gamma_Correct()</tt> macro</h3></div></div><div></div></div><a class="indexterm" name="id2582017"></a><p>
+      This macro generates a gamma correction function.
+    </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><tt class="function">Gamma</tt> - gamma correction factor</li></ul></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+        It is not a good idea to use this as a replacement for
+        the internal gamma correction to do actual gamma correction.
+        It may however be useful for scenes that are designed for being 
+        rendered without gamma correction (like for example certain
+        older POV-Ray sample scenes). 
+      </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2582066"></a>3.6.5. The <tt class="function">Brightness_Contrast()</tt> macro</h3></div></div><div></div></div><a class="indexterm" name="id2582080"></a><p>
+      This macro generates a function that applies brightness and contrast corrections to the image. 
+      These are linear operations so they won't affect the antialiasing quality.
+    </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><tt class="function">Brightness</tt> - brightness adjustment</li><li><tt class="function">Contrast</tt> - contrast adjustment</li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="inc_pprocess.inc.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="include.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="tutorials.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.5. The 'pprocess.inc' include file </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 4. Tutorials</td></tr></table></div></body></html>

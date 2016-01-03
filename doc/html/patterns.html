@@ -1,0 +1,207 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2.6. Textures and patterns</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="references.html" title="Chapter 2. MegaPOV References"><link rel="previous" href="effects.html" title="2.5. Effects"><link rel="next" href="global_settings.html" title="2.7. Global Settings"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.6. Textures and patterns</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="effects.html">Prev</a> </td><th width="60%" align="center">Chapter 2. MegaPOV References</th><td width="20%" align="right"> <a accesskey="n" href="global_settings.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="patterns"></a>2.6. Textures and patterns</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="aoi_pattern"></a>2.6.1. Angle of incidence</h3></div><div><div class="author"><h3 class="author"><span class="surname">Mael</span></h3></div></div></div><div></div></div><p>
+    The value returned by this pattern is proportional to the angle between a
+    certain ray and the (perturbed) normal at the surface of the object. The
+    range of returned values goes from 0 to 1.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2530452"></a>
+    </p><pre class="synopsis"><tt class="function">pigment</tt> { <tt class="function">aoi</tt> [ <i class="parameter"><tt>POINT</tt></i> ] }</pre><p>
+  </p><p>
+    When no <i class="parameter"><tt>POINT</tt></i> is given, the incident ray of rendering
+    is used.  This is not necessarily the ray coming from the camera, it can
+    also be a secondary ray from reflection or refraction effects.
+
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>With this option and without reflection and refraction, the range
+    of return values on the visible surfaces goes from 0 to 0.5 since the angle
+    between ray and normal can only be less than 90 degrees</p></td></tr></table></div><p>
+  </p><p>
+    When a <i class="parameter"><tt>POINT</tt></i> is specified, the reference ray
+    for measuring the angle will be the ray between this specified point and
+    the intersection point on the object.
+  </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      This pattern can only be used in situations where the intersection information
+      of the rendering process is available.  This applies for usage in pigments, textures
+      and normals but not in media densities or functions.
+    </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="listed_pattern"></a>2.6.2. Listed pattern</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Chris</span> <span class="surname">Huff</span></h3></div></div></div><div></div></div><p>Syntax is:
+	<a class="indexterm" name="id2530443"></a>
+	</p><pre class="synopsis"><tt class="function">pigment</tt> {
+  <tt class="function">listed</tt> <i class="parameter"><tt>FLOAT</tt></i>
+  <tt class="function">color_map</tt> { <i class="parameter"><tt>color_map stuff }</tt></i> } |
+  <tt class="function">pigment_map</tt> { <i class="parameter"><tt>pigment_map stuff }</tt></i> }
+}
+
+<tt class="function">normal</tt> {
+  <tt class="function">listed</tt> <i class="parameter"><tt>FLOAT</tt></i>
+  <tt class="function">normal_map</tt> { <i class="parameter"><tt>normal_map stuff }</tt></i> }
+}</pre><p>
+	This "pattern" is simply a solid pattern, the value of <i class="parameter"><tt>FLOAT</tt></i> is used as the return value of the
+	pattern. This means that the pattern listed at the specified <i class="parameter"><tt>FLOAT</tt></i> value is used as the pattern for the
+	whole object.
+  </p><p>
+	This is very useful in having a progression of objects blending from one texture to another, and can also be useful in animating
+	textures.
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="projection_pattern"></a>2.6.3. Projection pattern</h3></div><div><div class="author"><h3 class="author"><span class="surname">Mael</span></h3></div></div></div><div></div></div><p>
+    In this pattern the pattern value is determined by shooting a ray
+    in a certain direction.  When this ray hits a specified object it returns 1, if
+    not it returns 0. There are a few options to specify the direction of this ray.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2531338"></a>
+    </p><pre class="synopsis">
+pigment { ... | <i class="parameter"><tt>PROJECTION_PATTERN</tt></i> }
+normal { ... | <i class="parameter"><tt>PROJECTION_PATTERN</tt></i> }
+
+<i class="parameter"><tt>PROJECTION_PATTERN</tt></i>:
+  projection { <i class="parameter"><tt>PROJECTION_OBJECT</tt></i> <i class="parameter"><tt>PROJECTION_TYPE</tt></i> [<i class="parameter"><tt>BLUR_MODIFIER</tt></i>] }
+
+<i class="parameter"><tt>PROJECTION_OBJECT</tt></i>:
+  <i class="parameter"><tt>OBJECT_IDENTIFIER</tt></i> |
+  object { ... }
+
+<i class="parameter"><tt>PROJECTION_TYPE</tt></i>:
+  point <i class="parameter"><tt>VECTOR</tt></i> |
+  parallel <i class="parameter"><tt>VECTOR</tt></i> |
+  normal [on|off]
+
+<i class="parameter"><tt>BLUR_MODIFIER</tt></i>:
+  blur <i class="parameter"><tt>BLUR_AMOUNT</tt></i>, <i class="parameter"><tt>BLUR_SAMPLES</tt></i>
+    </pre><p>
+  </p><p>
+    With <tt class="function">point</tt> <i class="parameter"><tt>VECTOR</tt></i> specified the rays
+    are shot in direction of this point. When a ray hits the specified object,
+    the value 1 is returned, otherwise 0.
+  </p><p>
+    When the keyword <tt class="function">parallel</tt> is used, a ray is shot from each intersection
+    point in the specified direction. When a ray hits the specified object, the value
+    1 is returned, otherwise 0.
+  </p><p>
+    When the keyword <tt class="function">normal</tt> is used, a ray direction is determined by
+    the normal vector of the surface.  This variation can only be used when the intersection
+    information is available, i.e. in pigments, textures and normals. It does not work in
+    media density and functions.
+  </p><p>
+    With the <tt class="function">blur</tt> option, a number of <i class="parameter"><tt>BLUR_SAMPLES</tt></i> rays is sent, more or less modified
+    spread over an area determined by the specified <i class="parameter"><tt>BLUR_AMOUNT</tt></i> value.
+    The pattern value returned is the percentage of rays that intersect with the object.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>When no blur is used the pattern returns either 0 and 1.  When used in a pigment
+      only the colors for the values 0 and 1 in the <tt class="function">color_map</tt> are used.  </p><p>With blur on, the pattern can also return other values.</p></td></tr></table></div><p>
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="displace_warp"></a>2.6.4. Displace warp for patterns</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Chris</span> <span class="surname">Huff</span></h3></div></div></div><div></div></div><p>Syntax is:
+	<a class="indexterm" name="id2531096"></a>
+	<a class="indexterm" name="id2530238"></a>
+	</p><pre class="synopsis"><tt class="function">warp</tt> {
+  <tt class="function">displace</tt> {
+    <i class="parameter"><tt>PATTERN</tt></i> | <i class="parameter"><tt>FUNCTION</tt></i>, <i class="parameter"><tt>COLOR_MAP</tt></i>
+    <tt class="function">type</tt> <i class="parameter"><tt>0</tt></i> | <i class="parameter"><tt>1</tt></i>
+  }
+}</pre><p>
+	 Displaces the pattern by an amount determined by the PATTERN or FUNCTION and COLOR_MAP at each point.
+  </p><p>
+	 In <tt class="function">type</tt> 0, the rgb values of the pigment at each point are used as xyz displacement amounts.
+  </p><p>
+	In <tt class="function">type</tt> 1, the brightness of the pigment color determines the directions and amounts points are pushed.
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="noisepigment"></a>2.6.5. Noise pigment</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Chris</span> <span class="surname">Huff</span></h3></div></div></div><div></div></div><p>Syntax is:
+    <a class="indexterm" name="id2530790"></a>
+    </p><pre class="synopsis"><tt class="function">pigment</tt> { <tt class="function">noise_pigment</tt> { <i class="parameter"><tt>TYPE</tt></i>, <i class="parameter"><tt>MIN_COLOR</tt></i>, <i class="parameter"><tt>MAX_COLOR</tt></i> } }
+</pre><p>
+    TYPE:
+    </p><div class="itemizedlist"><ul type="disc" compact><li><i class="parameter"><tt>0</tt></i> - plain color</li><li><i class="parameter"><tt>1</tt></i> - plain monochrome</li><li><i class="parameter"><tt>2</tt></i> - Gaussian color</li><li><i class="parameter"><tt>3</tt></i> - Gaussian monochrome</li></ul></div><p>
+    Produces a "static" effect. This is a pigment, like an image_map, not a pattern. Anti-aliasing tends to mess
+    it up when used in textures, and it is not animation-safe (unless you want an animated static effect).
+    It can be used in an average map to add some noise to a pigment.
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="hdr"></a>2.6.6. HDR (High Dynamic Range) image type</h3></div><div><div class="author"><h3 class="author"><span class="surname">Mael</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2531514"></a><a class="indexterm" name="id2531525"></a><a class="indexterm" name="id2532471"></a><a class="indexterm" name="id2532481"></a><p>
+    This patch introduces support for a new image file format for
+    reading in <tt class="function">image_map</tt>, <tt class="function">image_pattern</tt>
+    and other cases.  A usual image file stores the color values
+    with 8 bit resolution which means a dynamic range of 255:1.  In other words
+    in the dark areas of an image color nuances can only be represented down to
+    1/255 of the maximum brightness of the image.  All darker parts are completely
+    black.  High dynamic range images support a wider range of color
+    values than common image files.
+  </p><p>
+    The HDR file format supported by MegaPOV is the
+    <span class="emphasis"><em>rgbe format</em></span> developed by
+    <span class="emphasis"><em>Greg Ward</em></span> for the RADIANCE software package.
+    It stores the color values in four bytes: three for the red, green and blue color value
+    and one as a common exponent.  Further information and image files in this
+    format can be found on:
+  </p><p>
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="http://www.debevec.org/Research/HDR/" target="_top">http://www.debevec.org/Research/HDR/</a></li><li><a href="http://www.rna.hr/home.htm" target="_top">http://www.rna.hr/home.htm</a></li><li><a href="http://radiosity.tripod.co.jp/hdri/lightprobe3.htm" target="_top">http://radiosity.tripod.co.jp/hdri/lightprobe3.htm</a></li><li><a href="http://radsite.lbl.gov/radiance/" target="_top">http://radsite.lbl.gov/radiance/</a></li></ul></div><p>
+  </p><p>
+    Syntax for an image map is:
+
+    </p><pre class="synopsis">image_map {
+  hdr "file.hdr"
+  [map_type 7]
+}</pre><p>
+
+    The	new <tt class="function">map_type</tt> 7 allows correct mapping of the
+    omnidirectional light probes that can be found on
+    <a href="http://www.debevec.org/Probes/" target="_top">Paul Debevec's website</a> and elsewhere.
+  </p><div class="example"><a name="id2532610"></a><p class="title"><b>Example 2.9. HDR image example</b></p><p>
+      Varying the ambient finish shows the high dynamic range of the image
+
+      </p><pre class="programlisting">camera {
+  orthographic
+  location &lt;.5,.5,-5&gt;
+  right 1*x
+  up 1*y
+  look_at &lt;.5,.5,0&gt;
+}
+
+plane {
+  z,0
+  pigment {
+    image_map { hdr "rosette.hdr" once interpolate 2}
+  }
+  finish { ambient 1.0 diffuse 0 }
+}</pre><p>
+    </p><p>
+      </p><div class="table"><a name="id2532634"></a><p class="title"><b>Table 2.2. HDR image ambient variations</b></p><table summary="HDR image ambient variations" border="0" style="border-collapse: collapse;"><colgroup><col><col><col></colgroup><tbody><tr><td style="" align="center"><div><img src="img/hdr1.png"></div></td><td style="" align="center"><div><img src="img/hdr2.png"></div></td><td style="" align="center"><div><img src="img/hdr3.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>ambient 1.0</em></span></td><td style="" align="center"><span class="emphasis"><em>ambient 10</em></span></td><td style="" align="center"><span class="emphasis"><em>ambient 30</em></span></td></tr></tbody></table></div><p>
+    </p></div><p>
+    HDR images can be most useful for illuminating scenes with a realistic
+    light distribution.  Reflections become more realistic and with
+    <tt class="function">radiosity</tt> you can get a nice appearance of diffuse
+    surfaces as well.  A sample scene for this technique can be found in the
+    MegaPOV package.  A short tutorial on that matter can be found in
+    <a href="tutorials_hdri.html#hdri_tutorial" title="4.3.1. HDRI tutorial">Section 4.3.1, &#8220;HDRI tutorial&#8221;</a>.
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="bicubic_image"></a>2.6.7. Bicubic interpolation for images</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Lutz</span> <span class="othername">Peter</span> <span class="surname">Hooge</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2532393"></a><p>
+    <span class="trademark">POV-Ray</span>&#8482; offers two interpolation methods for images: <tt class="function">2</tt> (bilinear) and 
+    <tt class="function">4</tt> (normalized distance).  This patch implements a bicubic interpolation
+    as method 3.
+  </p><div class="example"><a name="id2532455"></a><p class="title"><b>Example 2.10. Bicubic interpolation for an image map</b></p><p>
+      The following code activates bicubic interpolation in an <tt class="function">image_map</tt> pigment.
+
+      </p><pre class="programlisting">pigment {
+  image_map {
+    png "my_image.png"
+    interpolate 3
+  }
+}</pre><p>
+
+    </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="camera_view"></a>2.6.8. New <tt class="function">camera_view</tt> pigment</h3></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    In order to obtain the content rendered by some camera as an <tt class="function">image_map</tt> - without the need for
+    multiple renderings - there is now a new <tt class="function">camera_view</tt> pigment type introduced in MegaPOV 1.1.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2533317"></a>
+    <a class="indexterm" name="id2533327"></a>
+    </p><pre class="synopsis"><tt class="function">pigment</tt> { <tt class="function">camera_view</tt>{ [CAMERA_ITEMS...] [<tt class="function">output</tt> <i class="parameter"><tt>OUTPUT_TYPE</tt></i>] } }
+
+<i class="parameter"><tt>OUTPUT_TYPE</tt></i>:
+  0 | 1 | 2 | 3 | 4 | 5
+
+  // 0 - classic color output (default)
+  // 1 - intersection point components as color components
+  // 2 - components of normal vector at intersection point
+  // 3 - components of perturbed normal vector 
+  // 4 - depth (distance between camera location and intersection)
+  // 5 - components of uv coordinates at intersection
+</pre><p>
+  </p><p>
+    The scene viewed by this camera is rendered directly within the area &lt;0,0&gt;-&lt;1,1&gt;.
+    Additional <tt class="function">output</tt> keyword allows other rendering data to be presented (see <a href="mp_consts.inc.html#mp_consts_camera_view" title="3.2.1. Output types for camera_view pigment">Section 3.2.1, &#8220;Output types for camera_view pigment&#8221;</a>).
+  </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      The <tt class="function">camera_view</tt> pigment is calculated using structures created <span class="emphasis"><em>after</em></span> parsing which
+      makes it impossible to evaluate it during parsing of scene.
+    </p><p>
+      When using the camera_view in a recursive way (image in image) the <tt class="function">max_trace_level</tt> controls the number
+      of times the image is showed. Raise <tt class="function">max_trace_level</tt> when at a certain recursion level the image gets the
+      background color.
+    </p></td></tr></table></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="effects.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="references.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="global_settings.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.5. Effects </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.7. Global Settings</td></tr></table></div></body></html>

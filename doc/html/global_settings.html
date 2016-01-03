@@ -1,0 +1,1245 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2.7. Global Settings</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="references.html" title="Chapter 2. MegaPOV References"><link rel="previous" href="patterns.html" title="2.6. Textures and patterns"><link rel="next" href="include.html" title="Chapter 3. MegaPOV Include files"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.7. Global Settings</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="patterns.html">Prev</a> </td><th width="60%" align="center">Chapter 2. MegaPOV References</th><td width="20%" align="right"> <a accesskey="n" href="include.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="global_settings"></a>2.7. Global Settings</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="film_exposure"></a>2.7.1. Film exposure simulation</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Kari</span> <span class="surname">Kivisalo</span></h3></div></div></div><div></div></div><p>
+    This addition simulates decrease of reactive chemicals in film
+    emulsion during exposure. The areas that have received more
+    light react less than other areas. Useful for high contrast
+    scenes as it brings up the dark areas and limit bright areas.
+  </p><a class="indexterm" name="id2533532"></a><a class="indexterm" name="id2533542"></a><p>
+    There are two new keywords in the <tt class="function">global_settings</tt> block:
+    </p><pre class="synopsis"><tt class="function">exposure</tt> <i class="parameter"><tt>FLOAT</tt></i>
+<tt class="function">exposure_gain</tt> <i class="parameter"><tt>FLOAT</tt></i></pre><p>
+    where <tt class="function">exposure_gain</tt> is optional and has default value 1.
+    Both parameters have to be greater than 0 to influence rendering.
+  </p><p>
+    <tt class="function">exposure</tt> can be thought as film speed, aperture and exposure time
+    multiplied together. The value is not absolute. If the light source
+    intensities in the scene are multiplied by 10 and exposure value is
+    divided by 10 the resulting image will be the same.
+  </p><p>
+    <tt class="function">exposure_gain</tt> can be used to brighten scenes with low maximum
+    intensity when also low exposure value is used.
+  </p><p>
+    The equation for such behavior of color used in MegaPOV is:
+  </p><p>
+    <span class="emphasis"><em>color = exposure_gain * (1 - exp( - exposure * color ))</em></span>.
+  </p><div class="table"><a name="id2534364"></a><p class="title"><b>Table 2.3. Exposure influence comparison</b></p><table summary="Exposure influence comparison" border="0" style="border-collapse: collapse;"><colgroup><col><col></colgroup><tbody><tr><td style="" align="center"><div><img src="img/expo1.png"></div></td><td style="" align="center"><div><img src="img/expo2.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>no exposure used</em></span></td><td style="" align="center"><tt class="function">exposure</tt><i class="parameter"><tt>1.6</tt></i></td></tr></tbody></table></div><div class="example"><a name="id2534439"></a><p class="title"><b>Example 2.11. Various values for film exposure simulations</b></p><p>
+      Examples which map range 0-1 to range 0-1 with increasing amount
+      of compression:
+      </p><pre class="programlisting"><tt class="function">exposure</tt> 0.05 <tt class="function">exposure_gain</tt> 20   // almost linear
+<tt class="function">exposure</tt> 0.2  <tt class="function">exposure_gain</tt> 5.5
+<tt class="function">exposure</tt> 0.5  <tt class="function">exposure_gain</tt> 2.5
+<tt class="function">exposure</tt> 1    <tt class="function">exposure_gain</tt> 1.6
+<tt class="function">exposure</tt> 10   <tt class="function">exposure_gain</tt> 1
+<tt class="function">exposure</tt> 100  <tt class="function">exposure_gain</tt> 1    // high compression</pre><p>
+    </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="tone_mapping"></a>2.7.2. Custom tone mapping function</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2533012"></a><p>
+    Traditionally the color values <span class="trademark">POV-Ray</span>&#8482; calculates for the image pixels were clipped
+    right at the beginning, before calculating the antialiasing.  Further color processing was not
+    done (except gamma correction).  In <span class="trademark">POV-Ray</span>&#8482; 3.6.1 clipping was moved to be applied after
+    antialiasing which also made it unnecessary to turn it off explicitly for high dynamic range image
+    output.  But in a lot of cases this is not the optimal solution for high quality antialiasing.
+  </p><p>
+    This patch offers a way to specify a custom tone mapping function for both before and after 
+    antialiasing.  This way you can for example apply the pre-aa clipping known from <span class="trademark">POV-Ray</span>&#8482; 3.5
+    or an exponential exposure curve like in the film exposure simulation patch (see <a href="global_settings.html#film_exposure" title="2.7.1. Film exposure simulation">Section 2.7.1, &#8220;Film exposure simulation&#8221;</a>).
+  </p><p>
+    By also allowing to specify a mapping function after antialiasing you can also invert the
+    mapping used and get back the linear color values.  The antialiasing in this case is aimed
+    at the used mapping function and when a similar function is applied in an imaging program
+    afterwards the antialiasing will look good.  The patch also offers automatic numerical inversion
+    of the mapping function.
+  </p><p>The syntax is:
+    </p><pre class="synopsis"><tt class="function">global_settings</tt> {
+  <tt class="function">tone_mapping</tt> {
+    <tt class="function">function</tt> { <i class="parameter"><tt>FUNCTION_ITEMS</tt></i> }
+    [<tt class="function">inverse</tt> <i class="parameter"><tt>INTEGER</tt></i> | <tt class="function">function</tt> { <i class="parameter"><tt>FUNCTION_ITEMS</tt></i> }]
+  }
+}</pre><p>
+  </p><p>
+    The functions are user defined float functions with at least one parameter.  The
+    original color value is passed as the first parameter and the return value specifies
+    the resulting color.  Using
+    </p><pre class="programlisting"><tt class="function">function</tt> { min(1, x) }</pre><p>
+    will for example result is a simple clipping.
+  </p><p>
+    Specifying an integer value instead of a user defined function after <tt class="function">inverse</tt>
+    makes MegaPOV numerically invert the function with the number of sample points specified.
+    For non-invertible functions this might lead to unexpected results.
+  </p><div class="example"><a name="id2534246"></a><p class="title"><b>Example 2.12. Exponential tone mapping</b></p><p>
+      The following code applies an exponential exposure curve like
+      the film exposure simulation patch:
+
+      </p><pre class="programlisting">#declare Exposure=1.6;
+#declare Exposure_Gain=1.0;
+
+global_settings {
+  ...
+  tone_mapping {
+    function { Exposure_Gain - exp( -Exposure * x ) * Exposure_Gain }
+  }
+}</pre><p>
+
+    </p></div><p>
+    The include file <tt class="function">tone_mapping.inc</tt> coming with MegaPOV offers several
+    macros with useful tone mapping functions (see (see <a href="tone_mapping.inc.html" title="3.6. The 'tone_mapping.inc' include file">Section 3.6, &#8220;The 'tone_mapping.inc' include file&#8221;</a>));
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="radiosity"></a>2.7.3. Radiosity</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="radiosity_cache"></a>2.7.3.1. Cache file</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2533117"></a><p>
+      In <span class="trademark">POV-Ray</span>&#8482; 3.5 and earlier temporary files with cache of radiosity were named the same for every frame
+      in the animation rendering. Since MegaPOV 1.0 the name of this file is concatenated from the name of the
+      currently rendered image. Together with <tt class="function">Frame_Step</tt> (see <a href="references.html#frame_step" title="2.1.1. Frame_Step">Section 2.1.1, &#8220;Frame_Step&#8221;</a>) and this addition it is finally possible to start
+      two parallel processes with radiosity rendering over one source.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="radiosity_samples"></a>2.7.3.2. Custom radiosity sampling directions</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2533218"></a><a class="indexterm" name="id2533229"></a><p>
+      The radiosity function in <span class="trademark">POV-Ray</span>&#8482; 3.5 uses an internal table of directions for the
+      rays that are traced from a sampling point to determine the irradiance at that point.
+      This patch allows to select alternative sets of sample ray directions.  This can help
+      both to overcome the limit for maximum <tt class="function">count</tt> of 1600 as well as
+      improve the quality of results at lower count values.
+    </p><p>
+      The syntax description of this feature is:
+      </p><pre class="synopsis"><i class="parameter"><tt>RADIOSITY_ITEMS</tt></i>:
+    ...
+    [ samples <i class="parameter"><tt>SAMPLES_ITEMS</tt></i> ]
+
+<i class="parameter"><tt>SAMPLES_ITEMS</tt></i>:
+    <i class="parameter"><tt>INT_SAMPLES_TYPE</tt></i> |
+    {
+      <i class="parameter"><tt>SAMPLES_COUNT</tt></i>,
+      <i class="parameter"><tt>VECTOR_DIRECTION</tt></i>, ...
+      [weight <i class="parameter"><tt>INT_WEIGHT_TYPE</tt></i>]
+    }</pre><p>
+    </p><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="radiosity_samples_internal"></a>2.7.3.2.1. internally generated directions</h5></div></div><div></div></div><p>
+        MegaPOV contains an internal generator for sample direction using the halton sequence
+        written by <span class="author"><span class="surname">Mael</span></span>. It is activated by adding:
+
+        </p><pre class="programlisting">samples 1</pre><p>
+
+        to the <tt class="function">radiosity{}</tt> block. The default value (0) uses the old
+        internal direction table.
+      </p><div class="table"><a name="id2534854"></a><p class="title"><b>Table 2.4. internal sequence</b></p><table summary="internal sequence" border="0" style="border-collapse: collapse;"><colgroup><col><col><col></colgroup><tbody><tr><td style="" align="center"><div><img src="img/rad_internal_50a.png"></div></td><td style="" align="center"><div><img src="img/rad_internal_300a.png"></div></td><td style="" align="center"><div><img src="img/rad_internal_1600a.png"></div></td></tr><tr><td style="" align="center"><div><img src="img/rad_internal_50b.png"></div></td><td style="" align="center"><div><img src="img/rad_internal_300b.png"></div></td><td style="" align="center"><div><img src="img/rad_internal_1600b.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>50 rays</em></span></td><td style="" align="center"><span class="emphasis"><em>300 rays</em></span></td><td style="" align="center"><span class="emphasis"><em>1600 rays</em></span></td></tr></tbody></table></div><div class="table"><a name="id2534970"></a><p class="title"><b>Table 2.5. halton sequence</b></p><table summary="halton sequence" border="0" style="border-collapse: collapse;"><colgroup><col><col><col></colgroup><tbody><tr><td style="" align="center"><div><img src="img/rad_halton_50a.png"></div></td><td style="" align="center"><div><img src="img/rad_halton_300a.png"></div></td><td style="" align="center"><div><img src="img/rad_halton_1600a.png"></div></td></tr><tr><td style="" align="center"><div><img src="img/rad_halton_50b.png"></div></td><td style="" align="center"><div><img src="img/rad_halton_300b.png"></div></td><td style="" align="center"><div><img src="img/rad_halton_1600b.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>50 rays</em></span></td><td style="" align="center"><span class="emphasis"><em>300 rays</em></span></td><td style="" align="center"><span class="emphasis"><em>1600 rays</em></span></td></tr></tbody></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="radiosity_samples_user"></a>2.7.3.2.2. user defined directions</h5></div></div><div></div></div><div class="informalfigure"><div align="right"><img src="img/rad_sampling.png" align="right"></div></div><p>
+        The sample ray directions can also be defined directly in the scene file:
+
+        </p><pre class="programlisting">samples {
+  300, // number of directions given
+  &lt;0.78080, -0.36618, 0.50622&gt;,
+  &lt;-0.26409, -0.01064, 0.96444&gt;,
+  ...
+}</pre><p>
+
+        A number of sample direction sets is coming with MegaPOV as include files.
+      </p><p>
+        The coordinate system for these sample ray directions is relative to the
+        surface at the sample position.  The z-Axis points in normal direction.
+        All directions should be in the upper hemisphere (z coordinate &gt;0).
+      </p><p>
+        An optional <tt class="function">weight</tt> parameter allows to weight the sample
+        intensity with <tt class="function">cos(theta)</tt> where <tt class="function">theta</tt>
+        is the angle between the normal vector and the ray direction.  The sample ray
+        directions should have a density distribution according to this function.  If
+        a uniform distribution is used instead <tt class="function">weight 1</tt> would weight
+        the sample rays to compensate this.  The default is 0 which turns off special
+        weighting.
+      </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="radiosity_randomize"></a>2.7.3.3. Randomized radiosity sampling directions</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div><div><div class="author"><h3 class="author"><span class="firstname">Michael</span> <span class="surname">Andrews</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2535948"></a><a class="indexterm" name="id2535968"></a><p>
+      This patch is based on an idea by <span class="author"><span class="firstname">Michael</span> <span class="surname">Andrews</span></span>.  Normally the distribution of
+      radiosity rays is identical for all sample points.  This patch rotates the sample
+      set around the vertical axis by a random angle for each sample taken.  This can
+      help to reduce artefacts in some cases.
+    </p><p>
+      This patch is activated the following way:
+      </p><pre class="programlisting">radiosity {
+  ...
+  randomize on
+}</pre><p>
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+        Since this feature uses a random number for the sample direction rotation
+        it is not safe to use it in animations.  Also a partial render of a scene will
+        produce different results than rendering the whole scene.
+      </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="radiosity_error_bound_adaptive"></a>2.7.3.4. Adaptive radiosity error_bound</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2536046"></a><a class="indexterm" name="id2536057"></a><a class="indexterm" name="id2536068"></a><p>
+      The <span class="trademark">POV-Ray</span>&#8482; radiosity feature uses the <tt class="function">error_bound</tt> parameter
+      to decide when to reuse radiosity samples already in the cache and when to take a 
+      new sample because there are not enough samples nearby.  Setting a low error_bound
+      makes <span class="trademark">POV-Ray</span>&#8482; take a new sample very often and therefore leads to more accurate
+      calculation of the diffuse illumination but at the same time is prone to artefacts
+      when used with a low number of sample rays (<tt class="function">count</tt>).
+    </p><p>
+      Especially with geometries containing sharp edges the sample density can become
+      very high because <span class="trademark">POV-Ray</span>&#8482; recognizes the lighting changes very rapidly there.  In such
+      cases it will not be possible to take all required samples during pretrace which is 
+      unfortunate because it leads to slow renders, increasing memory requirements during 
+      the render and makes splitting the render into multiple tasks more difficult.
+      <span class="trademark">POV-Ray</span>&#8482; already offers the <tt class="function">always_sample</tt> option that reduces
+      the necessity of additional samples in the final render pass by setting
+      nearest_count to 1 on the final pass so only one sample is required per radiosity
+      evaluation but this only reduces the problem a bit and is prone to artefacts.
+    </p><p>
+      The adaptive <tt class="function">error_bound</tt> allows you to set a range the
+      <tt class="function">error_bound</tt> value is automatically chosen from as well as
+      an overestimation factor used to find the optimal <tt class="function">error_bound</tt> 
+      value.  This means the radius from which cached radiosity samples are used
+      is increased if not enough samples are found in the area defined by the original
+      <tt class="function">error_bound</tt>.  In a way this is similar to the adaptive search 
+      radius used in photon mapping.
+    </p><p>
+      This patch is activated by using the following syntax instead of the standard 
+      <tt class="function">error_bound</tt> parameter:
+
+      </p><pre class="synopsis"><i class="parameter"><tt>RADIOSITY_ITEMS</tt></i>:
+    ...
+    [ error_bound <i class="parameter"><tt>ERROR_BOUND_DEFINITION</tt></i> ]
+
+<i class="parameter"><tt>ERROR_BOUND_DEFINITION</tt></i>:
+    <i class="parameter"><tt>FLOAT_ERROR_BOUND</tt></i> |
+    {
+      <i class="parameter"><tt>FLOAT_ERROR_BOUND</tt></i>
+      [adaptive <i class="parameter"><tt>FLOAT_EB_OVERESTIMATION</tt></i> [, FLOAT_ERROR_BOUND_MAX] ]
+    }</pre><p>
+    </p><p>
+      The default values are:
+    </p><p>
+      <tt class="function">FLOAT_EB_OVERESTIMATION</tt> : <tt class="literal">1.5</tt>
+    </p><p>
+      <tt class="function">FLOAT_ERROR_BOUND_MAX</tt> : <tt class="literal">10.0</tt>
+    </p><p>
+      The following code for example might be used for an adaptive <tt class="function">error_bound</tt>:
+      </p><pre class="programlisting">radiosity {
+  ...
+  error_bound { 0.3 adaptive 2.0, 20 }
+}</pre><p>
+    </p><p>
+      Note it can be necessary to use fairly large maximum values to avoid
+      final pass radiosity samples to be necessary.  The overestimation factor
+      increases the render time when chosen too small and will result in 
+      unnecessarily large errors when very large.  Values between 1.5 and 2 are
+      usually a good choice.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="radiosity_additional_statistics"></a>2.7.3.5. Additional radiosity statistics</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2536341"></a><a class="indexterm" name="id2536352"></a><p>
+      The patch introduces some additional statistics showing the number of samples
+      taken in pretrace and final pass and separately for the different recursion levels.
+      This can be useful for optimizing the radiosity settings.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="radiosity_adaptive_pretrace"></a>2.7.3.6. Adaptive radiosity pretrace</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2536394"></a><a class="indexterm" name="id2536406"></a><a class="indexterm" name="id2536417"></a><p>
+      The purpose of the radiosity pretrace is to take care of an optimal distribution
+      of radiosity samples in the scene.  For achieving this the view area is sampled
+      with increasing density until <tt class="function">pretrace_end</tt>.  During pretrace
+      pass the <tt class="function">error_bound</tt> is also reduced with <tt class="function">low_error_factor</tt>.
+      The results are usually quite good but this is unnecessarily slow in a lot of scenes where different
+      areas require a very different sample density.  Also the standard pretrace
+      only samples down to a 2 pixel density which is not sufficient in many cases.
+    </p><p>
+      Because of these limitation practical use of radiosity usually does not take all 
+      radiosity samples during the pretrace.  Sometimes it is even more efficient to totally
+      avoid the pretrace.   
+    </p><p>
+      This patch introduces a new pretrace mode which no more samples the whole view with the 
+      same density but adapts the sampling to the scene's requirements.  To accomplish this the
+      pretrace no more traces the different subdivision levels one after the other but
+      subdivides the view in a recursive way.   
+    </p><p>
+      In addition the new pretrace can also subdivide to a sub-pixel density (by using 
+      <tt class="function">pretrace_end</tt> smaller than <tt class="function">1/image_width</tt>).
+      This can of course be quite slow depending on the scene, render- and radiosity-settings.
+    </p><p>
+      The new pretrace is activated the following way:
+      </p><pre class="programlisting">radiosity {
+  ...
+  adaptive 1
+}</pre><p>
+    </p><p>
+      The following values can be used for the radiosity parameter:
+      </p><div class="itemizedlist"><ul type="disc" compact><li>
+            <tt class="literal">0</tt> old pretrace, default.
+          </li><li>
+            <tt class="literal">1</tt> new pretrace, subdivide until no new sample has to be taken.
+          </li><li>
+            <tt class="literal">2</tt> new pretrace, one additional subdivision level
+            in addition to <tt class="literal">1</tt>.
+          </li></ul></div><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="radiosity_visualize"></a>2.7.3.7. Radiosity visualizations</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2536598"></a><a class="indexterm" name="id2536609"></a><a class="indexterm" name="id2536620"></a><p>
+      The <span class="trademark">POV-Ray</span>&#8482; radiosity code contains code to visualize the way radiosity works internally in the rendered
+      images.  This code is deactivated by default.  This patch offers access to these features from SDL
+      with some new parameters in the radiosity block.
+    </p><p>
+      The syntax of these parameters is the following:
+
+      </p><pre class="synopsis"><i class="parameter"><tt>RADIOSITY_ITEMS</tt></i>:
+    ...
+    [ show_samples <i class="parameter"><tt>FLOAT_RADIUS</tt></i>, <i class="parameter"><tt>COLOR</tt></i> ]
+    [ show_low_count <i class="parameter"><tt>COLOR_LOW_COUNT</tt></i>, <i class="parameter"><tt>COLOR_GATHER_FINAL</tt></i> ]</pre><p>
+    </p><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="radiosity_visualize_samples"></a>2.7.3.7.1. sample locations</h5></div></div><div></div></div><p>
+        The <tt class="function">show_samples</tt> parameter activates the marking of the radiosity sample locations with 
+        the specified color.  Note this color only sets the ambient value returned by the radiosity function.
+        The other finish components are added to this.  Therefore it might be necessary to use quite extreme color values for this.  
+        The radius parameter influences how large the sample spots are marked.
+      </p><p>
+        </p><div class="informalfigure"><div><img src="img/rad_viz_sampling.png"></div></div><p>
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="radiosity_visualize_low_count"></a>2.7.3.7.2. low sample count areas</h5></div></div><div></div></div><p>
+        The <tt class="function">show_low_count</tt> activates the marking of areas where the sample density
+        is too low so less than <tt class="function">nearest_count</tt> samples are available for the radiosity 
+        estimation.  The color of these areas is chosen with the first parameter.  
+        This is only visible when <tt class="function">always_sample</tt> is <tt class="literal">off</tt>, otherwise
+        additional samples are taken in the final pass and the area is colored with the second color specified.
+      </p><p>
+        </p><div class="informalfigure"><div><img src="img/rad_viz_low_count.png"></div></div><p>
+      </p></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="mechsim"></a>2.7.4. Mechanics simulation patch</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><p>
+    The mechanics simulation system is integrated into the <span class="trademark">POV-Ray</span>&#8482;
+    rendering system.  The simulation parameters are set in the
+    <tt class="function">global_settings{}</tt> block of the scene file.  While
+    parsing the scene MegaPOV calculates the simulation exactly
+    where it occurs in the file.  This way the simulation can
+    interact with the scene by using objects, functions and values
+    set before the <tt class="function">mechsim{}</tt> block in the scene file.
+    But additionally the simulation data can also be used in the
+    scene later on for placing objects according to the
+    simulation results.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_settings"></a>2.7.4.1. The simulation settings</h4></div></div><div></div></div><a class="indexterm" name="id2538327"></a><p>
+      This patch introduces a new block in the
+      <tt class="function">global_settings{}</tt> section of the <span class="trademark">POV-Ray</span>&#8482; scene file.
+    </p><p>
+      The complete syntax description of this block is:
+      </p><pre class="synopsis"><i class="parameter"><tt>MECHSIM</tt></i>:
+    mechsim { [<i class="parameter"><tt>MECHSIM_ITEMS...</tt></i>] }
+<i class="parameter"><tt>MECHSIM_ITEM</tt></i>:
+    method <i class="parameter"><tt>INTEGER</tt></i> | bounding <i class="parameter"><tt>INTEGER</tt></i> | 
+    gravity <i class="parameter"><tt>VECTOR</tt></i> | time_step <i class="parameter"><tt>FLOAT</tt></i> |
+    step_count <i class="parameter"><tt>INTEGER</tt></i> | time <i class="parameter"><tt>FLOAT</tt></i> | 
+    start_time <i class="parameter"><tt>FLOAT</tt></i> | end_time <i class="parameter"><tt>FLOAT</tt></i> | 
+    accuracy <i class="parameter"><tt>FLOAT</tt></i>[, <i class="parameter"><tt>FLOAT</tt></i>] |
+    environment { <i class="parameter"><tt>ENVIRONMENT_DEFINITION</tt></i> [<i class="parameter"><tt>ENVIRONMENT_ITEMS...</tt></i>] } |
+    interaction { <i class="parameter"><tt>INTERACTION_DEFINITION ...</tt></i> } |
+    field { <i class="parameter"><tt>FIELD_DEFINITION ...</tt></i> } |
+    force { <i class="parameter"><tt>FORCE_DEFINITION ...</tt></i> } |
+    attach [<i class="parameter"><tt>VECTOR</tt></i>] { <i class="parameter"><tt>ATTACH_DEFINITION ...</tt></i> } |
+    fixed <i class="parameter"><tt>VECTOR</tt></i> |
+    collision { <i class="parameter"><tt>COLLISION_TOGGLE</tt></i> [<i class="parameter"><tt>COLLISION_ITEMS...</tt></i>] } |
+    topology { [<i class="parameter"><tt>GROUP_DEFINITIONS...</tt></i>] [<i class="parameter"><tt>TOPOLOGY_ITEMS...</tt></i>]
+               [save_file <i class="parameter"><tt>FILE_NAME</tt></i> [<i class="parameter"><tt>Type</tt></i>]] }
+<i class="parameter"><tt>ENVIRONMENT_DEFINITION</tt></i>:
+    function [(<i class="parameter"><tt>IDENT_LIST</tt></i>)] { <i class="parameter"><tt>FUNCTION_ITEMS</tt></i> } | object <i class="parameter"><tt>OBJECT</tt></i>
+<i class="parameter"><tt>ENVIRONMENT_ITEM</tt></i>:
+    stiffness FLOAT | damping <i class="parameter"><tt>FLOAT</tt></i> | friction <i class="parameter"><tt>FLOAT</tt></i> [<i class="parameter"><tt>, FLOAT</tt></i>] |
+    method <i class="parameter"><tt>INTEGER</tt></i>
+<i class="parameter"><tt>INTERACTION_DEFINITION</tt></i>:
+    function [(<i class="parameter"><tt>IDENT_LIST</tt></i>)] { <i class="parameter"><tt>FUNCTION_ITEMS</tt></i> }
+<i class="parameter"><tt>FIELD_DEFINITION</tt></i>:
+    function { <i class="parameter"><tt>SPECIAL_COLOR_FUNCTION</tt></i> }
+<i class="parameter"><tt>FORCE_DEFINITION</tt></i>:
+    function { <i class="parameter"><tt>SPECIAL_COLOR_FUNCTION</tt></i> }
+<i class="parameter"><tt>ATTACH_DEFINITION</tt></i>:
+    function { <i class="parameter"><tt>SPLINE</tt></i> }
+<i class="parameter"><tt>COLLISION_TOGGLE</tt></i>:
+    [<i class="parameter"><tt>INT_MASS_MASS</tt></i> [, <i class="parameter"><tt>INT_MASS_FACE</tt></i> [, <i class="parameter"><tt>INT_CONNECTION_CONNECTION</tt></i>]]]
+<i class="parameter"><tt>COLLISION_ITEM</tt></i>:
+    stiffness <i class="parameter"><tt>FLOAT</tt></i> | damping <i class="parameter"><tt>FLOAT</tt></i> | friction <i class="parameter"><tt>FLOAT</tt></i> [, <i class="parameter"><tt>FLOAT</tt></i>]
+<i class="parameter"><tt>GROUP_DEFINITION</tt></i>:
+    group [(<i class="parameter"><tt>INT_GROUP_INDEX</tt></i>)] { <i class="parameter"><tt>TOPOLOGY_ITEMS...</tt></i> }
+<i class="parameter"><tt>TOPOLOGY_ITEM</tt></i>:
+    mass { <i class="parameter"><tt>V_POSITION</tt></i>, <i class="parameter"><tt>V_VELOCITY</tt></i>, <i class="parameter"><tt>F_RADIUS</tt></i>
+           mass <i class="parameter"><tt>FLOAT</tt></i> | density <i class="parameter"><tt>FLOAT</tt></i> 
+           [attach <i class="parameter"><tt>INTEGER</tt></i>] [force <i class="parameter"><tt>INTEGER</tt></i>] [fixed <i class="parameter"><tt>BOOL</tt></i>] } |
+    connection { <i class="parameter"><tt>INDEX1</tt></i>, <i class="parameter"><tt>INDEX2</tt></i> [stiffness <i class="parameter"><tt>FLOAT</tt></i>] [damping <i class="parameter"><tt>FLOAT</tt></i>]
+                 [length <i class="parameter"><tt>FLOAT</tt></i>] } |
+    viscoelastic { <i class="parameter"><tt>INDEX1</tt></i>, <i class="parameter"><tt>INDEX2</tt></i> [stiffness <i class="parameter"><tt>FLOAT</tt></i>] [length <i class="parameter"><tt>FLOAT</tt></i>]
+                 [accuracy <i class="parameter"><tt>FLOAT</tt></i>] [ VE_ELEMENTS...  ] } |
+    face { <i class="parameter"><tt>INDEX1</tt></i>, <i class="parameter"><tt>INDEX2</tt></i>, <i class="parameter"><tt>INDEX3</tt></i> } |
+    load_file <i class="parameter"><tt>FILE_NAME</tt></i>
+<i class="parameter"><tt>VE_ELEMENT</tt></i>:
+    element { <i class="parameter"><tt>F_STIFFNESS</tt></i>, <i class="parameter"><tt>F_DAMPING</tt></i> [, <i class="parameter"><tt>F_POSITION</tt></i> ] ] }</pre><p>
+    </p><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="mechsim_gen_settings"></a>2.7.4.1.1. The general settings</h5></div></div><div></div></div><p>
+        Some general parameters can be given in the top level of the
+        <tt class="function">mechsim{}</tt> section.
+      </p><p>
+        The default values are:
+      </p><p>
+        <tt class="function">method</tt> : <tt class="literal">1</tt>
+      </p><p>
+        <tt class="function">bounding</tt> : <tt class="literal">0</tt>
+      </p><p>
+        <tt class="function">gravity</tt>  : <tt class="literal">&lt;0, 0, 0&gt;</tt>
+      </p><p>
+        <tt class="function">time_step</tt> : <tt class="literal">0.1</tt>
+      </p><p>
+        <tt class="function">step_count</tt> : <tt class="literal">10</tt>
+      </p><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_method"></a>2.7.4.1.1.1. method</h6></div></div><div></div></div><a class="indexterm" name="id2539054"></a><p>
+          Selects the integration method used for solving the
+          equations of movement.
+        </p><p>
+          Possible values are:
+          </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="literal">1</tt> (<tt class="constant">MECHSIM_METHOD_EULER</tt>) simple forward Euler integration method</li><li><tt class="literal">2</tt> (<tt class="constant">MECHSIM_METHOD_HEUN</tt>) second order (Heun) integration method</li><li><tt class="literal">3</tt> (<tt class="constant">MECHSIM_METHOD_RUNGE_KUTTA</tt>) fourth order Runge Kutta integration method</li><li><tt class="literal">4</tt> (<tt class="constant">MECHSIM_METHOD_GRADIENT</tt>) gradient descent method</li></ul></div><p>
+        </p><p>
+          Method 1 is a first order integration method also known as explicit Euler method.
+          With the differential equations of movement written as:
+        </p><div class="informalfigure"><div class="mediaobject" align="left"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0"><tr><td align="left" valign="middle"><img src="img/formula001.png" align="left"></td></tr></table></div></div><p>
+          <i class="parameter"><tt>y</tt></i> being the state of the system (positions and velocities)
+          and the initial conditions
+          <tt class="function">y(t<sub>0</sub>)=y<sub>0</sub></tt>
+          the Euler method can be written as:
+        </p><div class="informalfigure"><div class="mediaobject" align="left"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0"><tr><td align="left" valign="middle"><img src="img/formula002.png" align="left"></td></tr></table></div></div><p>
+          Method 2 is a second order integration method known as Heun's method.
+          Its formula is:
+        </p><div class="informalfigure"><div class="mediaobject" align="left"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0"><tr><td align="left" valign="middle"><img src="img/formula003.png" align="left"></td></tr></table></div></div><p>
+          Method 3 is a fourth order integration method known as the classical
+          Runge-Kutta method, in contrast to method 1 and 2 it automatically controls the time steps (see <a href="global_settings.html#mechsim_step_adaptive" title="2.7.4.1.1.6. adaptive time stepping">Section 2.7.4.1.1.6, &#8220;adaptive time stepping&#8221;</a>):
+        </p><div class="informalfigure"><div class="mediaobject" align="left"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0"><tr><td align="left" valign="middle"><img src="img/formula004.png" align="left"></td></tr></table></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_bounding"></a>2.7.4.1.1.2. bounding</h6></div></div><div></div></div><a class="indexterm" name="id2539433"></a><p>
+          Selects the bounding method to speed up collision detections between masses, connections and faces.
+        </p><p>
+          Possible values are:
+          </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="literal">0</tt> (<tt class="constant">MECHSIM_COLLISION_BOUNDING_NO</tt>) no bounding system</li><li><tt class="literal">1</tt> (<tt class="constant">MECHSIM_COLLISION_BOUNDING_AUTO</tt>) automatically select method 0, 2 or 3 depending on complexity</li><li><tt class="literal">2</tt> (<tt class="constant">MECHSIM_COLLISION_BOUNDING_BOX</tt>) speed up using bounding boxes</li><li><tt class="literal">3</tt> (<tt class="constant">MECHSIM_COLLISION_BOUNDING_HASH</tt>) speed up using spatial hashing</li></ul></div><p>
+        </p><p>
+          The bounding techniques have been implemented by <span class="author"><span class="firstname">Daniel</span> <span class="surname">Jungmann</span></span>.
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_gravity"></a>2.7.4.1.1.3. gravity</h6></div></div><div></div></div><a class="indexterm" name="id2539548"></a><p>Applies an overall constant gravitational force to all masses.</p><p>A vector is expected, the unit is <tt class="function">m/s²</tt>.</p><p>
+          Standard earth gravity (with y=up coordinates) is:
+
+          </p><pre class="programlisting">gravity &lt;0, -9.81, 0&gt;</pre><p>
+        </p><p>
+          With field functions (see <a href="global_settings.html#mechsim_field" title="2.7.4.1.6. Field forces">Section 2.7.4.1.6, &#8220;Field forces&#8221;</a>) non constant
+          gravity can be simulated
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_fixed"></a>2.7.4.1.1.4. global fixation</h6></div></div><div></div></div><a class="indexterm" name="id2539612"></a><p>
+          All movements in the simulation system can be fixed in one or two directions
+          using the <tt class="function">fixed</tt> option.
+        </p><p>
+          This can be used to make the MechSim system perform simulation of 2D and 1D systems.
+          Note however that the simulation still runs in 3D internally.
+        </p><p>
+          by adding:
+
+          </p><pre class="programlisting">fixed &lt;0, 0, 1&gt;</pre><p>
+
+          to the <tt class="function">mechsim{}</tt> block you can for example perform a simulation
+          in the x-y-plane.
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_stepping"></a>2.7.4.1.1.5. simulation stepping</h6></div></div><div></div></div><a class="indexterm" name="id2539678"></a><a class="indexterm" name="id2539689"></a><a class="indexterm" name="id2539700"></a><p>
+          All simulation methods use discrete time steps for calculating
+          the simulation.  There are three parameters to steer this but only
+          two are needed to correctly define the stepping.  The formula for
+          calculating the third is:
+        </p><p>
+          <tt class="function">Step_Count = Time / Time_Step</tt>
+        </p><p>
+          <a class="indexterm" name="id2539734"></a>
+          <a class="indexterm" name="id2539745"></a>
+
+          An optional <tt class="function">start_time</tt> value allows to specify a
+          starting time different from <tt class="literal">0</tt>.  Changing this can
+          influence the <tt class="function">attach</tt> and
+          <tt class="function">environment</tt> function.
+          (see <a href="global_settings.html#mechsim_attach" title="2.7.4.1.7. Attaching masses">Section 2.7.4.1.7, &#8220;Attaching masses&#8221;</a> and <a href="global_settings.html#mechsim_environment" title="2.7.4.1.2. The environments">Section 2.7.4.1.2, &#8220;The environments&#8221;</a>)
+          Specifying an <tt class="function">end_time</tt> value instead of
+          <tt class="function">time</tt> is also possible.
+        </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+            Using too large time steps can lead to instability in the simulation.
+            MegaPOV will recognize this in most cases and stop simulation with an
+            error message but this does not mean the simulation is correct as long
+            as no error is reported.  Simulation results should always be checked
+            for plausibility.
+          </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_step_adaptive"></a>2.7.4.1.1.6. adaptive time stepping</h6></div></div><div></div></div><a class="indexterm" name="id2539842"></a><p>
+          Simulation method 3 automatically controls the used time steps.  This is done by calculating every step
+          with double steps size and comparing the results.  So the local discretization error is automatically
+          kept below a specified threshold.  You can specify this threshold and the minimum allowed step size
+          with the <tt class="function">accuracy</tt> keyword:
+
+          </p><pre class="programlisting">accuracy THRESHOLD, MIN_STEP</pre><p>
+        </p><p>
+          the minimum step size is optional, default values are:
+        </p><p>
+          <tt class="function">THRESHOLD</tt> : <tt class="literal">1.0e-5</tt>
+        </p><p>
+          <tt class="function">MIN_STEP</tt> : <tt class="literal">1.0e-7</tt>
+        </p><p>
+          The step size to start with can be specified with <tt class="function">time_step</tt>.  It is usually
+          not critical but can be necessary to be set sufficiently low for a successful simulation.
+        </p><p>
+          The render statistics show the actual minimum, average and maximum time steps used during the 
+          simulation.
+        </p><div class="example"><a name="id2539936"></a><p class="title"><b>Example 2.13. Adaptive time stepping</b></p><p>
+            A simulation setup for adaptive time stepping could look like:
+
+            </p><pre class="programlisting">mechsim {
+  ...
+  method 3
+  time 1/30
+  accuracy 1e-5, 1e-6
+  ...
+}</pre><p>
+
+          </p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+            Adaptive time stepping guarantees a certain local accuracy of the simulation, it does not prevent
+            instability though.  It will not be possible to simulate a system that does not run with fixed
+            time steps.
+          </p></td></tr></table></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="mechsim_environment"></a>2.7.4.1.2. The environments</h5></div></div><div></div></div><a class="indexterm" name="id2539983"></a><p>
+        Environments are shapes the simulated masses are supposed to interact
+        with. Several of them can be created with
+        <tt class="function">environment{}</tt> blocks.
+      </p><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_env_definition"></a>2.7.4.1.2.1. The environment definition</h6></div></div><div></div></div><p>
+          An environment is defined either by a user defined function or an object.
+          If both are given the function is preferred.
+        </p><p>
+          Apart from the default parameters
+          (<tt class="function">x</tt>, <tt class="function">y</tt> and <tt class="function">z</tt>)
+          the function can have a fourth parameter supplying a time index.  This way
+          moving environment objects can be simulated.
+        </p><p>
+
+          </p><pre class="programlisting">#declare fn_Env=function(x, y, z, tim) { z-tim }
+
+global_settings {
+  ...
+  mechsim {
+    ...
+    environment {
+      function(x, y, z, tim) { fn_Env(x, y, z, tim) }
+      ...
+    }
+  }
+}</pre><p>
+
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_env_properties"></a>2.7.4.1.2.2. The environment properties</h6></div></div><div></div></div><p>
+          There are three parameters defining the properties of the environment:
+        </p><p>
+          </p><div class="itemizedlist"><ul type="disc"><li><p>
+                <a class="indexterm" name="id2540095"></a>
+                <tt class="function">stiffness</tt> The elasticity parameter of the surface.
+                The unit is <tt class="function">N/m</tt> or <tt class="function">kg/s²</tt>.
+              </p></li><li><p>
+                <a class="indexterm" name="id2540138"></a>
+                <tt class="function">damping</tt> Depending on the environment calculation method
+                (see below) this is either a diminishing factor (&lt;1) applied to the mass
+                velocities at each collision or a damping constant (unit <tt class="function">kg/s</tt>)
+              </p></li><li><p>
+                <a class="indexterm" name="id2540174"></a>
+                <tt class="function">friction</tt> The friction factor controls the amount of friction
+                during collisions.  An optional second parameter, the friction
+                excess value should usually be slightly larger than 1 and causes the friction
+                to occur already slightly above the surface.  This can be helpful to obtain
+                realistic results.
+              </p></li></ul></div><p>
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_env_method"></a>2.7.4.1.2.3. The environment calculation method</h6></div></div><div></div></div><a class="indexterm" name="id2540216"></a><p>
+          There are currently two methods how the environment collisions can be
+          calculated:
+        </p><p>
+          </p><div class="itemizedlist"><ul type="disc"><li><p>
+                <span class="emphasis"><em>Method 1</em></span> (<tt class="constant">MECHSIM_ENV_METHOD_FORCE</tt>)
+                is force based.  When a mass collides with the environment a force is
+                applied in direction of the function gradient (with function based environments)
+                or the surface normal (with objects).  The <tt class="function">stiffness</tt>,
+                <tt class="function">damping</tt> and <tt class="function">friction</tt> parameters
+                influence this force. <tt class="function">friction</tt> defines the ratio between
+                the tangential force and the normal force.
+              </p><div class="figure"><a name="id2540286"></a><p class="title"><b>Figure 2.1. Force based environment collisions illustration</b></p><div><img src="img/env_force.png" alt="Force based environment collisions illustration"></div></div></li><li><p>
+                <span class="emphasis"><em>Method 2</em></span> (<tt class="constant">MECHSIM_ENV_METHOD_IMPACT</tt>)
+                is based on impact laws.  The velocity is inverted at the surface and
+                diminished by the <tt class="function">damping</tt> factor in normal direction
+                and by the <tt class="function">friction</tt> value in tangential direction.
+                <tt class="function">stiffness</tt> does not have any influence in this case.
+              </p><div class="figure"><a name="id2540345"></a><p class="title"><b>Figure 2.2. Impact based environment collisions illustration</b></p><div><img src="img/env_impact.png" alt="Impact based environment collisions illustration"></div></div><p>
+                Since this method directly modifies the velocity rather than applying
+                forces it should only be used with the first order (Euler) integration method.
+              </p></li></ul></div><p>
+        </p><p>
+          With the gradient descent simulation method the method parameter does
+          not have any effect.
+        </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="mechsim_collision"></a>2.7.4.1.3. The collision settings</h5></div></div><div></div></div><a class="indexterm" name="id2540395"></a><p>
+        The collisions referred to here are not environment collisions but collisions
+        between the simulation elements.  Since detecting this kind of collision is quite
+        computationally intensive it is turned off by default.
+      </p><p>
+        With three numbers at the beginning of the <tt class="function">collision{}</tt> section
+        collision can be toggled for <span class="emphasis"><em>mass-mass-collisions</em></span>,
+        <span class="emphasis"><em>mass-face-collisions</em></span>
+        and <span class="emphasis"><em>connection-connection-collisions</em></span>.
+        All these parameters are optional, the meaning of the possible values is:
+      </p><p>
+        </p><div class="itemizedlist"><ul type="disc" compact><li>
+              <tt class="literal">0</tt> (<tt class="constant">MECHSIM_COLLISION_NONE</tt>)
+              No collisions of this kind are calculated.
+            </li><li>
+              <tt class="literal">1</tt> (<tt class="constant">MECHSIM_COLLISION_ALL</tt>)
+              Collisions between all simulation elements are calculated.
+            </li><li>
+              <tt class="literal">2</tt> (<tt class="constant">MECHSIM_COLLISION_GROUP</tt>)
+              Only collisions between elements of different groups are calculated.
+            </li></ul></div><p>
+      </p><div class="figure"><a name="id2540510"></a><p class="title"><b>Figure 2.3. Mass-mass collisions illustration</b></p><div><img src="img/coll_mass.png" alt="Mass-mass collisions illustration"></div></div><div class="figure"><a name="id2540528"></a><p class="title"><b>Figure 2.4. Mass-face collisions illustration</b></p><div><img src="img/coll_face.png" alt="Mass-face collisions illustration"></div></div><div class="figure"><a name="id2540545"></a><p class="title"><b>Figure 2.5. Connection-connection collisions illustration</b></p><div><img src="img/coll_con.png" alt="Connection-connection collisions illustration"></div></div><p>
+        Internal collisions are always calculated with forces.  The same three
+        parameters like in the environment settings can be used to specify the
+        properties
+      </p><p>
+        </p><div class="itemizedlist"><ul type="disc" compact><li>
+              <a class="indexterm" name="id2540584"></a>
+              <tt class="function">stiffness</tt> The elasticity parameter of the surface.
+              The unit is <tt class="function">N/m</tt> or <tt class="function">kg/s²</tt>.
+            </li><li>
+              <a class="indexterm" name="id2540624"></a>
+              <tt class="function">damping</tt> A damping constant (unit <tt class="function">kg/s</tt>)
+            </li><li>
+              <a class="indexterm" name="id2540657"></a>
+              <tt class="function">friction</tt> The friction factor controls the amount of friction
+              during collisions.  An optional second parameter, the friction
+              excess value should usually be slightly larger than 1 and causes the friction
+              to occur already slightly before the collision.  This can be helpful to obtain
+              realistic results.
+            </li></ul></div><p>
+      </p><div class="example"><a name="id2540686"></a><p class="title"><b>Example 2.14. An example for a complete <tt class="function">collision{}</tt> section:</b></p><p>
+          </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    collision {
+      2, /* mass-mass collisions between elements of different groups */
+      0, /* no mass-face collisions */
+      0  /* no connection-connection collisions */
+      stiffness 20000
+      damping 4000
+      friction 0.2, 1.01
+    }
+  }
+}</pre><p>
+        </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="mechsim_topology"></a>2.7.4.1.4. The topology</h5></div></div><div></div></div><a class="indexterm" name="id2540729"></a><p>
+        The <tt class="function">topology{}</tt> section is the central part
+        of the whole simulation settings.  Here the simulation elements,
+        their positions and properties, can be defined.
+      </p><p>
+        There are three topology items: masses, connections and faces.  Each of them
+        has several parameters that can be set.
+      </p><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_topo_mass"></a>2.7.4.1.4.1. Point masses</h6></div></div><div></div></div><p>
+          <a class="indexterm" name="id2540773"></a>
+          The <tt class="function">mass</tt> block defines a point mass.
+          These are the central elements of the simulation.  Their
+          movement is calculated by the simulation system.
+        </p><div class="informalfigure"><div><img src="img/masses1.png"></div></div><p>
+          The <tt class="function">mass</tt> block contains the following elements:
+        </p><p>
+          </p><div class="itemizedlist"><ul type="disc" compact><li>
+                The first item is a vector specifying the position of them mass
+                (unit: <tt class="function">m</tt>).
+              </li><li>
+                The second item, also a vector, represents the velocity of them mass
+                (unit: <tt class="function">m/s</tt>).
+              </li><li>
+                The third item is a float standing for the radius of the mass
+                (unit: <tt class="function">m</tt>).  This radius is only used in
+                collision calculations (see <a href="global_settings.html#mechsim_collision" title="2.7.4.1.3. The collision settings">Section 2.7.4.1.3, &#8220;The collision settings&#8221;</a>).
+                Otherwise the mass behaves as a point mass.
+              </li></ul></div><p>
+        </p><p>
+          In addition either the <tt class="function">mass</tt> (unit: <tt class="function">kg</tt>) or the
+          <tt class="function">density</tt> (unit: <tt class="function">kg/m³</tt>) of the element has to be given.
+          If <tt class="function">density</tt> is specified the resulting mass is calculated
+          automatically.  An optional boolean parameter (<tt class="function">fixed</tt>)
+          prevents the mass from moving if set to <tt class="function">true</tt>.
+        </p><p>
+          A complete example for a mass definition:
+
+          </p><pre class="programlisting">mass {
+  &lt;0, 0, 1&gt;, /* position */
+  &lt;1, 0, 0&gt;, /* velocity */
+  0.1        /* radius */
+  density 600
+  // mass 2
+  // fixed true
+}</pre><p>
+
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_topo_connection"></a>2.7.4.1.4.2. Connections</h6></div></div><div></div></div><p>
+          <a class="indexterm" name="id2540981"></a>
+          The <tt class="function">connection</tt> block defines a connection
+          between two point masses.  It can have elastic and dissipative
+          properties.
+        </p><div class="informalfigure"><div><img src="img/connections1.png"></div></div><p>
+          The first two elements of this block are integer numbers specifying the
+          indices of the masses to connect.
+        </p><p>
+          Connections simulate a parallel elasticity and linear damping
+          element - a so called <span class="emphasis"><em>Voigt-Kelvin-Element</em></span>.
+        </p><div class="informalfigure"><div><img src="img/con_vk.png"></div></div><p>
+          The force they exhibit
+          on the masses they connect is:
+        </p><div class="informalfigure"><div class="mediaobject" align="left"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0"><tr><td align="left" valign="middle"><img src="img/formula005.png" align="left"></td></tr></table></div></div><p>
+          There are three optional parameters: The <tt class="function">stiffness</tt> value specifies
+          the elasticity of the connection (unit <tt class="function">N/m</tt> or <tt class="function">kg/s²</tt>).
+          <tt class="function">damping</tt> the velocity proportional damping factor (unit <tt class="function">kg/s</tt>).
+          The default value for both of these is zero.  The third parameter allows to specify
+          a relaxed length (<tt class="function">x<sub>0</sub></tt>) of the connection.  If it is not specified the distance of the two
+          masses at the time the connection is created is used for this property.
+        </p><p>
+          A complete example for a connection definition:
+
+          </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    topology {
+      mass { ... }  /* mass with index 0 */
+      mass { ... }  /* mass with index 1 */
+
+      connection {
+        0,          /* index of the first mass */
+        1           /* index of the second mass */
+        stiffness 10000
+        damping 2000
+        // length 0.5
+      }
+      ...
+    }
+  }
+}</pre><p>
+
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_topo_face"></a>2.7.4.1.4.3. Faces</h6></div></div><div></div></div><p>
+          <a class="indexterm" name="id2541195"></a>
+          The <tt class="function">face</tt> block defines a triangular face between
+          three point masses.  It is used for collision calculations
+          (see <a href="global_settings.html#mechsim_collision" title="2.7.4.1.3. The collision settings">Section 2.7.4.1.3, &#8220;The collision settings&#8221;</a>) and can be useful for
+          generating a mesh from the simulation data for display.
+        </p><div class="informalfigure"><div><img src="img/faces1.png"></div></div><p>
+          There are three integer numbers in the block, the
+          indices of the masses forming the face.
+        </p><p>
+          A complete example for a face definition:
+
+          </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    topology {
+      mass { ... }  /* mass with index 0 */
+      mass { ... }  /* mass with index 1 */
+      mass { ... }  /* mass with index 2 */
+
+      face {
+        0,          /* index of the first mass */
+        1,          /* index of the second mass */
+        2           /* index of the third mass */
+      }
+      ...
+    }
+  }
+}</pre><p>
+
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_topo_viscoelastic"></a>2.7.4.1.4.4. Viscoelastic connections</h6></div></div><div></div></div><p>
+          Viscoelastic connections allow you to simulate more complex material properties than 
+          conventional connections.  Conventional connections simulate a parallel elasticity and linear damping
+          element - a so called <span class="emphasis"><em>Voigt-Kelvin-Element</em></span> 
+          (see <a href="global_settings.html#mechsim_topo_connection" title="2.7.4.1.4.2. Connections">Section 2.7.4.1.4.2, &#8220;Connections&#8221;</a>).  With this element the force
+          of the connection only depends on the momentaneous distance and velocity of the masses.
+          Viscoelastic connections use a more complex model that also allows you to simulate
+          effects like relaxation.
+        </p><p>
+          The element definition contains the index of the two masses it connects and a relaxed length - 
+          just like conventional connections.  The <tt class="function">stiffness</tt> value specifies
+          the static elasticity of the connection (unit <tt class="function">N/m</tt> or <tt class="function">kg/s²</tt>).
+          Furthermore you can specify an arbitrary number of parallel <span class="emphasis"><em>Maxwell-Elements</em></span>.
+          Each contains two mandatory parameters: the stiffness (unit <tt class="function">N/m</tt> or 
+         <tt class="function">kg/s²</tt>) and the damping (unit <tt class="function">kg/s</tt>)
+        </p><div class="informalfigure"><div><img src="img/con_visc.png"></div></div><p>
+          The force viscoelastic connections exhibit on the masses they connect is:
+        </p><div class="informalfigure"><div class="mediaobject" align="left"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0"><tr><td align="left" valign="middle"><img src="img/formula006.png" align="left"></td></tr></table></div></div><p>
+          <tt class="function">y<sub>i</sub></tt> are the inner coordinates of the Maxwell-Elements
+          that get calculated by the simulation system.
+        </p><p>
+          A complete example for a connection definition:
+
+          </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    topology {
+      mass { ... }       /* mass with index 0 */
+      mass { ... }       /* mass with index 1 */
+
+      viscoelastic {
+        0,               /* index of the first mass */
+        1                /* index of the second mass */
+        stiffness 10000  /* static stiffness */
+        element {        /* first maxwell element */ 
+          2000,          /*   - stiffness */
+          5000           /*   - damping */
+        }
+        element {        /* second maxwell element */  
+          4000,          /*   - stiffness */ 
+          2000           /*   - damping */ 
+        }
+        // length 0.5
+      }
+      ...
+    }
+  }
+}</pre><p>
+
+        </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+            In contrast to normal connections viscoelastic connections do not participate in 
+            collisions.  If you want connection-connection collisions in your simulation you
+            have to use normal connections in addition.
+          </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_topo_group"></a>2.7.4.1.4.5. grouping elements</h6></div></div><div></div></div><a class="indexterm" name="id2541489"></a><p>Simulation elements can be categorized into groups.  The main purpose of this
+          is to speed up collision tests.  The <tt class="function">group</tt> keyword can be followed by
+          an integer number in parentheses to explicitly specify the group.  Otherwise
+          the group index is determined automatically.
+        </p><p>
+
+          </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    topology {
+      mass { ... }  /* these elements are group index 0 */
+      ...
+      group {
+        mass { ... } /* these elements are group index 1 */
+      }
+      group {
+        mass { ... } /* these elements are group index 2 */
+      }
+      group (1) {
+        mass { ... } /* these elements are group index 1 */
+      }
+
+      ...
+    }
+  }
+}</pre><p>
+
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h6 class="title"><a name="mechsim_topo_save_load"></a>2.7.4.1.4.6. saving and loading topology data</h6></div></div><div></div></div><p>The topology data can be written to and loaded
+          from files.  For the format of these files see
+          <a href="global_settings.html#mechsim_file" title="2.7.4.3. The simulation data file format">Section 2.7.4.3, &#8220;The simulation data file format&#8221;</a>.
+        </p><p>
+          <a class="indexterm" name="id2541563"></a>
+          <tt class="function">save_file</tt> can only be added to the main
+          <tt class="function">topology{}</tt> block.  It saves the complete data
+          after the simulation to the specified file.
+        </p><p>
+          <a class="indexterm" name="id2541592"></a>
+          <tt class="function">load_file</tt> can be placed anywhere in the
+          <tt class="function">topology{}</tt> section.  If placed in a group
+          the elements in the file are added to that group.
+          Otherwise they are are placed in groups according to group index information in
+          the file.
+        </p><p>
+          The same file name can be specified for both loading and saving the data.  This
+          is especially useful for animation when the following frame simulation should start
+          with the result of the last frame:
+        </p><p>
+
+          </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    topology {
+      load_file "mechsim_data.dat"
+      save_file "mechsim_data.dat"
+    }
+  }
+}</pre><p>
+
+        </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="mechsim_interaction"></a>2.7.4.1.5. Mass interaction</h5></div></div><div></div></div><a class="indexterm" name="id2541656"></a><p>
+        Masses can be set to exert forces on each other depending
+        on the distance and the position in space.  Phenomena like
+        gravity in space and electrostatic fields can be simulated
+        this way.
+      </p><p>
+        The <tt class="function">interaction{}</tt> block can contain
+        one or more user defined functions.  Apart from the default
+        parameters (<tt class="function">x</tt>, <tt class="function">y</tt> and
+        <tt class="function">z</tt>) the functions can have three additional 
+        parameters:  the distance between the masses and the masses of the two
+        masses that interact.
+      </p><p>
+        The function return value defines the force exerted on both masses
+        in opposite directions.  Positive values mean attractive
+        forces and negative values repulsion.
+      </p><p>
+        To calculate the force on each mass the function is evaluated at the 
+        mass position for all combinations with other masses.  The first mass
+        parameter is always for the mass itself, the second is for the other
+        mass interacting.  In most cases the two mass parameters should be
+        exchangeable in the formula of course.
+      </p><div class="example"><a name="id2541727"></a><p class="title"><b>Example 2.15. Mass interaction</b></p><p>
+
+          The following code defines an gravity-like inverse square falloff interaction
+
+        </p><pre class="programlisting">#declare fn_Force=function(x, y, z, dist, m1, m2) { (m1*m2)/(dist*dist) }
+
+global_settings {
+  ...
+  mechsim {
+    ...
+    interaction {
+      function(x, y, z, dist) { fn_Force(x, y, z, dist) }
+      ...
+    }
+  }
+}</pre><p>
+
+        </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="mechsim_field"></a>2.7.4.1.6. Field forces</h5></div></div><div></div></div><a class="indexterm" name="id2541763"></a><p>
+        General field like forces can be simulated
+        using the <tt class="function">field{}</tt> block.  One example
+        for such a field force is gravity although the simulation
+        system has a special parameter for specifying such a
+        simple constant gravity force.  Much more complicated
+        fields can be set up using this function.
+      </p><p>
+        The <tt class="function">field{}</tt> block expects a pigment function
+        defining the force components in the different directions.
+        The <tt class="function">red</tt> component of the pigment for the
+        <tt class="function">x</tt> direction, the <tt class="function">green</tt> component
+        for the <tt class="function">y</tt> direction and <tt class="function">blue</tt> for
+        <tt class="function">z</tt>. The mechsim include file
+        (see <a href="mechsim.inc.html" title="3.4. The 'mechsim.inc' include file">Section 3.4, &#8220;The 'mechsim.inc' include file&#8221;</a>)
+        contains a macro generating an appropriate pigment function
+        from three float functions.
+      </p><div class="example"><a name="id2541852"></a><p class="title"><b>Example 2.16. Constant downward force in Mechanics simulation</b></p><p>
+
+          A function for a constant downward force (in y direction)
+          would look like:
+
+          </p><pre class="programlisting"><tt class="function">#include</tt> "<tt class="filename">mechsim.inc</tt>"
+
+global_settings {
+  ...
+  mechsim {
+    ...
+    field {
+      Vector_Function(
+        function {0},
+        function {-1},
+        function {0}
+      )
+      ...
+    }
+  }
+}</pre><p>
+
+        </p></div><p>
+        Note that in contrast to the gravity parameter the
+        fields define a force and not an acceleration.  Large masses will
+        be influenced less than small masses.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="mechsim_attach"></a>2.7.4.1.7. Attaching masses</h5></div></div><div></div></div><a class="indexterm" name="id2541912"></a><p>
+        Apart from adding the <tt class="function">fixed</tt> flag to masses and thereby
+        fixing them to a certain position we can also constrain them to a certain
+        predefined movement.  Those movements are described with spline functions
+        in the <tt class="function">attach{}</tt> block.
+      </p><p>
+        An optional vector can be added after the <tt class="function">attach</tt>
+        keyword to make the attachment only force the movement in one or two 
+        coordinate directions.  Zero elements in the vector lead to free movement in that direction
+      </p><div class="example"><a name="id2541958"></a><p class="title"><b>Example 2.17. Attachment in Mechanics simulation</b></p><p>
+
+          The following generates a linear movement in x direction,
+          a constant position in y direction and
+          a free movement in z-direction:
+
+          </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    attach &lt;1,1,0&gt; {
+      function {
+        spline {
+          linear_spline
+            0.0, &lt;0,0,0&gt;
+            0.5, &lt;1,0,0&gt;
+            1.0, &lt;2,0,0&gt;
+          }
+        }
+      }
+      ...
+    }
+  }
+}</pre><p>
+
+        </p></div><p>
+        These functions are automatically numbered starting from zero.
+        To attach a mass to a function the <tt class="function">attach</tt> parameter
+        has to be set in the mass definition.  The following mass is
+        attached to the <tt class="function">attach</tt> function with the number two:
+      </p><p>
+        </p><pre class="programlisting">mass {
+  &lt;0, 0, 1&gt;, &lt;0, 0, 0&gt;, 0.1
+  density 600
+  attach 2
+}</pre><p>
+      </p><p>
+        During the simulation the spline is evaluated at the current
+        time value and the returned vector describes the movement of the
+        attached masses.  Note that the spline does not describe an
+        absolute position for the masses, just their movement relative
+        to their starting position.  Attaching several masses to the same
+        spline makes them perform a parallel movement.
+      </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_access"></a>2.7.4.2. Accessing simulation data</h4></div></div><div></div></div><a class="indexterm" name="id2542045"></a><p>
+      The whole simulation data can be accessed anywhere in the
+      POV-Script.  This is achieved by adding new float/vector
+      functions:
+    </p><p>
+      The complete syntax description of this block is:
+      </p><pre class="synopsis"><i class="parameter"><tt>FLOAT_FUNCTION</tt></i>:
+    ... | mechsim : <i class="parameter"><tt>MECHSIM_ELEMENTS</tt></i>
+<i class="parameter"><tt>MECHSIM_ELEMENTS</tt></i>:
+    time | mass_count | connection_count | face_count |
+    mass( <i class="parameter"><tt>INTEGER</tt></i> ) : <i class="parameter"><tt>MASS_FLOAT_ELEMENT</tt></i> |
+    connection( <i class="parameter"><tt>INTEGER</tt></i> ) : <i class="parameter"><tt>CONNECTION_FLOAT_ELEMENT</tt></i> |
+    viscoelastic( <i class="parameter"><tt>INTEGER</tt></i> ) : <i class="parameter"><tt>VISCOELASTIC_FLOAT_ELEMENT</tt></i> |
+    face( <i class="parameter"><tt>INTEGER</tt></i> ) : <i class="parameter"><tt>FACE_FLOAT_ELEMENT</tt></i>
+<i class="parameter"><tt>MASS_FLOAT_ELEMENT</tt></i>:
+    radius | mass
+<i class="parameter"><tt>CONNECTION_FLOAT_ELEMENT</tt></i>:
+    index1 | index2 | length | stiffness | damping
+<i class="parameter"><tt>VISCOELASTIC_FLOAT_ELEMENT</tt></i>:
+    index1 | index2 | length | stiffness | accuracy | count | 
+    element( <i class="parameter"><tt>INTEGER</tt></i> ) : stiffness | damping | position
+<i class="parameter"><tt>FACE_FLOAT_ELEMENT</tt></i>:
+    index1 | index2 | index3
+
+<i class="parameter"><tt>VECTOR_FUNCTION</tt></i>:
+    ... | mechsim : <i class="parameter"><tt>MECHSIM_ELEMENTS</tt></i>
+<i class="parameter"><tt>MECHSIM_ELEMENTS</tt></i>:
+    mass( <i class="parameter"><tt>INTEGER</tt></i> ) : <i class="parameter"><tt>MASS_VECTOR_ELEMENT</tt></i>
+<i class="parameter"><tt>MASS_VECTOR_ELEMENT</tt></i>:
+    position | velocity | force</pre><p>
+    </p><p>
+      These elements correspond to those set in the
+      <tt class="function">mechsim{}</tt> block in <tt class="function">global_settings{}</tt>.  The
+      mass position and velocity are the ones that are modified during
+      simulation.  The mass force is the summed force that accelerated the mass in the last simulation step.
+      <a class="indexterm" name="id2542245"></a>
+      <a class="indexterm" name="id2542256"></a>
+      <a class="indexterm" name="id2542267"></a>
+      The <tt class="function">mass_count</tt> <tt class="function">connection_count</tt>
+      and <tt class="function">face_count</tt> values are especially useful inside
+      the <tt class="function">mechsim{}</tt> block to determine the current index:
+    </p><p>
+      </p><pre class="programlisting">global_settings {
+  ...
+  mechsim {
+    ...
+    topology {
+      /* part 1 */
+      mass { ... }
+      mass { ... }
+      connection { ... }
+      ...
+
+      #declare Start_Mass_Part2=mechsim:mass_count;
+      #declare Start_Connection_Part2=mechsim:connection_count;
+
+      /* part 2 */
+      mass { ... }
+      mass { ... }
+      connection { ... }
+      ...
+    }
+  }
+}</pre><p>
+    </p><p>
+      The <tt class="function">Start_Mass_Part2</tt> and
+      <tt class="function">Start_Connection_Part2</tt>
+      variables can later be used to display the different
+      parts of the simulation in different forms.
+    </p><p>
+      The <tt class="function">time</tt> value returns the current time index of the simulation (in seconds).
+      Inside the <tt class="function">mechsim</tt> block this is the start time of the simulation, afterwards
+      it returns the time index when the simulation ended.
+    </p><p>
+      The <tt class="function">force</tt> values return the force a connection exerts on the
+      masses it connects.  This value is a scalar, the force is always in direction
+      of the connection.  Note this value can of course be calculated manually as well,
+      it is supplied for convenience.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_file"></a>2.7.4.3. The simulation data file format</h4></div></div><div></div></div><a class="indexterm" name="id2542391"></a><a class="indexterm" name="id2542402"></a><p>
+      The file format used for storing the simulation data has changed in MegaPOV 1.2.  
+      Backwards compatibility is provided for reading MegaPOV 1.1 style simulation data files.
+      The new file format is especially introduced for being forward compatible with future
+      versions of MegaPOV.  This means that data files written by newer versions of MegaPOV
+      should still be possible to read with MegaPOV 1.2 - it will just ignore the data it cannot handle.
+    </p><p>
+      The file format - like the old one - is a ASCII text file format.  
+      It starts with a four character string ('MSIM') identifying the mechanics simulation
+      file format.  The second element (seperated by a comma) is an integer number specifying the subformat of the
+      file.  Subformat <tt class="function">4</tt> is the current new format. Subformat 
+      <tt class="function">3</tt> and lower are read with the backwards compatibility feature.
+    </p><p>
+      After that follows a line break and the first character of every line following
+      indicates what kind of data is stored in that line.  The following characters
+      are recognized right now:
+    </p><div class="itemizedlist"><ul type="disc"><li><p>
+          <tt class="function">I</tt>: Info line - containing 4 number: the number of masses, 
+          connections, faces and viscoelastic connections in the file (all integer).
+        </p></li><li><p>
+          <tt class="function">T</tt>: Timing line - containing 3 number: the current time index (float), 
+          the current time step size (float) and the number of steps (integer).  If no timing parameters are specified
+          in the <tt class="function">mechsim{}</tt> block these are used.  If adaptive time stepping
+          is used the stored time step value is used as the starting time step.
+        </p></li><li><p>
+          <tt class="function">M</tt>: Mass line (see <a href="global_settings.html#mechsim_topo_mass" title="2.7.4.1.4.1. Point masses">Section 2.7.4.1.4.1, &#8220;Point masses&#8221;</a>) - 
+          containing the following numbers:
+          </p><div class="itemizedlist"><ul type="circle" compact><li>3 numbers for the position (float vector), unit: <tt class="function">m</tt></li><li>3 numbers for the velocity (float vector), unit: <tt class="function">m/s</tt></li><li>The mass (float), unit: <tt class="function">kg</tt></li><li>The radius (float), unit: <tt class="function">m</tt></li><li>
+                A flag (integer) currently only containing the <tt class="function">fixed</tt> value.
+                This flag could contain other boolean values in the future (connected with
+                logical OR) so it should be tested accordingly (<tt class="function">if (flag &amp; 1)</tt>)
+              </li><li>The group index (integer)</li><li>The attach index (integer) - <tt class="function">-1</tt> means not attached</li></ul></div><p>
+        </p></li><li><p>
+          <tt class="function">C</tt>: Connection line (see <a href="global_settings.html#mechsim_topo_connection" title="2.7.4.1.4.2. Connections">Section 2.7.4.1.4.2, &#8220;Connections&#8221;</a>) - 
+          containing the following numbers:
+          </p><div class="itemizedlist"><ul type="circle" compact><li>The index of the first mass (integer)</li><li>The index of the second mass (integer)</li><li>The relaxed length (float), unit: <tt class="function">m</tt></li><li>The stiffness (float), unit: <tt class="function">N/m</tt> or <tt class="function">kg/s²</tt></li><li>The damping constant (float), unit: <tt class="function">kg/s</tt></li><li>The group index (integer)</li></ul></div><p>
+        </p></li><li><p>
+          <tt class="function">F</tt>: Face line (see <a href="global_settings.html#mechsim_topo_face" title="2.7.4.1.4.3. Faces">Section 2.7.4.1.4.3, &#8220;Faces&#8221;</a>) - 
+          containing the following numbers:
+          </p><div class="itemizedlist"><ul type="circle" compact><li>The index of the first mass (integer)</li><li>The index of the second mass (integer)</li><li>The index of the third mass (integer)</li><li>The group index (integer)</li></ul></div><p>
+        </p></li><li><p>
+          <tt class="function">V</tt>: Viscoelastic connection line (see <a href="global_settings.html#mechsim_topo_viscoelastic" title="2.7.4.1.4.4. Viscoelastic connections">Section 2.7.4.1.4.4, &#8220;Viscoelastic connections&#8221;</a>) - 
+          containing the following numbers:
+          </p><div class="itemizedlist"><ul type="circle" compact><li>The index of the first mass (integer)</li><li>The index of the second mass (integer)</li><li>The relaxed length (float), unit: <tt class="function">m</tt></li><li>The static stiffness (float), unit: <tt class="function">N/m</tt> or <tt class="function">kg/s²</tt></li><li>The calculation accuracy (integer), 1 or larger</li><li>The number of maxwell elements (integer)</li><li><p>For every maxwell elements: The value of the inner coordinate (float), 
+              unit: <tt class="function">m</tt>, the stiffness (float), 
+              unit: <tt class="function">N/m</tt> or <tt class="function">kg/s²</tt></p>
+              and the damping (float), unit: <tt class="function">kg/s</tt>.
+            </li></ul></div><p>
+        </p></li></ul></div><div class="example"><a name="id2542944"></a><p class="title"><b>Example 2.18. The simulation data file format</b></p><p>
+        A short sample file looks like this:
+
+        </p><pre class="programlisting">MSIM, 4,
+I 3 2 0
+T 0.133333 0.00182897 16
+M 0.000000000000 0.000000000000 2.400000000000 0.000000000000 0.000000000000 0.000000000000 20.944 0.1 1 0 -1 -1
+M 0.998031324856 0.000000000000 2.309705370342 -0.078825113822 0.000000000000 -1.298327808122 20.944 0.1 0 0 -1 -1
+M 1.996410451933 0.000000000000 2.390382496553 -0.094947075882 0.000000000000 -0.744192468433 70.6858 0.15 0 0 -1 -1
+C 0 1 1 50000 2000 0
+C 1 2 1 50000 2000 0</pre><p>
+
+        This file contains 3 masses and two normal connections between them.  Simulation has progressed to
+        <tt class="function">0.133333</tt> seconds with a current time stepping of <tt class="function">0.00182897</tt>
+        and <tt class="function">16</tt> steps per frame.  The first mass is fixed, the others are moving freely.
+
+      </p></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="post_processing"></a>2.7.5. Post processing</h3></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    Post processing allows manipulation of the color of the pixels after the rendering step is
+    completed.
+  </p><p>
+    In the past, post processing of images required some third-party software (such
+    as PhotoShop, Paint Shop Pro, or the GIMP) or older versions of MegaPOV that had implemented
+    a few predefined effects.
+  </p><p>
+    MegaPOV 1.1 introduces a more generic approach to the post processing.
+    Instead of being limited to a few predefined effects, access to the content of the rendered
+    image through internal functions is now available for the user. By mixing these functions, any
+    imaginable effect is possible. 
+    As an example of using these functions, some basic effects (in the form of macros) are provided 
+    with a similar syntax to the postprocessing effects included in older MegaPOV versions.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="post_proc_storage"></a>2.7.5.1. Turning on the storage of data</h4></div></div><div></div></div><p>
+      Post processing data is stored during rendering. This data contains several components:
+      color of the pixel, intersection point, depth, normal - in other words all the information
+      the raytracer receives for each of the pixels. For anti-aliased images only the data from
+      the first ray is gathered. The storage is automatically turned on after the explicit call
+      to one of predefined macros:
+      </p><pre class="programlisting">#<tt class="function">version</tt> unofficial megapov 1.1;
+<tt class="function">#include</tt> "<tt class="filename">pprocess.inc</tt>"
+// store data of the color and transparency
+PP_Init_Alpha_Colors_Outputs()
+
+// store data of the intersection point coordinates or &lt;0,0,0&gt;
+PP_Init_IPoint_Outputs()
+
+// store data of the normal at the intersection point or &lt;0,0,0&gt;
+PP_Init_INormal_Outputs()
+
+// store data of the perturbed normal at the intersection point or &lt;0,0,0&gt;
+PP_Init_PNormal_Outputs()
+
+// store the distance between camera and intersection point
+PP_Init_Depth_Output()
+
+// store the uv coordinates at the intersection point
+PP_Init_UV_Outputs()
+
+// allow access to intermediate post processing stages
+// (color and transparency received from a previous post process stage)
+PP_Init_PP_Alpha_Colors_Outputs()
+</pre><p>
+    </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+        When using <tt class="function">post_process</tt> { }, do not forget to include the file "<tt class="filename">pprocess.inc</tt>"
+        because this include file is needed to access the internal data.
+      </p></td></tr></table></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+        If you do not need to store all the data mentioned in the macros listed above, you can
+        pick one ore more of the dedicated internal functions mentioned further down.
+      </p><p>
+        For example: store only the red component and the x coordinate of the intersection point
+        for further usage. Check the content of the listed macros in the include file to find how to
+        turn on only specific component storage.
+      </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="post_proc_functions"></a>2.7.5.2. Dedicated internal functions</h4></div></div><div></div></div><p>
+      Macros listed in the previous section enables internal functions with the following syntax:
+      </p><pre class="programlisting">// functions to access the color components and transparency
+f_output_red(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_green(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_blue(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_alpha(<tt class="function">x</tt>,<tt class="function">y</tt>)
+
+// access to the intersection point coordinates
+f_output_ipoint_x(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_ipoint_y(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_ipoint_z(<tt class="function">x</tt>,<tt class="function">y</tt>)
+
+// access to the normal vector at the intersection point
+f_output_inormal_x(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_inormal_y(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_inormal_z(<tt class="function">x</tt>,<tt class="function">y</tt>)
+
+// access to the perturbed normal vector at the intersection point
+f_output_pnormal_x(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_pnormal_y(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_pnormal_z(<tt class="function">x</tt>,<tt class="function">y</tt>)
+
+// access to the distance between camera and intersection point
+f_output_depth(<tt class="function">x</tt>,<tt class="function">y</tt>)
+
+// access to the uv coordinates at the intersection point
+f_output_u(<tt class="function">x</tt>,<tt class="function">y</tt>)
+f_output_v(<tt class="function">x</tt>,<tt class="function">y</tt>)
+
+// access to color and transparency of an earlier post processing stage
+f_pp_red(<tt class="function">x</tt>,<tt class="function">y</tt>,<tt class="function">Ref</tt>)
+f_pp_green(<tt class="function">x</tt>,<tt class="function">y</tt>,<tt class="function">Ref</tt>)
+f_pp_blue(<tt class="function">x</tt>,<tt class="function">y</tt>,<tt class="function">Ref</tt>)
+f_pp_alpha(<tt class="function">x</tt>,<tt class="function">y</tt>,<tt class="function">Ref</tt>)</pre><p>
+    </p><p>
+      The majority of the listed functions only need <tt class="function">x</tt> and <tt class="function">y</tt> parameters. These parameters
+      are the location in the area of the rendered image. Not defined in pixels but in the range &lt;0,1&gt;.
+      </p><div class="example"><a name="id2548163"></a><p class="title"><b>Example 2.19. The internal post process function asking for red color at the middle of image</b></p><pre class="programlisting">f_output_red(0.5,0.5)</pre></div><p>
+    </p><p>
+      Note that &lt;0,0&gt; is not the value of the most top-left pixel, but the value at the top left
+      corner of the most top left _pixel_. You have to shift it about &lt;0.5/image_width,0.5/image_size&gt;
+      to hit the center of the most top left pixel.
+      If you are not happy with the need of expressing coordinates in decimal form you can always
+      express them in relation to the image size. 
+    </p><p>
+      Some of the functions contain an additional <tt class="function">Ref</tt> parameter. These are functions which
+      refer to the result of the earlier calculated post processing stage. This parameter specifies to
+      which stage we refer: 0 means output of rendering, 1 means output of first post processing, 2 means
+      output of second postprocessing, etc.
+    </p><p>
+      Numbering depends on the order of appearence in the sources.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="post_proc_definition"></a>2.7.5.3. Definition of the effect</h4></div></div><div></div></div><p>
+       Postprocessing should be defined in the <tt class="function">global_settings</tt> section of the scene file like this:
+    </p><pre class="synopsis"><tt class="function">global_settings</tt> {
+  <tt class="function">post_process</tt> {
+    <tt class="function">function</tt> { ... } // calculation of red component
+    <tt class="function">function</tt> { ... } // calculation of green component
+    <tt class="function">function</tt> { ... } // calculation of blue component
+    <tt class="function">function</tt> { ... } // calculation of transparency component
+    [ <tt class="function">save_file</tt> FILENAME ]
+  }
+}</pre><p>
+      </p><div class="example"><a name="id2548294"></a><p class="title"><b>Example 2.20. Post processing which does nothing (only duplicate the original image)</b></p><pre class="programlisting"><tt class="function">global_settings</tt> {
+  <tt class="function">post_process</tt> {
+    <tt class="function">function</tt> { f_output_red(<tt class="function">x</tt>,<tt class="function">y</tt>) }   // calculation of red component
+    <tt class="function">function</tt> { f_output_green(<tt class="function">x</tt>,<tt class="function">y</tt>) } // calculation of green component
+    <tt class="function">function</tt> { f_output_blue(<tt class="function">x</tt>,<tt class="function">y</tt>) }  // calculation of blue component
+    <tt class="function">function</tt> { f_output_alpha(<tt class="function">x</tt>,<tt class="function">y</tt>) } // calculation of transparency component
+    <tt class="function">save_file</tt> "<tt class="filename">duplication.png</tt>"
+  }
+}</pre></div><p>
+    </p><p>
+       The <tt class="function">post_process</tt> block can appear a few times in the <tt class="function">global_settings</tt> block.
+       Note that saving to file is optional but only the saved blocks will be calculated.
+       Also note that saving is always done in the same file format as the render output
+       (regardless of the file extension).
+    </p><p>
+      </p><div class="example"><a name="id2548450"></a><p class="title"><b>Example 2.21. Post processing which turns the rendered image into a gray scale image</b></p><pre class="programlisting"><tt class="function">#declare</tt> F_gray = <tt class="function">function</tt>(<i class="parameter"><tt>r</tt></i>,<i class="parameter"><tt>g</tt></i>,<i class="parameter"><tt>b</tt></i>){0.297*<i class="parameter"><tt>r</tt></i> + 0.589*<i class="parameter"><tt>g</tt></i> + 0.114*<i class="parameter"><tt>b</tt></i>};
+<tt class="function">global_settings</tt> {
+  <tt class="function">post_process</tt> {
+    <tt class="function">function</tt> { F_gray(f_output_red(<tt class="function">x</tt>,<tt class="function">y</tt>),f_output_green(<tt class="function">x</tt>,<tt class="function">y</tt>),f_output_blue(<tt class="function">x</tt>,<tt class="function">y</tt>)) }
+    <tt class="function">function</tt> { F_gray(f_output_red(<tt class="function">x</tt>,<tt class="function">y</tt>),f_output_green(<tt class="function">x</tt>,<tt class="function">y</tt>),f_output_blue(<tt class="function">x</tt>,<tt class="function">y</tt>)) }
+    <tt class="function">function</tt> { F_gray(f_output_red(<tt class="function">x</tt>,<tt class="function">y</tt>),f_output_green(<tt class="function">x</tt>,<tt class="function">y</tt>),f_output_blue(<tt class="function">x</tt>,<tt class="function">y</tt>)) }
+    <tt class="function">function</tt> { f_output_alpha(<tt class="function">x</tt>,<tt class="function">y</tt>) }
+    <tt class="function">save_file</tt> "<tt class="filename">grayed.png</tt>"
+  }
+}</pre></div><p>
+    </p><p>
+      Because it could be difficult using functions to define your own post processing effects, some
+      macros with user-friendly syntax have been added to the "<tt class="filename">pprocess.inc</tt>" include file.
+      For an overview and some explanation on the parameters, (see <a href="inc_pprocess.inc.html#post_proc_macros" title="3.5.1. Macros with effects">Section 3.5.1, &#8220;Macros with effects&#8221;</a>).
+    </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="patterns.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="references.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="include.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.6. Textures and patterns </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 3. MegaPOV Include files</td></tr></table></div></body></html>

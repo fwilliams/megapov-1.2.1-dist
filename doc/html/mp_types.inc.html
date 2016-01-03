@@ -1,0 +1,54 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>3.3. The 'mp_types.inc' include file</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="include.html" title="Chapter 3. MegaPOV Include files"><link rel="previous" href="mp_consts.inc.html" title="3.2. The 'mp_consts.inc' include file"><link rel="next" href="mechsim.inc.html" title="3.4. The 'mechsim.inc' include file"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.3. The 'mp_types.inc' include file</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mp_consts.inc.html">Prev</a> </td><th width="60%" align="center">Chapter 3. MegaPOV Include files</th><td width="20%" align="right"> <a accesskey="n" href="mechsim.inc.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mp_types.inc"></a>3.3. The '<tt class="filename">mp_types.inc</tt>' include file</h2></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    This part describes the <tt class="filename">mp_types.inc</tt>
+    include file that comes with MegaPOV and contains
+    macros for simplification of type checking. Some user might be disappointed
+    with syntax of <tt class="function">is</tt> function (see <a href="expressions.html#is" title="2.2.3.6. Type checking">Section 2.2.3.6, &#8220;Type checking&#8221;</a>) and this syntax can be different
+    in the future so this file creates layer between scripts and hard coded syntax
+    of type checking (for example for usage in <tt class="function">#switch</tt> block).
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2567178"></a>3.3.1. The <tt class="function">Type_Of(<i class="parameter"><tt>Id</tt></i>)</tt> macro</h3></div></div><div></div></div><p>
+      <a class="indexterm" name="id2568402"></a>
+      Macro <tt class="function">Type_Of(<i class="parameter"><tt>Id</tt></i>)</tt> returns one of following
+      constants for given <i class="parameter"><tt>Id</tt></i>:
+      </p><pre class="programlisting">UNDEFINED_ID,    ARRAY_ID,       CAMERA_ID,
+COLOR_ID,        COLOR_MAP_ID,   DENSITY_ID,
+DENSITY_MAP_ID,  FINISH_ID,      FLOAT_ID,
+FOG_ID,          FUNCTION_ID,    INTERIOR_ID,
+LIGHT_SOURCE_ID, MATERIAL_ID,    MEDIA_ID,
+NORMAL_ID,       NORMAL_MAP_ID,  OBJECT_ID,
+PIGMENT_ID,      PIGMENT_MAP_ID, RAINBOW_ID,
+SKY_SPHERE_ID,   SLOPE_MAP_ID,   SPLINE_ID,
+STRING_ID,       TEXTURE_ID,     TEXTURE_MAP_ID,
+TRANSFORM_ID,    VECTOR_ID</pre><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2568453"></a>3.3.2. The <tt class="function">Type_Of_Spline(<i class="parameter"><tt>Id</tt></i>)</tt> macro</h3></div></div><div></div></div><p>
+      <a class="indexterm" name="id2568475"></a>
+      Macro <tt class="function">Type_Of_Spline(<i class="parameter"><tt>Id</tt></i>)</tt> returns one of following
+      constants for given <i class="parameter"><tt>Id</tt></i>:
+      </p><pre class="programlisting">
+NOT_SPLINE,    AKIMA_SPLINE,      BASIC_X_SPLINE,
+CUBIC_SPLINE,  EXTENDED_X_SPLINE, GENERAL_X_SPLINE,
+LINEAR_SPLINE, NATURAL_SPLINE,    QUADRATIC_SPLINE,
+SOR_SPLINE,    TCB_SPLINE</pre><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2568520"></a>3.3.3. The <tt class="function">Type_Of_Object(<i class="parameter"><tt>Id</tt></i>)</tt> macro</h3></div></div><div></div></div><p>
+      <a class="indexterm" name="id2568542"></a>
+      Macro <tt class="function">Type_Of_Object(<i class="parameter"><tt>Id</tt></i>)</tt> returns one of following
+      constants for given <i class="parameter"><tt>Id</tt></i>:
+      </p><pre class="programlisting">NOT_OBJECT,          BICUBIC_PATCH_OBJECT,   BLOB_OBJECT,
+BOX_OBJECT,          CONE_OBJECT,            CUBIC_OBJECT, 
+CYLINDER_OBJECT,     DISC_OBJECT,            HEIGHT_FIELD_OBJECT, 
+INTERSECTION_OBJECT, ISOSURFACE_OBJECT,      JULIA_FRACTAL_OBJECT, 
+LATHE_OBJECT,        MERGE_OBJECT,           MESH_OBJECT, 
+PARAMETRIC_OBJECT,   PLANE_OBJECT,           POLY_OBJECT, 
+POLYGON_OBJECT,      PRISM_OBJECT,           QUADRIC_OBJECT, 
+QUARTIC_OBJECT,      SMOOTH_TRIANGLE_OBJECT, SOR_OBJECT, 
+SPHERE_OBJECT,       SPHERE_SWEEP_OBJECT,    SUPERELLIPSOID_OBJECT, 
+TEXT_OBJECT,         TORUS_OBJECT,           TRIANGLE_OBJECT, 
+UNION_OBJECT</pre><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2568592"></a>3.3.4. The <tt class="function">Type_Of_Camera(<i class="parameter"><tt>Id</tt></i>)</tt> macro</h3></div></div><div></div></div><p>
+      <a class="indexterm" name="id2568613"></a>
+      Macro <tt class="function">Type_Of_Camera(<i class="parameter"><tt>Id</tt></i>)</tt> returns one of following
+      constants for given <i class="parameter"><tt>Id</tt></i>:
+      </p><pre class="programlisting">NOT_CAMERA,         CYLINDER_CAMERA,     FISHEYE_CAMERA
+OMNIMAX_CAMERA,     ORTHOGRAPHIC_CAMERA, PANORAMIC_CAMERA,
+PERSPECTIVE_CAMERA, SPHERICAL_CAMERA,    ULTRA_WIDE_ANGLE_CAMERA,
+USER_DEFINED_CAMERA</pre><p>
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mp_consts.inc.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="include.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mechsim.inc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.2. The 'mp_consts.inc' include file </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.4. The 'mechsim.inc' include file</td></tr></table></div></body></html>

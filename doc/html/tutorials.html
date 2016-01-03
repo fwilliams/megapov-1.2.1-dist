@@ -1,0 +1,207 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 4. Tutorials</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="index.html" title="MegaPOV Documentation"><link rel="previous" href="tone_mapping.inc.html" title="3.6. The 'tone_mapping.inc' include file"><link rel="next" href="tutorials_simulation.html" title="4.2. Simulation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 4. Tutorials</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="tone_mapping.inc.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="tutorials_simulation.html">Next</a></td></tr></table><hr></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="tutorials"></a>Chapter 4. Tutorials</h2></div></div><div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="tutorials.html#tutorials_objects">4.1. Objects</a></span></dt><dd><dl><dt><span class="section"><a href="tutorials.html#id2587339">4.1.1. Cloth simulation</a></span></dt></dl></dd><dt><span class="section"><a href="tutorials_simulation.html">4.2. Simulation</a></span></dt><dd><dl><dt><span class="section"><a href="tutorials_simulation.html#mechsim_tutorial">4.2.1. Mechanics simulation tutorial</a></span></dt></dl></dd><dt><span class="section"><a href="tutorials_hdri.html">4.3. HDRI (High dynamic range illumination)</a></span></dt><dd><dl><dt><span class="section"><a href="tutorials_hdri.html#hdri_tutorial">4.3.1. HDRI tutorial</a></span></dt></dl></dd></dl></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tutorials_objects"></a>4.1. Objects</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2587339"></a>4.1.1. Cloth simulation</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="tablecloth"></a>4.1.1.1. Simulating a tablecloth</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christophe</span> <span class="surname">Bouffartigue</span></h3></div></div></div><div></div></div><p>
+    Before launching the simulation, it is initially necessary to create the starting *.cth file. It will contain a
+    fresh cloth with the desired dimensions, normalized distances between points and strength coefficient of the springs
+    connecting the points.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="writecloth"></a>4.1.1.1.1. Writing a *.cth file</h5></div></div><div></div></div><p>
+    The *.cth format was defined in such manner that it is able to be read and written using the <span class="trademark">POV-Ray</span>&#8482;'s input/output
+    files directives (<tt class="function">#fopen</tt>, <tt class="function">#read</tt>, <tt class="function">#write</tt>, <tt class="function">#fclose</tt>). One thus will write the following macro:
+    </p><pre class="programlisting"><tt class="function">#macro</tt> WriteClothFile(filename, n1, n2, nlng, ks, ht)
+  <tt class="function">#debug</tt> "\nWriting new cth file\n"
+  <tt class="function">#fopen</tt> file filename write
+  <tt class="function">#write</tt>(file, n1, ", ", n2, ", ", nlng, ", ", ks, ",\n";)
+  <tt class="function">#local</tt> l1 = nlng*(n1-1);
+  <tt class="function">#local</tt> l2 = nlng*(n2-1);
+  <tt class="function">#local</tt> st = seed(1234);
+  <tt class="function">#local</tt> i=0;
+  <tt class="function">#while</tt> (i &lt; n1)
+    <tt class="function">#local</tt> j=0;
+    <tt class="function">#while</tt> (j &lt; n2)
+      <tt class="function">#local</tt> tempx = -l1/2 + i*nlng;
+      <tt class="function">#local</tt> tempz = -l2/2 + j*nlng;
+      <tt class="function">#local</tt> tempy = ht + (-1+2*rand(st))*nlng*0.1;
+      <tt class="function">#write</tt>(file, tempx, ",", tempy, ",", tempz, ", 0.0, 0.0, 0.0,\n")
+      <tt class="function">#set</tt> j=j+1;
+    <tt class="function">#end</tt>
+    <tt class="function">#set</tt> i=i+1;
+  <tt class="function">#end</tt>
+  <tt class="function">#fclose</tt> file
+<tt class="function">#end</tt></pre><p>
+    After having opened the file (<tt class="function">#fopen</tt>), the macro writes the first line (<tt class="function">#write</tt>) which contains the number of
+    points of the cloth patch in two dimensions (n1, n2), the normal distance between all points (nlng), and the
+    strength coefficient of the springs (ks).
+  </p><p>
+    Then, the various points are distributed in a rectangle of dimension (nlng*(n1-1)) on (nlng*(n2-1)), parallel
+    with the (xz) plane, and at height ht, centered around y axis. A small amount of noise is added to each point
+    coordinates (rand()). Don't forget to close the file (#fclose)... 
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2589981"></a>4.1.1.1.2. A tablecloth goes on a table ...</h5></div></div><div></div></div><p>
+      So we will define a simple table: 
+    </p><pre class="programlisting"><tt class="function">#declare</tt> Table =
+  <tt class="function">union</tt> {
+    <tt class="function">cylinder</tt> { 8*y, 9*y, 8 }
+    <tt class="function">torus</tt> { 8, 05 <tt class="function">sturm</tt> <tt class="function">translate</tt> 85*y }
+    <tt class="function">cylinder</tt> { 85*y, 0, 05 }
+    <tt class="function">cylinder</tt> { 0, 05*y, 4 }
+  }</pre><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2590049"></a>4.1.1.1.3. Visualize the starting position of the fabric</h5></div></div><div></div></div><p>
+      To check that the simulation does not begin with part of the fabric IN the table, we can create the mesh Nappe,
+      using 0 iterations in simcloth: 
+      </p><pre class="programlisting">WriteClothFile("nappe.cth", 50, 50, 1.8/50, 10, 0.95)
+
+<tt class="function">simcloth</tt> {
+  <tt class="function">iterations</tt> 0
+  <tt class="function">input</tt> "nappe.cth"
+  <tt class="function">mesh_output</tt> "nappe.msh"
+  <tt class="function">uv_mesh</tt> <tt class="function">on</tt>
+}
+
+<tt class="function">#declare</tt> Nappe =
+  <tt class="function">mesh</tt> {
+    <tt class="function">#include</tt> "nappe.msh"
+    <tt class="function">uv_mapping</tt>
+    <tt class="function">texture</tt> {
+      <tt class="function">pigment</tt> {
+        <tt class="function">checker</tt> <tt class="function">color</tt> <tt class="function">rgb</tt> &lt;1, 0.5, 0.2&gt; <tt class="function">color</tt> <tt class="function">rgb</tt> &lt;1, 0.8, 0.4&gt;
+        <tt class="function">scale</tt> &lt;1/10, 1/10, 1/10&gt;
+      }
+    }
+  }</pre><p>
+      Then, the ground, the walls, a light source, a camera, are added, and we obtain this:
+    </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_nappe01.jpg"></div></div><p>
+     </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2590215"></a>4.1.1.1.4. Darling !!! Put the tablecloth on the table !!!</h5></div></div><div></div></div><p>
+      And for that, nothing better than the gravity (-0.4*y). Moreover, the table is rough (and the fabric also),
+      one thus will put the coefficient of friction at 0 (high frictions). As the distance between each point is
+      rather small, one will also take a rather small time interval between each iteration (0.03). 
+	</p><pre class="synopsis"><tt class="function">simcloth</tt> {
+  <tt class="function">environment</tt> Table
+  <tt class="function">friction</tt> 0
+  <tt class="function">gravity</tt> -0.4*y,
+  <tt class="function">damping</tt> 0.9,
+  <tt class="function">intervals</tt> 0.03
+  <tt class="function">iterations</tt> 50
+  <tt class="function">input</tt> "nappe.cth"
+  <tt class="function">output</tt> "nappe.cth"
+  <tt class="function">mesh_output</tt> "nappe.msh"
+  <tt class="function">smooth_mesh</tt> <tt class="function">on</tt>
+  <tt class="function">uv_mesh</tt> <tt class="function">on</tt>
+}</pre><p>
+      Don't forget to look at the messages window (in Windows &amp; Mac version) or output stream (in UNIX version),
+      to know if the simulation ended OK or not (in case of problems while opening files, lack of memory, etc...). 
+    </p><p>
+      The starting *.cth file can be calculated only once. By putting the WriteClothFile(...) macro in comments thereafter
+      - or make it conditional for clock off: <tt class="function">#if</tt>(<tt class="function">clock_on</tt>=<tt class="function">off</tt>) macro <tt class="function">#end</tt> - , each simulation
+      will begin again where the preceding one was stopped. 
+    </p><p>
+      In order to avoid coincident surfaces, you can reduce very slightly the dimensions of the table,
+      and level up the tablecloth a little... 
+      </p><pre class="programlisting"><tt class="function">object</tt> { Nappe <tt class="function">translate</tt> 0.001*y }
+<tt class="function">object</tt> {
+  Table <tt class="function">scale</tt> &lt;0.98, 1, 0.98&gt;
+  <tt class="function">texture</tt> { T_Wood23 <tt class="function">rotate</tt> &lt;10, 20, 0&gt; }
+}</pre><p>
+      For those who are as I am (i.e. lazy), a complete script is available: <a href="nappe.pov" target="_top"><tt class="filename">nappe.pov</tt></a>
+    </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_nappe02.jpg"></div></div><p>
+     </p><p>
+       After 50 iterations ...
+     </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_nappe03.jpg"></div></div><p>
+     </p><p>
+       ... 50 additional iterations ...
+     </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_nappe04.jpg"></div></div><p>
+     </p><p>
+       ... and 100 more.
+     </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="drapecube"></a>4.1.1.2. Simulating a drape falling on a cube</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christophe</span> <span class="surname">Bouffartigue</span></h3></div></div></div><div></div></div><p>
+    The difficulty in making a good-looking lying cloth is to well position the fabric at the beginning, and to make
+    it so that it tends to gather in a smaller zone than its dimensions.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2589223"></a>4.1.1.2.1. Environment</h5></div></div><div></div></div><p>
+      Once more, we will make it easy: a cube (with rounded edges), lying on the ground:
+      </p><pre class="programlisting"><tt class="function">#declare</tt> R = 1;
+<tt class="function">#declare</tt> Cube =
+  <tt class="function">union</tt> {
+    <tt class="function">box</tt> { &lt;R, 0, R&gt;, &lt;1-R, 1, 1-R&gt; }
+    <tt class="function">box</tt> { &lt;R, 0, 0&gt;, &lt;1-R, 1-R, 1&gt; }
+    <tt class="function">box</tt> { &lt;0, 0, R&gt;, &lt;1, 1-R, 1-R&gt; }
+    <tt class="function">cylinder</tt> { &lt;R, 0, R&gt;,  &lt;R, 1-R, R&gt;, R }
+    <tt class="function">cylinder</tt> { &lt;R, 0, 1-R&gt;,  &lt;R, 1-R, 1-R&gt;, R }
+    <tt class="function">cylinder</tt> { &lt;1-R, 0, R&gt;,  &lt;1-R, 1-R, R&gt;, R }
+    <tt class="function">cylinder</tt> { &lt;1-R, 0, 1-R&gt;,  &lt;1-R, 1-R, 1-R&gt;, R }
+    <tt class="function">sphere</tt> { &lt;R, 1-R, R&gt;, R }
+    <tt class="function">sphere</tt> { &lt;R, 1-R, 1-R&gt;, R }
+    <tt class="function">sphere</tt> { &lt;1-R, 1-R, R&gt;, R }
+    <tt class="function">sphere</tt> { &lt;1-R, 1-R, 1-R&gt;, R }
+    <tt class="function">translate</tt> -0.02*x
+  }
+
+<tt class="function">#declare</tt> Obstacle =
+  <tt class="function">union</tt> {
+    <tt class="function">plane</tt> { y, 0 }
+    <tt class="function">object</tt> { Cube }
+  }</pre><p>
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2591466"></a>4.1.1.2.2. First test</h5></div></div><div></div></div><p>
+      We will reuse the <tt class="function">WriteClothFile(...)</tt> macro from the preceding example, and we will create
+      a rectangular cloth patch (30 X 50 points):
+    </p><p>
+      </p><pre class="programlisting"><tt class="function">WriteClothFile("drape.cth", 30, 50, 2/50, 20, 1.5)</tt>
+<tt class="function">simcloth</tt> {
+  <tt class="function">environment</tt> Obstacle
+  <tt class="function">friction</tt> 0
+  <tt class="function">gravity</tt> -.5*y
+  <tt class="function">damping</tt> 0.9
+  <tt class="function">intervals</tt> 0.03
+  <tt class="function">iterations</tt> 200
+  <tt class="function">input</tt> "drape.cth"
+  <tt class="function">mesh_output</tt> "drape.msh"
+  <tt class="function">smooth_mesh</tt> <tt class="function">on</tt>
+  <tt class="function">uv_mesh</tt> <tt class="function">on</tt>
+}
+
+<tt class="function">#declare</tt> Drap =
+  <tt class="function">mesh</tt> {
+    <tt class="function">#include</tt> "drape.msh"
+    <tt class="function">uv_mapping</tt>
+    <tt class="function">texture</tt> {
+      <tt class="function">pigment</tt> {
+        <tt class="function">checker</tt> <tt class="function">color</tt> <tt class="function">rgb</tt> &lt;1, 0.5, 0.2&gt; <tt class="function">color</tt> <tt class="function">rgb</tt> &lt;1, 0.8, 0.4&gt;
+        <tt class="function">scale</tt> &lt;1/10, 3/50, 1&gt;
+      }
+    }
+  }</pre><p>
+    </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_drape01.jpg"></div></div><p>
+    </p><p>
+      Well... hu... good, but it is not what is called pretty good-looking lying cloth (this one is rather banal...)
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2591692"></a>4.1.1.2.3. Starting position of the cloth</h5></div></div><div></div></div><p>
+      Let's modify the positioning of each point of the cloth, in the macro <tt class="function">WriteClothFile(...)</tt>, by
+      carrying out a rotation of -60 degrees around axis Z, and slightly translating it towards the right, like this:
+      </p><pre class="programlisting"><tt class="function">#local</tt> tempx = -l1/2 + i*nlng;
+<tt class="function">#local</tt> tempz = -l2/2 + j*nlng;
+<tt class="function">#local</tt> vtemp = ;
+<tt class="function">#local</tt> vtemp = <tt class="function">vaxis_rotate</tt>(vtemp, z, -60);
+<tt class="function">#local</tt> tempy = ht + (-1+2*rand(st))*nlng*0.1;
+<tt class="function">#local</tt> vtemp = vtemp + tempy*y + .2*x;
+<tt class="function">#write</tt>(file, vtemp.x, ",", vtemp.y, ",", vtemp.z, ", 0.0, 0.0, 0.0,\n")</pre><p>
+    One does not forget "to level up" the cloth, and the starting position can be visualized:
+    </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_drape02.jpg"></div></div><p>
+    </p><p>
+      And finally, let the nature... well, MegaPOV ... do its job:</p><div class="literallayout"><p><br>
+</p></div><p>
+      For the lazy ones, there is a complete script: drape.pov
+    </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_drape03.jpg"></div></div><p>
+    </p><p>
+      The fabric starts lying...
+    </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_drape04.jpg"></div></div><p>
+    </p><p>
+      Some iterations further... 
+    </p><p>
+      </p><div class="informalfigure"><div><img src="img/tut_drape05.jpg"></div></div><p>
+    </p><p>
+      ... and the result.
+    </p><p>
+      Obviously, the absence of internal test of collision (fabric against fabric) causes some "errors" (see in bottom
+      of cloth)... . But, one can nevertheless obtain more or less satisfactory results. 
+    </p></div></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="tone_mapping.inc.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="tutorials_simulation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.6. The 'tone_mapping.inc' include file </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.2. Simulation</td></tr></table></div></body></html>

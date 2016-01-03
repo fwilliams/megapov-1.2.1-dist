@@ -1,0 +1,350 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>4.2. Simulation</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="tutorials.html" title="Chapter 4. Tutorials"><link rel="previous" href="tutorials.html" title="Chapter 4. Tutorials"><link rel="next" href="tutorials_hdri.html" title="4.3. HDRI (High dynamic range illumination)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.2. Simulation</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="tutorials.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Tutorials</th><td width="20%" align="right"> <a accesskey="n" href="tutorials_hdri.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tutorials_simulation"></a>4.2. Simulation</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="mechsim_tutorial"></a>4.2.1. Mechanics simulation tutorial</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><p>
+    This part of the MegaPOV documentation gives
+    a short practical introduction into using
+    the mechanics simulation patch and describes
+    some simple simulations step by step.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_tut_mass"></a>4.2.1.1. mass movement</h4></div></div><div></div></div><p>
+      The simplest thing that can be simulated with the mechanics simulation patch
+      is the movement
+      of individual point masses.  Their movement under the influence of gravity
+      and environment objects is handled in this part.
+    </p><p>We start with a simple scene setup:</p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial01.pov" target="_top"><tt class="filename">tutorial01.pov</tt></a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial01.png"></div></div><p>
+    </p><p>
+      To simulate the movement of a single mass we add the following to the
+      <tt class="function">global_settings{}</tt>:
+    </p><div class="informalexample"><pre class="programlisting">mechsim {		
+  gravity &lt;0, 0, -9.81&gt;
+  method 1
+
+  environment {
+    object plane { z, 0 }
+    damping 0.9
+    friction 0.1
+    method 2
+  }
+
+  time_step (1/30)/300
+  step_count 300
+		
+  #if (frame_number=1)
+    topology {
+      mass { &lt;-2.8, -8.0, 0.9&gt;, &lt;2, 5, 0&gt;, 0.1 density 5000 }
+      save_file "tut02.dat"
+    }
+  #else
+    topology {
+      load_file "tut02.dat"
+      save_file "tut02.dat"
+    }
+  #end
+}</pre></div><p>
+      The purpose of the individual lines of this block is the following:
+    </p><p>
+      <tt class="function">gravity &lt;0, 0, -9.81&gt;</tt> activates a standard gravity force in negative
+      vertical direction.
+    </p><p>
+      <tt class="function">method 1</tt> selects simulation method 1 (Euler integration).
+    </p><p>
+      The <tt class="function">environment {}</tt> block contains the definition of
+      the environment. It contains:
+    </p><div class="itemizedlist"><ul type="disc"><li><p>
+        <tt class="function">object plane { z, 0 }</tt> - the environment object,
+        a plane like seen in the image.
+      </p></li><li><p>
+        <tt class="function">damping 0.9</tt> - a damping factor decreasing the
+        velocity perpendicular to the surface to 90% during every collision.
+      </p></li><li><p>
+        <tt class="function">friction 0.1</tt> - a friction factor decreasing the
+        velocity tangential to the surface by 10% during every collision.
+      </p></li><li><p>
+        <tt class="function">method 2</tt> - activates method 2 collision calculation
+        (impact law based collision).
+      </p></li></ul></div><p>
+      The next two lines specify the timing of the simulation:
+    </p><div class="itemizedlist"><ul type="disc"><li><p>
+        <tt class="function">step_count 300</tt> - makes MegaPOV calculate 300 simulation steps
+        per frame.
+      </p></li><li><p>
+        <tt class="function">time_step (1/30)/300</tt> - sets the duration of each step
+        appropriate for a 30 fps animation.
+      </p></li></ul></div><p>
+      Finding the right step size is probably something most difficult for the
+      beginner.  A smaller step size generally leads to more accurate results.  Usually
+      the step size has to be below a certain value depending on the other simulation
+      settings to get usable results, but it is not always obvious if some strange result
+      is due to large time steps.  High stiffness values in environments, collision and
+      connections usually require smaller time steps.  If you experience unexpected results
+      it is often worth trying to decrease the step size and see if problems vanish.
+    </p><p>
+      There is also the possibility to use adaptive time stepping that will be introduced in 
+      the next part of this tutorial.
+    </p><p>
+      What follows is an <tt class="function">#if</tt> conditional.  It makes
+      sure the mass is generated in the first frame and saved to the file
+      while the following frames load and save the simulation data.
+    </p><p>The first part contains statements for the first frame:</p><p>
+      The <tt class="function">topology{}</tt> block contains a singular <tt class="function">mass{}</tt>
+      section.  It contains:
+    </p><div class="itemizedlist"><ul type="disc"><li><p>
+        <tt class="function">&lt;-2.8, -8.0, 0.9&gt;</tt> - the starting position of the mass.
+      </p></li><li><p>
+        <tt class="function">&lt;2, 5, 0&gt;</tt> - the initial velocity of the mass.
+      </p></li><li><p>
+        <tt class="function">0.1</tt> - the radius of the mass.
+      </p></li><li><p>
+        <tt class="function">density 5000</tt> - the density of the mass (in <tt class="function">kg/m³</tt>).
+      </p></li></ul></div><p>
+      The <tt class="function">save_file</tt> statement finally saves this mass to a file.
+    </p><p>The second part contains the variant for the subsequent frames.</p><p>
+      The <tt class="function">topology{}</tt> block here contains just <tt class="function">load_file</tt>
+      and <tt class="function">save_file</tt> statements referring to the same file.  This makes
+      MegaPOV load the old simulation data at the beginning, calculate the steps for
+      the current frame and save to the same file afterwards.
+    </p><p>
+      To show the mass in the scene we can use a macro from the
+      <tt class="filename"><tt class="filename">mechsim.inc</tt></tt>
+      include file:
+    </p><div class="informalexample"><pre class="programlisting"><tt class="function">#include</tt> "<tt class="filename">mechsim.inc</tt>"
+
+MechSim_Show_All_Objects(-1, false, -1, "")</pre></div><p>
+      The meaning of the parameters of this macro is described in
+      <a href="mechsim.inc.html#mechsim_inc_MechSim_Show_All_Objects" title="3.4.4.2. MechSim_Show_All_Objects()">Section 3.4.4.2, &#8220;MechSim_Show_All_Objects()&#8221;</a>.
+    </p><p>
+      Now all we need to do is render the scene using the render options that
+      can be found in the scene file comment and we get the following result:
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial02.pov" target="_top"><tt class="filename">tutorial02.pov</tt></a></li><li><a href="msim_tut/tutorial02.mpg" target="_top"><tt class="filename">tutorial02.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial02.png"></div></div><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_tut_coll"></a>4.2.1.2. collisions</h4></div></div><div></div></div><p>
+      In the first part of the tutorial we have handled masses and their movement under
+      the influence of gravity and the constraints of the environment.  If several masses
+      exist in the simulation collisions between have to be taken into account.
+    </p><p>
+      For turning collision calculation on the following block is added to the
+      <tt class="function">mechsim{}</tt> section:
+    </p><div class="informalexample"><pre class="programlisting">collision {
+  1, 0, 0
+  stiffness 60000
+  damping 4000
+}</pre></div><p>
+      The first three numbers tell MegaPOV which collision to calculate.  For details
+      see <a href="global_settings.html#mechsim_collision" title="2.7.4.1.3. The collision settings">Section 2.7.4.1.3, &#8220;The collision settings&#8221;</a>.  The numbers used here
+      turn calculation on for all mass-mass collisions.
+    </p><p>
+      <tt class="function">stiffness</tt> (unit <tt class="function">kg/s²</tt>) and
+      <tt class="function">damping</tt> (unit <tt class="function">kg/s</tt>) influence
+      how the masses interact.
+    </p><p>
+      Another change made in this tutorial step is changing the environment
+      to function based calculations.  This usually leads to more accurate environment
+      collisions, especially with more complex geometries.
+    </p><p>
+      Defining the environment as a function is fairy easy with the
+      <a href="http://www.tu-bs.de/~y0013390/pov/ic/" target="_top">IsoCSG library</a>.
+      The definition in this case looks like:
+    </p><div class="informalexample"><pre class="programlisting">#include "iso_csg.inc"
+
+#declare fn_Env=
+IC_Merge5(
+  IC_Plane(z, 0),
+  IC_Box(&lt; 1.7,-1.7,-1.0&gt;, &lt; 1.5,1.7,0.5&gt;),
+  IC_Box(&lt;-1.7,-1.7,-1.0&gt;, &lt;-1.5,1.7,0.5&gt;),
+  IC_Box(&lt;-1.7, 1.7,-1.0&gt;, &lt;1.7, 1.5,0.5&gt;),
+  IC_Box(&lt;-1.7,-1.7,-1.0&gt;, &lt;1.7,-1.5,0.5&gt;)
+)</pre></div><p>
+      Note that the <tt class="function">stiffness</tt>, <tt class="function">damping</tt> and
+      <tt class="function">friction</tt> parameters in the environment now have the same meaning
+      as in the collision settings because it uses calculation method 1 (force based
+      environment collisions).
+    </p><p>
+      Force based environment collisions lead to a more realistic simulation of the
+      interaction of the masses with the environment since the movement of the masses does
+      not abruptly change.  Using this method is necessary for all higher order integration
+      methods which will be introduced later.
+    </p><p>
+      This scene also adds new masses during the animation.  This is achieved by adding
+      the following code to the <tt class="function">topology{}</tt> section:
+    </p><div class="informalexample"><pre class="programlisting">#if (mod(frame_number, 6)=5)
+  mass { &lt; 1.3,-1.55,0.8&gt;, &lt;-0.2, 5, 0&gt;, 0.18 density 5000 }
+#end</pre></div><p>
+      It means that in every sixth frame a new mass is added at the starting
+      position with the same starting velocity as the first mass.
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial03.pov" target="_top"><tt class="filename">tutorial03.pov</tt></a></li><li><a href="msim_tut/tutorial03.mpg" target="_top"><tt class="filename">tutorial03.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial03.png"></div></div><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_tut_con"></a>4.2.1.3. connections</h4></div></div><div></div></div><p>
+      Apart from masses there is another important element that can be added to the
+      <tt class="function">topology{}</tt> section: connections.  Connections can be seen as
+      springs.  They connect two point masses and exert a force on them depending on the
+      current distance of the masses compared to the relaxed length of the connection.
+      In addition there is a damping property generating dissipative forces.
+    </p><p>
+      A <tt class="function">connection{}</tt> block is added to the
+      <tt class="function">topology{}</tt> section like a mass:
+    </p><div class="informalexample"><pre class="programlisting">connection { 0, 1 stiffness 50000 damping 2000 }</pre></div><p>It contains:</p><div class="itemizedlist"><ul type="disc"><li><p>
+        <tt class="function">0</tt> - the index of the first mass connected.
+      </p></li><li><p>
+        <tt class="function">1</tt> - the index of the second mass connected.
+      </p></li><li><p>
+        <tt class="function">stiffness 50000</tt> - the stiffness of the connection (unit <tt class="function">kg/s²</tt>).
+      </p></li><li><p>
+        <tt class="function">damping 2000</tt> - the damping of the connection (unit <tt class="function">kg/s</tt>).
+      </p></li></ul></div><p>
+      if no <tt class="function">length</tt> is given the current
+      distance of the masses is used.
+    </p><p>
+      The mass indices are counted in order of creation starting at zero.
+      The three connected
+      masses from the following scene are created with:
+    </p><div class="informalexample"><pre class="programlisting">topology {
+  mass { &lt;0, 0, 2.4&gt;, &lt;0, 0, 0&gt;, 0.1 density 5000 fixed on }
+  mass { &lt;1, 0, 2.4&gt;, &lt;0, 0, 0&gt;, 0.1 density 5000 }
+  mass { &lt;2, 0, 2.4&gt;, &lt;0, 0, 0.6&gt;, 0.15 density 5000 }
+  connection { 0, 1 stiffness 50000 damping 2000 }
+  connection { 1, 2 stiffness 50000 damping 2000 }
+}</pre></div><p>
+      The <tt class="function">fixed on</tt> in the first mass definition fixes the
+      position of this mass.
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial04.pov" target="_top"><tt class="filename">tutorial04.pov</tt></a></li><li><a href="msim_tut/tutorial04.mpg" target="_top"><tt class="filename">tutorial04.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial04.png"></div></div><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_tut_grid"></a>4.2.1.4. grids</h4></div></div><div></div></div><p>
+      With plenty of such connections we can form more complex shapes.
+      The <tt class="filename">mechsim.inc</tt> include file
+      (see <a href="mechsim.inc.html" title="3.4. The 'mechsim.inc' include file">Section 3.4, &#8220;The 'mechsim.inc' include file&#8221;</a>)
+      contains several macros forming grids of masses and connections.
+    </p><p>
+      Placing the following in the <tt class="function">topology{}</tt> section generates a
+      box-like grid of connected masses:
+    </p><div class="informalexample"><pre class="programlisting">MechSim_Generate_Block(
+  &lt;0, 0, 0&gt;, 0.07, 1500, 22000, 2000, true,
+  &lt;-0.5, -2.75, 1.0&gt;, &lt;0.5, 2.75, 2.0&gt;, &lt;3, 12, 3&gt;, No_Trans, 3
+)</pre></div><p>
+      The meaning of the different parameters is described in
+      <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Block" title="3.4.5.11. MechSim_Generate_Block()">Section 3.4.5.11, &#8220;MechSim_Generate_Block()&#8221;</a>.
+    </p><p>
+      Apart from the grid macro we introduce a different simulation method in
+      this scene.  <tt class="function">method 3</tt> uses adaptive time stepping.
+      This means you don't need to specify a step size but instead specify how 
+      accurate the simulation should be.  The <tt class="function">accuracy</tt>
+      option takes two parameters: the maximum allowed local discretization
+      error and the minimum step size to use.
+    </p><p>
+      Note that you might still need to specify an appropriate starting step size
+      using <tt class="function">time_step</tt> - the default value might not be
+      appropriate.
+    </p><p>
+      In addition to the accuracy settings the total time per frame is specified
+      using the <tt class="function">time</tt> parameter.
+    </p><p>
+      The resulting animation shows a moving and deforming box geometry.
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial05.pov" target="_top"><tt class="filename">tutorial05.pov</tt></a></li><li><a href="msim_tut/tutorial05.mpg" target="_top"><tt class="filename">tutorial05.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial05.png"></div></div><p>
+    </p><p>
+      The <tt class="function">MechSim_Generate_Block()</tt> macro also generates faces for the
+      outside surface of the box.  Faces are triangles each connecting three masses.  They
+      can be used for collision calculations and for displaying the geometry as a mesh.
+      The latter can be done easily by changing the parameters of the
+      <tt class="function">MechSim_Show_All_Objects()</tt> macro:
+    </p><div class="informalexample"><pre class="programlisting">MechSim_Show_All_Objects(-1, true, -1, "")</pre></div><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial06.pov" target="_top"><tt class="filename">tutorial06.pov</tt></a></li><li><a href="msim_tut/tutorial06.mpg" target="_top"><tt class="filename">tutorial06.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial06.png"></div></div><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_tut_patch"></a>4.2.1.5. patches</h4></div></div><div></div></div><p>
+      Apart from 3D grids we of course can also create 2D rectangular patches.
+      Such objects behave like cloth or foil and offer a very interesting field
+      of simulation.
+    </p><p>
+      Like 3D grids rectangular patches can be created with macros from
+      the <tt class="filename">mechsim.inc</tt> include file
+      (see <a href="mechsim.inc.html" title="3.4. The 'mechsim.inc' include file">Section 3.4, &#8220;The 'mechsim.inc' include file&#8221;</a>):
+    </p><div class="informalexample"><pre class="programlisting">MechSim_Generate_Patch_Std(
+  &lt;0, 0, 0&gt;, 0.03, 8000, 10000, 0,
+  true, &lt;0.055, 0.055&gt;, &lt;50, 50&gt;, Trans1, 2
+)</pre></div><p>
+      This creates a 50x50 masses patch, again movable with a
+      <tt class="function">transform</tt>.  Description of the parameters can be found in
+      <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Patch_Std" title="3.4.5.15. MechSim_Generate_Patch_Std()">Section 3.4.5.15, &#8220;MechSim_Generate_Patch_Std()&#8221;</a>.
+    </p><p>
+      The following sample scene also uses a different simulation method than
+      the previous scenes.  It is called gradient descent method. It does not integrate the
+      equations of movement like the other methods but moves the masses directly according
+      to the forces influencing them.  Inertia does not have effect with these method,
+      therefore oscillations can't occur.  Still the step size has to be chosen small enough
+      for accurate results.  The movement won't look very realistic in an animation but
+      the final result can be used for a still render.  Another disadvantage is the lack
+      of friction, therefore the patch slides off the sphere in the end.
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial07.pov" target="_top"><tt class="filename">tutorial07.pov</tt></a></li><li><a href="msim_tut/tutorial07.mpg" target="_top"><tt class="filename">tutorial07.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial07.png"></div></div><p>
+    </p><p>
+      There is also a specialized macro for generating a mesh from a patch topology
+      including normal vectors and uv coordinates.  Rendering the previous topology with
+      this macro results in the following picture:
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial08.pov" target="_top"><tt class="filename">tutorial08.pov</tt></a></li><li><a href="msim_tut/tutorial08.mpg" target="_top"><tt class="filename">tutorial08.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial08.png"></div></div><p>
+    </p><p>
+      There are a lot more aspects of the mechanics simulation patch that are not
+      handled in this tutorial yet.  Reading the reference
+      (see <a href="global_settings.html#mechsim" title="2.7.4. Mechanics simulation patch">Section 2.7.4, &#8220;Mechanics simulation patch&#8221;</a>) and
+      <tt class="filename">mechsim.inc</tt> include file documentation
+      (see <a href="mechsim.inc.html" title="3.4. The 'mechsim.inc' include file">Section 3.4, &#8220;The 'mechsim.inc' include file&#8221;</a>) should help learning
+      about those things.  The sample scenes show several examples what
+      the simulation system
+      can be used for but there are a lot more possibilities.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_tut_interaction"></a>4.2.1.6. mass interaction</h4></div></div><div></div></div><p>
+      Masses can not only collide but also can interact in a freely definable way.
+      This way you can simulate physical effect like electromagnetic fields and gravity.
+    </p><p>
+      Mass interaction is defined globally with the<tt class="function">interaction</tt> keyword
+      in the <tt class="function">mechsim{}</tt> block.  For the inverse square law of gravity
+      you for example could use the following setup:
+    </p><div class="informalexample"><pre class="programlisting">// Gravitation constant: 6.672e-11 m^3*kg^-1*s^-2
+#declare G=6.672e-11;
+
+// Newton's law of gravitation
+#declare fn_Gravity=
+  function(x, y, z, dist, m1, m2) {
+    (G*m1*m2)/(dist*dist)
+  }
+
+global_settings {
+  mechsim {
+    ...
+    interaction {
+      function(x, y, z, dist, m1, m2) { fn_Gravity(x, y, z, dist, m1, m2) }
+    }
+    ...
+  }
+}</pre></div><p>
+      As you can see the interaction function has 6 parameters.  The first three
+      are the usual coordinates so you can define an interactions that differs
+      depending on the absolute position.  The last three are optional, the first 
+      of them is the distance between the masses and the other two the masses
+      of the two masses that interact.
+    </p><p>
+      The simulation system calls this function for every pair of masses in every 
+      simulation step.  This can of course be quite slow with a lot of masses.
+      But in this simple example we only want to simulate the movement of the earth
+      around the sun which is done with the following topology definition:
+    </p><div class="informalexample"><pre class="programlisting">#declare Mio_km=1.0e9;
+
+topology {
+  // Sun
+  mass { &lt;0,0,0&gt;, &lt;0,0,0&gt;, 696.0e6 mass 1.99e30 }
+  // Earth
+  mass { &lt;149.6*Mio_km,0,0&gt;, &lt;0,29.8*1000,0&gt;, (6371.0)*1000 mass 5.97e24 }
+
+  save_file "tut09.dat"
+}</pre></div><p>
+      Simulating this with 1 step per day is done with the following code:
+    </p><div class="informalexample"><pre class="programlisting">step_count 2000
+
+// 1 day per step
+time_step (24*3600)/2000
+
+topology {
+  load_file "tut09.dat"
+  save_file "tut09.dat"
+}</pre></div><p>
+      And results in the following movement.  The size of the sun and earth is of course
+      strongly exaggerated.  You can find a more complex simulation of all the inner
+      planets in the <tt class="filename">planets.pov</tt> sample scene.
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="msim_tut/tutorial09.pov" target="_top"><tt class="filename">tutorial09.pov</tt></a></li><li><a href="msim_tut/tutorial09.mpg" target="_top"><tt class="filename">tutorial09.mpg</tt> (mpeg, 320x240)</a></li></ul></div><p>
+      </p><div class="informalfigure"><div><img src="img/tutorial09.png"></div></div><p>
+    </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="tutorials.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="tutorials.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="tutorials_hdri.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. Tutorials </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.3. HDRI (High dynamic range illumination)</td></tr></table></div></body></html>

@@ -1,0 +1,460 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2.2. Expressions</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="references.html" title="Chapter 2. MegaPOV References"><link rel="previous" href="references.html" title="Chapter 2. MegaPOV References"><link rel="next" href="camera.html" title="2.3. Camera"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.2. Expressions</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="references.html">Prev</a> </td><th width="60%" align="center">Chapter 2. MegaPOV References</th><td width="20%" align="right"> <a accesskey="n" href="camera.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions"></a>2.2. Expressions</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2512770"></a>2.2.1. Language directives</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="set"></a>2.2.1.1. Set directive</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Chris</span> <span class="surname">Huff</span></h3></div></div></div><div></div></div><p>
+    The <tt class="function">#set</tt><a class="indexterm" name="id2512887"></a>
+    keyword modifies the most recently created version of a variable. So, if a variable has been created previously with either <tt class="function">#declare</tt> or <tt class="function">#local</tt>,
+    its value can be changed with the <tt class="function">#set</tt> directive.
+  </p><div class="example"><a name="id2512800"></a><p class="title"><b>Example 2.2. Using the #set directive</b></p><pre class="programlisting"><tt class="function">#declare</tt> MyCounter = 0:
+<tt class="function">#set</tt> MyCounter = MyCounter + 1;</pre><p>
+    One advantage is that it makes it more visually clear where variables are 'created', and where they are only 'changed'.
+  </p></div><p>
+    Another advantage is that if you try to change a variable that doesn't yet exist, it produces an error.
+    This could happen if you make a typing mistake, like this:
+    </p><pre class="programlisting"><tt class="function">#declare</tt> MyCounter = 0;
+<tt class="function">#while</tt> (MyCounter &lt; 10)
+  <tt class="function">#declare</tt> MyCountr = MyCounter+1;
+<tt class="function">#end</tt></pre><p>
+    This would normally cause an infinite loop, and may take a while to track down, especially in complex scenes and with typos
+    that "look right" at a glance. If <tt class="function">#set</tt> was used, it would cause an error ("#set cannot assign to uninitialized identifier MyCountr.")
+    at that line, pointing you directly at the problem.
+  </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="tokens"></a>2.2.2. Built-in tokens</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="additional_tokens"></a>2.2.2.1. Additional tokens in function syntax</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    <span class="trademark">POV-Ray</span>&#8482; 3.5 in its official release does not accept all built-in constants
+    and variables to be used in functions. Following tokens are recognized
+    additionally in VM since MegaPOV 1.0:
+    <span class="simplelist"><tt class="function">clock_delta</tt><a class="indexterm" name="id2512701"></a>, <tt class="function">clock_on</tt><a class="indexterm" name="id2513840"></a>, <tt class="function">false</tt><a class="indexterm" name="id2512739"></a>, <tt class="function">final_clock</tt><a class="indexterm" name="id2512754"></a>, <tt class="function">final_frame</tt><a class="indexterm" name="id2512736"></a>, <tt class="function">frame_number</tt><a class="indexterm" name="id2513773"></a>, <tt class="function">initial_clock</tt><a class="indexterm" name="id2513756"></a>, <tt class="function">initial_frame</tt><a class="indexterm" name="id2513765"></a>, <tt class="function">image_height</tt><a class="indexterm" name="id2513827"></a>, <tt class="function">image_width</tt><a class="indexterm" name="id2513796"></a>, <tt class="function">no</tt><a class="indexterm" name="id2513815"></a>, <tt class="function">off</tt><a class="indexterm" name="id2513794"></a>, <tt class="function">on</tt><a class="indexterm" name="id2513812"></a>, <tt class="function">true</tt><a class="indexterm" name="id2514046"></a>, <tt class="function">version</tt><a class="indexterm" name="id2513852"></a>, <tt class="function">yes</tt><a class="indexterm" name="id2513910"></a></span>
+    . All mentioned tokens return the same values as in the whole SDL parser.
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="frame_step_token"></a>2.2.2.2. <tt class="function">frame_step</tt> key-word</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+          <a class="indexterm" name="id2512596"></a>
+          As other animation options, also <tt class="function">Frame_Step</tt> has its own equivalent in SDL.
+          You can use the <tt class="function">frame_step</tt> key-word to get the value which was passed to <tt class="function">Frame_Step</tt>
+          (see <a href="references.html#frame_step" title="2.1.1. Frame_Step">Section 2.1.1, &#8220;Frame_Step&#8221;</a>). Default value is 1.
+        </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="functions"></a>2.2.3. Functions</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="time_date"></a>2.2.3.1. Time and date functions</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Yvo</span> <span class="surname">Smellenbergh</span></h3></div></div></div><div></div></div><p>
+    With the keyword <tt class="function">date</tt>, time and/or a date can be used in your images.
+    This might be useful in a macro to place a time stamp in your images, along with your name.
+    The keyword <tt class="function">date</tt> works like other string functions, except that you have to supply a format string.
+    </p><div class="example"><a name="id2515076"></a><p class="title"><b>Example 2.3. <tt class="function">date</tt> function usage</b></p><p>
+        Suppose it's Saturday 1 January. The following script:
+        </p><pre class="programlisting"><tt class="function">#declare</tt> TheString=<tt class="function">date</tt>("%a %B")</pre><p>
+        will return the string: Sat January
+      </p></div><p>
+    The most flexible implementation was chosen (which is probably not the easiest ...) because not all countries write
+    dates in the same way. Just think of the difference between the USA and most parts of Europe.
+
+    These are the possible specifiers for the format string:
+
+    Please note that these should be equal for all platforms but if you don't get the expected result, contact the
+    person who compiled your version to find out if there are differences.
+
+    </p><div class="table"><a name="id2515131"></a><p class="title"><b>Table 2.1. The following time formatting strings are available:</b></p><table summary="The following time formatting strings are available:" border="0" style="border-collapse: collapse;"><colgroup><col><col></colgroup><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">a  </td><td style="border-bottom: 0.5pt solid ; ">Abbreviated weekday name.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">A</td><td style="border-bottom: 0.5pt solid ; ">Full weekday name.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">b</td><td style="border-bottom: 0.5pt solid ; ">Abbreviated month name.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">B</td><td style="border-bottom: 0.5pt solid ; ">Full month name.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">c</td><td style="border-bottom: 0.5pt solid ; ">The strftime() format equaling the format string of "%x %X".</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">d</td><td style="border-bottom: 0.5pt solid ; ">Day of the month as a decimal number.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">H</td><td style="border-bottom: 0.5pt solid ; ">The hour (24-hour clock) as a decimal number from 00 to 23.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">I</td><td style="border-bottom: 0.5pt solid ; ">The hour (12-hour clock) as a decimal number from 01 to 12</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">j</td><td style="border-bottom: 0.5pt solid ; ">The day of the year as a decimal number from 001 to 366</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">m</td><td style="border-bottom: 0.5pt solid ; ">The month as a decimal number from 01 to 12.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">M</td><td style="border-bottom: 0.5pt solid ; ">The minute as a decimal number from 00 to 59.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">p</td><td style="border-bottom: 0.5pt solid ; ">"AM" or "PM".</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">S</td><td style="border-bottom: 0.5pt solid ; ">The seconds as a decimal number from 00 to 59.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">U</td><td style="border-bottom: 0.5pt solid ; ">The week number of the year as a decimal number from 00 to 52. Sunday is considered the first day of the week.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">w</td><td style="border-bottom: 0.5pt solid ; ">The weekday as a decimal number from 0 to 6. Sunday is (0) zero.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">W</td><td style="border-bottom: 0.5pt solid ; ">The week of the year as a decimal number from 00 to 51. Monday is the first day of the week.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">x</td><td style="border-bottom: 0.5pt solid ; ">The date representation of the current locale.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">X</td><td style="border-bottom: 0.5pt solid ; ">The time representation of the current locale.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">y</td><td style="border-bottom: 0.5pt solid ; ">The last two digits of the year as a decimal number.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">Y</td><td style="border-bottom: 0.5pt solid ; ">The century as a decimal number.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">z</td><td style="border-bottom: 0.5pt solid ; ">The time zone name or nothing if it is unknown.</td></tr><tr><td style="border-right: 0.5pt solid ; ">%  </td><td style="">The percent sign is displayed.</td></tr></tbody></table></div><p>
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note: Note:"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note:</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+        To use the '%' character in the result, use it twice: <tt class="function">date</tt>("%%")
+      </p></td></tr></table></div><p>
+    Refer to <tt class="filename">date.pov</tt> for an example scene.
+    Please note that you might have to write the result in a file if you want to abort the rendering and continue later
+    on. Otherwise you could get a different result because time goes on :-)
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="timer"></a>2.2.3.2. Timer function</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Yvo</span> <span class="surname">Smellenbergh</span></h3></div></div></div><div></div></div><p>
+    The keyword <tt class="function">start_chrono</tt> sets an internal variable and returns the current internal clock counter of your computer.
+    The return value is not important. However, you must assign this return value from <tt class="function">start_chrono</tt> otherwise you get
+    an error.
+    Use it like this:
+    </p><pre class="programlisting"><tt class="function">#declare</tt> Stopwatch = <tt class="function">start_chrono</tt>;</pre><p>
+    or use it like this:
+    </p><pre class="programlisting"><tt class="function">#if</tt> (<tt class="function">start_chrono</tt>)</pre><p>
+    but not:
+    </p><pre class="programlisting"><tt class="function">start_chrono</tt> //parsing stops with a fatal error</pre><p>
+
+    The keyword <tt class="function">current_chrono</tt> returns the time in full seconds (no fractions of seconds) between <tt class="function">start_chrono</tt> and
+    <tt class="function">current_chrono</tt>. The start value is not changed. A second <tt class="function">current_chrono</tt> will still return the seconds between
+    <tt class="function">start_chrono</tt> and the second <tt class="function">current_chrono</tt>.
+
+    </p><div class="literallayout"><p><br>
+</p></div><p>If you don't call <tt class="function">start_chrono</tt> somewhere before you call <tt class="function">current_chrono</tt>, you will get the seconds elapsed since the
+    beginning of the current render (parsing).
+    </p><div class="example"><a name="id2514973"></a><p class="title"><b>Example 2.4. Using the timer function</b></p><pre class="programlisting">//reset the chrono and return the internal clock counter
+<tt class="function">#declare</tt> ParseStart = <tt class="function">start_chrono</tt>; 
+
+<i class="parameter"><tt>... syntax to be parsed</tt></i>
+
+//read the seconds elapsed since chrono_start
+<tt class="function">#declare</tt> ParseEnd = <tt class="function">current_chrono</tt>;
+<tt class="function">#debug</tt> <tt class="function">concat</tt>("\nParsing took ",str((ParseEnd, 1, 0)," seconds\n")</pre><p>
+    </p></div><p>
+    Refer to <tt class="function">chrono.pov</tt> for a demo scene.
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="output_filename"></a>2.2.3.3. Filename with frame number</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    Some animators want to use filenames of previous, already rendered frames to average them
+    to mimic motion_blur in one turn. But the concatenation of filename with frame number is not a trivial thing
+    and can be platform dependant. MegaPOV allows you to get <i class="parameter"><tt>n</tt></i>-th filename of current
+    animation. For stills it always returns filename without numbers.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2514641"></a>
+    </p><pre class="synopsis">#declare File_Name=<tt class="function">output_filename</tt>(<i class="parameter"><tt>Frame_Number</tt></i>)</pre><p>
+  </p><div class="example"><a name="id2514660"></a><p class="title"><b>Example 2.5. Averaging frames with <tt class="function">output_filename</tt> function</b></p><p>
+      You can force every 10th frame to be averaged content of previous nine frames, this way:
+    </p><pre class="programlisting"><tt class="function">#if</tt>(<tt class="function">mod</tt>(<tt class="function">frame_number</tt>,10)=9)
+  <tt class="function">#declare</tt> Averaged_Frames=<tt class="function">pigment</tt>{
+    <tt class="function">average</tt>
+    <tt class="function">#local</tt> Counter=1;
+    <tt class="function">#while</tt>(Counter&lt;10)
+      [1 <tt class="function">image_map</tt>{<tt class="function">output_filename</tt>(<tt class="function">frame_number</tt>-Counter)}]
+      <tt class="function">#set</tt> Counter=Counter+1;
+    <tt class="function">#end</tt>
+  }
+  // placing of pigment in output area
+<tt class="function">#else</tt>
+  // conventional scene
+<tt class="function">#end</tt></pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="images_sizes"></a>2.2.3.4. Sizes of images</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    You probably already know that the <tt class="function">image_width</tt> and <tt class="function">image_height</tt>
+    keywords return the sizes of a rendered image. But there are cases when you would like
+    to change the content of a scene depending on the sizes of the images used for maps. For this
+    purpose the <tt class="function">image_width</tt> and <tt class="function">image_height</tt> keywords are extended with an
+    optional parameter which is the identifier of an item using an image.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2516860"></a>
+    <a class="indexterm" name="id2516871"></a>
+    </p><pre class="synopsis"><tt class="function">#declare</tt> Identifier=<tt class="function">image_width</tt> [ (ITEM_WITH_IMAGE) ];
+<tt class="function">#declare</tt> Identifier=<tt class="function">image_height</tt> [ (ITEM_WITH_IMAGE) ];
+
+ITEM_WITH_IMAGE: PIGMENT_ID | NORMAL_ID | TEXTURE_ID</pre><p>
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="vectors_dimensions"></a>2.2.3.5. Dimensions of vectors</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    The usage of the <tt class="function">dimension_size</tt> is extended since MegaPOV 1.1 with a measurement of
+    floats, vectors and colors. If you want to write a universal script which works differently
+    depending on the number of components in an identifier, you can use the <tt class="function">dimension_size</tt> to
+    get 1,2,3,4 or 5 as number of the components in the given identifier.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2514353"></a>
+    </p><pre class="synopsis"><tt class="function">#declare</tt> Identifier=<tt class="function">dimension_size</tt> ( FLOAT | VECTOR | COLOR );</pre><p>
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="is"></a>2.2.3.6. Type checking</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    MegaPOV 1.1 allows the verification of the type (and in some cases subtypes) of identifiers.
+    It is possible thanks to the <tt class="function">is</tt> function which tests the internal type of an identifier.
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2516835"></a>
+    <a class="indexterm" name="id2514484"></a>
+    <a class="indexterm" name="id2516658"></a>
+    <a class="indexterm" name="id2516669"></a>
+    <a class="indexterm" name="id2516680"></a>
+    <a class="indexterm" name="id2516691"></a>
+    <a class="indexterm" name="id2516702"></a>
+    <a class="indexterm" name="id2516713"></a>
+    <a class="indexterm" name="id2516724"></a>
+    <a class="indexterm" name="id2516735"></a>
+    <a class="indexterm" name="id2516746"></a>
+    <a class="indexterm" name="id2516757"></a>
+    <a class="indexterm" name="id2516768"></a>
+    <a class="indexterm" name="id2516779"></a>
+    <a class="indexterm" name="id2516790"></a>
+    <a class="indexterm" name="id2516801"></a>
+    <a class="indexterm" name="id2516812"></a>
+    <a class="indexterm" name="id2516822"></a>
+    <a class="indexterm" name="id2517469"></a>
+    <a class="indexterm" name="id2517478"></a>
+    <a class="indexterm" name="id2517489"></a>
+    <a class="indexterm" name="id2517500"></a>
+    <a class="indexterm" name="id2517511"></a>
+    <a class="indexterm" name="id2517522"></a>
+    <a class="indexterm" name="id2517533"></a>
+    <a class="indexterm" name="id2517544"></a>
+    <a class="indexterm" name="id2517555"></a>
+    <a class="indexterm" name="id2517566"></a>
+    <a class="indexterm" name="id2517577"></a>
+    <a class="indexterm" name="id2517588"></a>
+    <a class="indexterm" name="id2517599"></a>
+    <a class="indexterm" name="id2517610"></a>
+    <a class="indexterm" name="id2517621"></a>
+    <a class="indexterm" name="id2517632"></a>
+    <a class="indexterm" name="id2517643"></a>
+    <a class="indexterm" name="id2517654"></a>
+    <a class="indexterm" name="id2517665"></a>
+    <a class="indexterm" name="id2517676"></a>
+    <a class="indexterm" name="id2517687"></a>
+    <a class="indexterm" name="id2517698"></a>
+    <a class="indexterm" name="id2517709"></a>
+    <a class="indexterm" name="id2517720"></a>
+    <a class="indexterm" name="id2517731"></a>
+    <a class="indexterm" name="id2517742"></a>
+    <a class="indexterm" name="id2517753"></a>
+    <a class="indexterm" name="id2517764"></a>
+    <a class="indexterm" name="id2517774"></a>
+    <a class="indexterm" name="id2517785"></a>
+    <a class="indexterm" name="id2517796"></a>
+    <a class="indexterm" name="id2517807"></a>
+    <a class="indexterm" name="id2517818"></a>
+    <a class="indexterm" name="id2517829"></a>
+    <a class="indexterm" name="id2517840"></a>
+    <a class="indexterm" name="id2517851"></a>
+    <a class="indexterm" name="id2517862"></a>
+    <a class="indexterm" name="id2517873"></a>
+    <a class="indexterm" name="id2517884"></a>
+    <a class="indexterm" name="id2517895"></a>
+    <a class="indexterm" name="id2517906"></a>
+    <a class="indexterm" name="id2517917"></a>
+    <a class="indexterm" name="id2517928"></a>
+    <a class="indexterm" name="id2517939"></a>
+    <a class="indexterm" name="id2517950"></a>
+    <a class="indexterm" name="id2517961"></a>
+    <a class="indexterm" name="id2517972"></a>
+    <a class="indexterm" name="id2517983"></a>
+    <a class="indexterm" name="id2517994"></a>
+    <a class="indexterm" name="id2518005"></a>
+    <a class="indexterm" name="id2518016"></a>
+    <a class="indexterm" name="id2518026"></a>
+    <a class="indexterm" name="id2518037"></a>
+    <a class="indexterm" name="id2518048"></a>
+    <a class="indexterm" name="id2518059"></a>
+    <a class="indexterm" name="id2518070"></a>
+    <a class="indexterm" name="id2518081"></a>
+    <a class="indexterm" name="id2518092"></a>
+    <a class="indexterm" name="id2518103"></a>
+    <a class="indexterm" name="id2518114"></a>
+    </p><pre class="synopsis"><tt class="function">#declare</tt> Identifier=<tt class="function">is</tt> ( IDENTIFIER , TYPE | SUBTYPE );
+
+TYPE: <tt class="function">array</tt> | <tt class="function">camera</tt> | <tt class="function">color</tt> | 
+      <tt class="function">color_map</tt> | <tt class="function">density</tt> | <tt class="function">density_map</tt> | 
+      <tt class="function">finish</tt> | <tt class="function">float</tt> | <tt class="function">fog</tt> | 
+      <tt class="function">function</tt> | <tt class="function">interior</tt> | <tt class="function">light_source</tt> | 
+      <tt class="function">material</tt> | <tt class="function">media</tt> | <tt class="function">normal</tt> | 
+      <tt class="function">normal_map</tt> | <tt class="function">object</tt> | <tt class="function">pigment</tt> | 
+      <tt class="function">pigment_map</tt> | <tt class="function">rainbow</tt> | <tt class="function">sky_sphere</tt> | 
+      <tt class="function">slope_map</tt> | <tt class="function">spline</tt> | <tt class="function">string</tt> | 
+      <tt class="function">texture</tt> | <tt class="function">texture_map</tt> | <tt class="function">transform</tt> | 
+      <tt class="function">vector</tt>
+
+SUBTYPE: SPLINE_TYPE | OBJECT_TYPE | CAMERA_TYPE
+
+SPLINE_TYPE: <tt class="function">akima_spline</tt> | <tt class="function">basic_x_spline</tt> | 
+             <tt class="function">cubic_spline</tt> | <tt class="function">extended_x_spline</tt> | 
+             <tt class="function">general_x_spline</tt> | <tt class="function">linear_spline</tt> | 
+             <tt class="function">natural_spline</tt> | <tt class="function">quadratic_spline</tt> | 
+             <tt class="function">sor_spline</tt> | <tt class="function">tcb_spline</tt> 
+
+OBJECT_TYPE: <tt class="function">bicubic_patch</tt> | <tt class="function">blob</tt> | <tt class="function">box</tt> | 
+             <tt class="function">cone</tt> | <tt class="function">cubic</tt> | <tt class="function">cylinder</tt> | 
+             <tt class="function">disc</tt> | <tt class="function">height_field</tt> | <tt class="function">intersection</tt> | 
+             <tt class="function">isosurface</tt> | <tt class="function">julia_fractal</tt> | <tt class="function">lathe</tt> | 
+             <tt class="function">merge</tt> | <tt class="function">mesh</tt> | <tt class="function">parametric</tt> | 
+             <tt class="function">plane</tt> | <tt class="function">poly</tt> | <tt class="function">polygon</tt> | 
+             <tt class="function">prism</tt> | <tt class="function">quadric</tt> | <tt class="function">quartic</tt> | 
+             <tt class="function">smooth_triangle</tt> | <tt class="function">sor</tt> | <tt class="function">sphere</tt> | 
+             <tt class="function">sphere_sweep</tt> | <tt class="function">superellipsoid</tt> | <tt class="function">text</tt> | 
+             <tt class="function">torus</tt> | <tt class="function">triangle</tt> | <tt class="function">union</tt>
+
+CAMERA_TYPE: <tt class="function">cylinder</tt> | <tt class="function">fisheye</tt> | <tt class="function">omnimax</tt> | 
+             <tt class="function">orthographic</tt> | <tt class="function">panoramic</tt> | <tt class="function">perspective</tt> | 
+             <tt class="function">spherical</tt> | <tt class="function">ultra_wide_angle</tt> | <tt class="function">user_defined</tt></pre><p>
+  </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+       <a class="indexterm" name="id2518143"></a>
+       <a class="indexterm" name="id2518678"></a>
+       Internally <tt class="function">mesh2</tt> is stored as <tt class="function">mesh</tt>. Similar <tt class="function">difference</tt>
+       is stored as <tt class="function">intersection</tt>.
+    </p></td></tr></table></div><p>
+    An example using the <tt class="function">is</tt> keyword can be found in the <tt class="filename">mp_types.inc</tt> include file
+    (see <a href="mp_types.inc.html" title="3.3. The 'mp_types.inc' include file">Section 3.3, &#8220;The 'mp_types.inc' include file&#8221;</a>).
+  </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="internal_functions"></a>2.2.4. Internal functions</h3></div></div><div></div></div><p>
+        MegaPOV delivers new pre-defined functions. These new internal functions can be accessed
+        through the <tt class="filename">mp_functions.inc</tt> include file, so it should be included
+        in your scene to make use of them.
+      </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="f_triangle"></a>2.2.4.1. <tt class="function">f_triangle</tt></h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2519142"></a><p>
+    <tt class="function">f_triangle</tt> function has 10 parameters:
+    </p><div class="funcsynopsis"><p><code class="funcdef">FLOAT <b class="fsfunc">f_triangle</b>(</code>FLOAT <var class="pdparam">V1x</var>, FLOAT <var class="pdparam">V1y</var>, FLOAT <var class="pdparam">V1z</var>, FLOAT <var class="pdparam">V2x</var>, FLOAT <var class="pdparam">V2y</var>, FLOAT <var class="pdparam">V2z</var>, FLOAT <var class="pdparam">V3x</var>, FLOAT <var class="pdparam">V3y</var>, FLOAT <var class="pdparam">V3z</var>, FLOAT <var class="pdparam">Thickness</var><code>)</code>;</p></div><p>
+    The parameters <i class="parameter"><tt>V1x</tt></i>, <i class="parameter"><tt>V1y</tt></i>, <i class="parameter"><tt>V1z</tt></i>
+    describe the coordinates of the first vertex in the triangle.
+    </p><div class="literallayout"><p><br>
+</p></div><p>The parameters <i class="parameter"><tt>V2x</tt></i>, <i class="parameter"><tt>V2y</tt></i>, <i class="parameter"><tt>V2z</tt></i>
+    describe the coordinates of the second
+    vertex in the triangle.
+    </p><div class="literallayout"><p><br>
+</p></div><p>The parameters <i class="parameter"><tt>V3x</tt></i>, <i class="parameter"><tt>V3y</tt></i>, <i class="parameter"><tt>V3z</tt></i>
+    describe the coordinates of the third vertex in the triangle.
+    </p><div class="literallayout"><p><br>
+</p></div><p>The parameter <i class="parameter"><tt>Thickness</tt></i> describes how thick the triangle is.
+  </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      In order to achieve the fastest calculation, try to pass the parameters so that the side
+      <i class="parameter"><tt>V1</tt></i>-<i class="parameter"><tt>V2</tt></i> represents the longest side and
+      <i class="parameter"><tt>V1</tt></i>-<i class="parameter"><tt>V3</tt></i> represents the shortest side.
+    </p></td></tr></table></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="polynomial_solver"></a>2.2.5. Polynomial solver in parser</h3></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><p>
+    The polynomial solver is accessible from scripts via the float functions <tt class="function">n_roots</tt>
+    <a class="indexterm" name="id2520140"></a>
+    and <tt class="function">nth_root</tt><a class="indexterm" name="id2519491"></a>
+    with the following syntax:
+    </p><div class="funcsynopsis"><p><code class="funcdef">INT <b class="fsfunc">n_roots</b>(</code>FLOAT <var class="pdparam">an</var>, <var class="pdparam">...</var>, FLOAT <var class="pdparam">a0</var>, BOOL <var class="pdparam">sturm_flag</var>, FLOAT <var class="pdparam">epsilon</var><code>)</code>;</p><p><code class="funcdef">FLOAT <b class="fsfunc">nth_root</b>(</code>FLOAT <var class="pdparam">nth</var>, FLOAT <var class="pdparam">an</var>, <var class="pdparam">...</var>, FLOAT <var class="pdparam">a0</var>, BOOL <var class="pdparam">sturm_flag</var>, FLOAT <var class="pdparam">epsilon</var><code>)</code>;</p></div><p>
+  </p><p>
+    <tt class="function">n_roots</tt> returns the number of roots derived from the polynomial given by the parameters
+    <i class="parameter"><tt>a<sub>n</sub></tt></i>, <i class="parameter"><tt>...</tt></i>, <i class="parameter"><tt>a<sub>0</sub></tt></i>
+    and calculated under the conditions specified by the parameters
+    <i class="parameter"><tt>sturm_flag</tt></i> and <i class="parameter"><tt>epsilon</tt></i>.
+  </p><p>
+    <tt class="function">nth_root</tt> returns the value of the <i class="parameter"><tt>nth</tt></i> root of a given polynomial.
+  </p><p>
+    The sturm flag turns on a different algorithm of calculation.
+    Its usage influences the number of returned roots.
+    Epsilon (positive) value means that the roots below Epsilon value are ignored.
+    Epsilon=0 means that none of the roots are ignored.
+  </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      You don't have to call <tt class="function">n_roots</tt> before <tt class="function">nth_root</tt>, but if you do call
+      <tt class="function">nth_root</tt> with the wrong root number then it causes an error and breaks parsing.
+      It is better to call <tt class="function">n_roots</tt> first to verify the number of available roots.
+    </p></td></tr></table></div><div class="example"><a name="id2521297"></a><p class="title"><b>Example 2.6. Polynomial solver usage</b></p><p>
+      Imagine that we have
+        x<sup>3</sup>+6*x<sup>2</sup>-x-6
+      and that we are interested in its roots for further calculations. So if we declare:
+      </p><pre class="programlisting"><tt class="function">#declare</tt> N=<tt class="function">n_roots</tt>(1, 6, -1, -6, <tt class="function">off</tt>, 0);</pre><p>
+      then N has value 3 because the mentioned equation has 3 roots.
+      If we are interested in what roots it has, we can use the following calls:
+      </p><pre class="programlisting"><tt class="function">#declare</tt> R0=<tt class="function">nth_root</tt>(0, 1, 6, -1, -6, <tt class="function">off</tt>, 0);
+<tt class="function">#declare</tt> R1=<tt class="function">nth_root</tt>(1, 1, 6, -1, -6, <tt class="function">off</tt>, 0);
+<tt class="function">#declare</tt> R2=<tt class="function">nth_root</tt>(2, 1, 6, -1, -6, <tt class="function">off</tt>, 0);</pre><p>
+      And it returns R0=-6, R1=1 and R2=-1. So finally we know that
+        x<sup>3</sup>+6*x<sup>2</sup>-x-6=(x+6)*(x-1)*(x+1)
+      .
+    </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="splines"></a>2.2.6. Splines</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="sor_spline"></a>2.2.6.1. <tt class="function">spline</tt> follows <tt class="function">sor</tt></h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2519863"></a><a class="indexterm" name="id2521109"></a><p>
+    Splines in <span class="trademark">POV-Ray</span>&#8482; can be used to create objects through rotation,
+    translation or by being a border of a surface.
+    Usually it is hard to match those surfaces with calculations developed in SDL because they are mostly
+    hard-coded within the source core code of <span class="trademark">POV-Ray</span>&#8482;. The <tt class="function">spline</tt> feature introduced in <span class="trademark">POV-Ray</span>&#8482; 3.5
+    makes such operations much easier but some spline types are still missing. <tt class="function">sor_spline</tt> is
+    introduced to access the surface of the <tt class="function">sor</tt> object in SDL.
+  </p><p>
+    To use the data from the <tt class="function">sor</tt> object in a <tt class="function">sor_spline</tt>, the order of coordinates has to be
+    changed. The old <tt class="function">y</tt> coordinate is now the clock value in the spline.
+    The advantage is that one <tt class="function">sor_spline</tt> can hold data from five old <tt class="function">sor</tt>-s.
+    That's because every <tt class="function">spline</tt> can operate up to five dimensions along the clock value.
+  </p><div class="example"><a name="id2519922"></a><p class="title"><b>Example 2.7. Conversion from the <tt class="function">sor</tt> object definition to the <tt class="function">sor_spline</tt> type in <tt class="function">spline</tt></b></p><pre class="programlisting"><tt class="function">spline</tt>{
+   <tt class="function">sor_spline</tt>
+  -1.000000,0.000000*<tt class="function">x</tt>
+   0.000000,0.118143*<tt class="function">x</tt>
+   0.540084,0.620253*<tt class="function">x</tt>
+   0.827004,0.210970*<tt class="function">x</tt>
+   0.962025,0.194093*<tt class="function">x</tt>
+   1.000000,0.286920*<tt class="function">x</tt>
+   1.033755,0.468354*<tt class="function">x</tt>
+}
+
+<tt class="function">sor</tt>{
+  7
+  &lt;0.000000, -1.000000&gt;
+  &lt;0.118143,  0.000000&gt;
+  &lt;0.620253,  0.540084&gt;
+  &lt;0.210970,  0.827004&gt;
+  &lt;0.194093,  0.962025&gt;
+  &lt;0.286920,  1.000000&gt;
+  &lt;0.468354,  1.033755&gt;
+}</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="akima_spline"></a>2.2.6.2. akima <tt class="function">spline</tt></h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2522204"></a><a class="indexterm" name="id2522215"></a><p>
+    An <tt class="function">akima_spline</tt> is a spline that goes smoothly (pleasingly for some) through 
+    all points. ACM Press abstracts original work of Hiroshi Akima:
+    </p><div class="blockquote"><table border="0" width="100%" cellspacing="0" cellpadding="0" class="blockquote" summary="Block quote"><tr><td width="10%" valign="top"> </td><td width="80%" valign="top"><p>
+        This method is devised in such a way that the resultant curve will pass through 
+        the given points and will appear smooth and natural. It is based on a piecewise 
+        function composed of a set of polynomials, each of degree three, at most, and 
+        applicable to successive intervals of the given points. In this method, the slope 
+        of the curve is determined at each given point locally, and each polynomial 
+        representing a portion of the curve between a pair of given points is determined by 
+        the coordinates of and the slopes at the points. Comparison indicates that the curve 
+        obtained by this new method is closer to a manually drawn curve than those drawn by 
+        other mathematical methods.
+      </p></td><td width="10%" valign="top"> </td></tr><tr><td colspan="2" align="right" valign="top">--<span class="attribution"><a href="http://portal.acm.org/" target="_top"><i class="citetitle">The Guide to Computing Literature.</i></a></span></td><td width="10%" valign="top"> </td></tr></table></div><p>
+  </p><p>
+    Syntax is:
+  </p><pre class="synopsis"><tt class="function">spline</tt> {
+  <tt class="function">akima_spline</tt>
+  <i class="parameter"><tt>time_Val_1</tt></i>, &lt;<i class="parameter"><tt>Vector_1</tt></i>&gt; [,]
+  <i class="parameter"><tt>time_Val_2</tt></i>, &lt;<i class="parameter"><tt>Vector_2</tt></i>&gt; [,]
+    ...
+  <i class="parameter"><tt>time_Val_n</tt></i>, &lt;<i class="parameter"><tt>Vector_n</tt></i>&gt;
+}</pre><p>
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="tcb_spline"></a>2.2.6.3. tcb <tt class="function">spline</tt></h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2522364"></a><a class="indexterm" name="id2522374"></a><p>
+    This spline is also known as Kochanek-Bartels spline.
+  </p><p>
+    Syntax is:
+  </p><pre class="synopsis"><tt class="function">spline</tt> {
+  <tt class="function">tcb_spline</tt> [<i class="parameter"><tt>TCB_PARAMETERS</tt></i>]
+  <i class="parameter"><tt>time_Val_1</tt></i> [<i class="parameter"><tt>TCB_PARAMETERS</tt></i>], &lt;<i class="parameter"><tt>Vector_1</tt></i>&gt; [<i class="parameter"><tt>TCB_PARAMETERS</tt></i>][,]
+  <i class="parameter"><tt>time_Val_2</tt></i> [<i class="parameter"><tt>TCB_PARAMETERS</tt></i>], &lt;<i class="parameter"><tt>Vector_2</tt></i>&gt; [<i class="parameter"><tt>TCB_PARAMETERS</tt></i>][,]
+    ...
+  <i class="parameter"><tt>time_Val_n</tt></i> [<i class="parameter"><tt>TCB_PARAMETERS</tt></i>], &lt;<i class="parameter"><tt>Vector_n</tt></i>&gt; [<i class="parameter"><tt>TCB_PARAMETERS</tt></i>]
+}
+
+<i class="parameter"><tt>TCB_PARAMETERS</tt></i>:
+  [<tt class="function">tension</tt> <i class="parameter"><tt>FLOAT</tt></i>] [<tt class="function">continuity</tt> <i class="parameter"><tt>FLOAT</tt></i>] [<tt class="function">bias</tt> <i class="parameter"><tt>FLOAT</tt></i>]</pre><p>
+    The <tt class="function">tension</tt>, <tt class="function">continuity</tt> and <tt class="function">bias</tt> are fully optional. Depending on the place
+    where they appear, they control the spline in different ways:
+    </p><div class="itemizedlist"><ul type="disc" compact><li>
+          Placed right after the <tt class="function">tcb_spline</tt> keyword, they set the default values for
+          all ends of the spline segments. This placement is ignored in case of copying spline 
+          without adding new controls because previous defaults were already propagated to each 
+          side of control points.
+        </li><li>
+          Placed between the time_value and the corresponding vector, the tcb parameters determine the
+          properties of the spline segment ending in the vector that follows these parameters.
+        </li><li>
+          For tcb parameters following a vector, the properties of the spline segment beginning after
+          this vector are set.
+        </li></ul></div><p>
+  </p><p>
+    What is controlled by these parameters?
+    </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="function">tension</tt> controls how sharply the curve bends.</li><li><tt class="function">continuity</tt> controls how rapid speed and direction change.</li><li><tt class="function">bias</tt> controls the direction of the curve as it passes through the control point.</li></ul></div><p>
+  </p><p>
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top">A <tt class="function">tcb_spline</tt> needs additional control points before and after the spline. This is
+      required to control the first and last segment of the spline.
+    </td></tr></table></div><p>
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="x_splines"></a>2.2.6.4. x splines</h4></div></div><div></div></div><p>
+    A very nice property of x splines is that they can go through a control point as well as
+    just approximate it.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="basic_x_spline"></a>2.2.6.4.1. basic x spline</h5></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2522732"></a><a class="indexterm" name="id2522743"></a><p>
+      Syntax is:
+    </p><pre class="synopsis"><tt class="function">spline</tt> {
+  <tt class="function">basic_x_spline</tt> [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i>]
+  <i class="parameter"><tt>time_Val_1</tt></i>, &lt;<i class="parameter"><tt>Vector_1</tt></i>&gt; [,]
+  <i class="parameter"><tt>time_Val_2</tt></i>, &lt;<i class="parameter"><tt>Vector_2</tt></i>&gt; [,]
+  ...
+  <i class="parameter"><tt>time_Val_n</tt></i>, &lt;<i class="parameter"><tt>Vector_n</tt></i>&gt;
+}</pre><p>
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top">A <tt class="function">basic_x_spline</tt> needs additional control points before and after the spline. This is
+      required to control the first and last segment of the spline.
+    </td></tr></table></div><p>
+  </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="extended_x_spline"></a>2.2.6.4.2. extended x spline</h5></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2522873"></a><a class="indexterm" name="id2522884"></a><p>
+      The <tt class="function">extended_x_spline</tt> offers the possibility to mix smooth curves and sharp edges in an
+      unrestricted way in one spline.
+    </p><p>
+      Syntax is:
+    </p><pre class="synopsis"><tt class="function">spline</tt> {
+  <tt class="function">extended_x_spline</tt> [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i>]
+  <i class="parameter"><tt>time_Val_1</tt></i>, &lt;<i class="parameter"><tt>Vector_1</tt></i>&gt; [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i> ][,]
+  <i class="parameter"><tt>time_Val_2</tt></i>, &lt;<i class="parameter"><tt>Vector_2</tt></i>&gt; [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i> ][,]
+  ...
+  <i class="parameter"><tt>time_Val_n</tt></i>, &lt;<i class="parameter"><tt>Vector_n</tt></i>&gt; [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i> ]
+}</pre></div><div class="section" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="general_x_spline"></a>2.2.6.4.3. general x spline</h5></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2523049"></a><a class="indexterm" name="id2523060"></a><p>
+      Syntax is:
+    </p><pre class="synopsis"><tt class="function">spline</tt> {
+  <tt class="function">general_x_spline</tt> [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i>]
+  <i class="parameter"><tt>time_Val_1</tt></i>, &lt;<i class="parameter"><tt>Vector_1</tt></i>&gt; [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i> ][,]
+  <i class="parameter"><tt>time_Val_2</tt></i>, &lt;<i class="parameter"><tt>Vector_2</tt></i>&gt; [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i> ][,]
+  ...
+  <i class="parameter"><tt>time_Val_n</tt></i>, &lt;<i class="parameter"><tt>Vector_n</tt></i>&gt; [<tt class="function">freedom_degree</tt> <i class="parameter"><tt>FLOAT</tt></i> ]
+}</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="spline_like_array"></a>2.2.6.5. Spline accessed like array</h4></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2523293"></a><a class="indexterm" name="id2523304"></a><a class="indexterm" name="id2524504"></a><p>
+    Since MegaPOV 1.0 it is possible to read values stored in a <tt class="function">spline</tt> with a notation similar to an <tt class="function">array</tt>.
+    Previously once the <tt class="function">spline</tt> was declared, it was only possible to evaluate it for a specified argument. Now two new
+    usages are possible: you can get the number of entries and read the exact values placed in splines.
+  </p><pre class="synopsis"><i class="parameter"><tt>SPLINE_USAGE</tt></i>:
+  <i class="parameter"><tt>SPLINE_EVALUATION</tt></i> | <i class="parameter"><tt>SPLINE_MEASUREMENT</tt></i> | <i class="parameter"><tt>SPLINE_ENTRY</tt></i>
+
+<i class="parameter"><tt>SPLINE_EVALUATION</tt></i>:
+  <tt class="function">#declare</tt> Spline_Value = MySpline(Val);
+  <tt class="function">#declare</tt> Spline_Value = MySpline(Val, SPLINE_TYPE);
+
+<i class="parameter"><tt>SPLINE_MEASUREMENT</tt></i>:
+  <tt class="function">#declare</tt> Number_Of_Entries = <tt class="function">dimension_size</tt>( MySpline );
+
+<i class="parameter"><tt>SPLINE_ENTRY</tt></i>:
+  <tt class="function">#declare</tt> Float_Time_Parameter = MySpline[ Counter ][ 0 ];
+  <tt class="function">#declare</tt> Vector_Value_Of_Entry = MySpline[ Counter ][ 1 ];</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="transforms"></a>2.2.7. Transforms</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="normal_transform"></a>2.2.7.1. The normal modifier for transforms</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2523388"></a><a class="indexterm" name="id2523398"></a><p>
+    This patch adds a new option to the <tt class="function">transform</tt> syntax
+    that modifies the transform to be suited for transforming normal vectors.
+  </p><p>
+    When a mesh is transformed by the transformation matrix <tt class="function">M</tt>
+    the normals need to be transformed with the transpose of the inverse
+    of <tt class="function">M</tt>.  This is handled automatically by this patch.
+  </p><p>Syntax is:
+	</p><pre class="synopsis"><tt class="function">transform</tt> {
+  ...
+  <tt class="function">normal</tt> <i class="parameter"><tt>on</tt></i>|<i class="parameter"><tt>off</tt></i>
+}</pre><p>
+  </p><p>
+    The default value is <tt class="function">off</tt> so you get a standard transform.
+  </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="references.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="references.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="camera.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 2. MegaPOV References </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.3. Camera</td></tr></table></div></body></html>

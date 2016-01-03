@@ -1,0 +1,89 @@
+===============================================================================
+MegaPOV 1.2.1 for UNIX/Linux, binary linux version (povlinux.tgz) - README file
+
+For the binary distribution for Linux/AMD64
+===============================================================================
+
+This is the README file for the compiled version of MegaPOV 1.2.1 for
+Linux.  Platform specific instructions for POV-Ray can be found in
+README.unix and in chapter 1 of the documentation.
+
+This package contains a statically linked version of MegaPOV 1.2.1
+compiled for the AMD64 platform.  It will run on both AMD CPUs supporting
+these extensions (Athlon 64, Opteron etc.) and Intel CPUs with the compatible
+EM64T extensions.  
+
+Note in contrast to the x86 variant this version is built without SVGALib
+display.
+
+The install script can do both system wide installation (requires root 
+privileges) as well as user level installation.  Installation as root is the 
+recommended method.
+
+###############################################################################
+
+======================
+MegPOV specific notes:
+======================
+
+MegaPOV is a collection of unofficial extensions for the freeware
+raytracer POV-Ray.  It is maintained by a group of POV-Community
+members - the MegaPOV Team.  Up-to-date versions and information can
+be obtained at the MegaPOV website:
+
+http://megapov.inetart.net/
+
+This package contains all files that are necessary to run MegaPOV
+in addition to the offical POV-Ray distribution.  If you do not
+already have a version of POV-Ray installed you have to get one from
+the POV-Ray website:
+
+http://www.povray.org/
+
+otherwise MegaPOV won't function correctly!
+
+If you would like the MegaPOV Documentation in a different format than
+it is supplied in this package you can obtain it separately in a
+different form at the MegaPOV website.
+
+All further information about using MegaPOV can be found in the
+Documentation.
+
+For the conditions for using POV-Ray and modified versions you should
+have a look at the POV-Ray license (povlegal.doc) that is included in
+this package.
+
+This is a unofficial custom version of POV-Ray in terms of this document.
+The POV-Ray Team is not responsible for supporting it.
+
+###############################################################################
+
+======================
+Installation procedure
+======================
+
+  a) Install as root
+
+     From the directory where this file resides, run:
+
+       $ su
+       # ./install
+
+     and follow the instructions.
+
+  b) Install as non-privileged user
+
+     From the directory where this file resides, run:
+
+       $ ./install
+
+     and select 'U' to start a user level install.  Afterwards
+     follow the instructions of the install script.
+
+
+Additional command line options available can be determined by calling:
+
+  ./install --help
+
+
+Christoph Hormann <chris_hormann@gmx.de>, August 2005

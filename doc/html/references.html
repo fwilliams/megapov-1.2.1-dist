@@ -1,0 +1,53 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 2. MegaPOV References</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="index.html" title="MegaPOV Documentation"><link rel="previous" href="where.html" title="1.5. Where do I find MegaPOV?"><link rel="next" href="expressions.html" title="2.2. Expressions"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 2. MegaPOV References</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="where.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="expressions.html">Next</a></td></tr></table><hr></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="references"></a>Chapter 2. MegaPOV References</h2></div></div><div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="references.html#options">2.1. Options</a></span></dt><dd><dl><dt><span class="section"><a href="references.html#frame_step">2.1.1. Frame_Step</a></span></dt><dt><span class="section"><a href="references.html#hdr_write">2.1.2. HDR (High Dynamic Range) image output</a></span></dt></dl></dd><dt><span class="section"><a href="expressions.html">2.2. Expressions</a></span></dt><dd><dl><dt><span class="section"><a href="expressions.html#id2512770">2.2.1. Language directives</a></span></dt><dt><span class="section"><a href="expressions.html#tokens">2.2.2. Built-in tokens</a></span></dt><dt><span class="section"><a href="expressions.html#functions">2.2.3. Functions</a></span></dt><dt><span class="section"><a href="expressions.html#internal_functions">2.2.4. Internal functions</a></span></dt><dt><span class="section"><a href="expressions.html#polynomial_solver">2.2.5. Polynomial solver in parser</a></span></dt><dt><span class="section"><a href="expressions.html#splines">2.2.6. Splines</a></span></dt><dt><span class="section"><a href="expressions.html#transforms">2.2.7. Transforms</a></span></dt></dl></dd><dt><span class="section"><a href="camera.html">2.3. Camera</a></span></dt><dd><dl><dt><span class="section"><a href="camera.html#user_defined_camera">2.3.1. user_defined camera type</a></span></dt></dl></dd><dt><span class="section"><a href="objects.html">2.4. Objects</a></span></dt><dd><dl><dt><span class="section"><a href="objects.html#common_features">2.4.1. Common features</a></span></dt><dt><span class="section"><a href="objects.html#text">2.4.2. Text</a></span></dt><dt><span class="section"><a href="objects.html#cloth">2.4.3. Cloth simulation</a></span></dt><dt><span class="section"><a href="objects.html#isosurface">2.4.4. Isosurface</a></span></dt><dt><span class="section"><a href="objects.html#light">2.4.5. Light Sources</a></span></dt></dl></dd><dt><span class="section"><a href="effects.html">2.5. Effects</a></span></dt><dd><dl><dt><span class="section"><a href="effects.html#glow">2.5.1. Glow</a></span></dt><dt><span class="section"><a href="effects.html#motion_blur">2.5.2. Motion blur</a></span></dt><dt><span class="section"><a href="effects.html#fur">2.5.3. Fur</a></span></dt></dl></dd><dt><span class="section"><a href="patterns.html">2.6. Textures and patterns</a></span></dt><dd><dl><dt><span class="section"><a href="patterns.html#aoi_pattern">2.6.1. Angle of incidence</a></span></dt><dt><span class="section"><a href="patterns.html#listed_pattern">2.6.2. Listed pattern</a></span></dt><dt><span class="section"><a href="patterns.html#projection_pattern">2.6.3. Projection pattern</a></span></dt><dt><span class="section"><a href="patterns.html#displace_warp">2.6.4. Displace warp for patterns</a></span></dt><dt><span class="section"><a href="patterns.html#noisepigment">2.6.5. Noise pigment</a></span></dt><dt><span class="section"><a href="patterns.html#hdr">2.6.6. HDR (High Dynamic Range) image type</a></span></dt><dt><span class="section"><a href="patterns.html#bicubic_image">2.6.7. Bicubic interpolation for images</a></span></dt><dt><span class="section"><a href="patterns.html#camera_view">2.6.8. New camera_view pigment</a></span></dt></dl></dd><dt><span class="section"><a href="global_settings.html">2.7. Global Settings</a></span></dt><dd><dl><dt><span class="section"><a href="global_settings.html#film_exposure">2.7.1. Film exposure simulation</a></span></dt><dt><span class="section"><a href="global_settings.html#tone_mapping">2.7.2. Custom tone mapping function</a></span></dt><dt><span class="section"><a href="global_settings.html#radiosity">2.7.3. Radiosity</a></span></dt><dt><span class="section"><a href="global_settings.html#mechsim">2.7.4. Mechanics simulation patch</a></span></dt><dt><span class="section"><a href="global_settings.html#post_processing">2.7.5. Post processing</a></span></dt></dl></dd></dl></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="options"></a>2.1. Options</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="frame_step"></a>2.1.1. <tt class="function">Frame_Step</tt></h3></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2450283"></a><a class="indexterm" name="id2450254"></a><p>
+    The <tt class="function">Frame_Step</tt>=<i class="parameter"><tt>n</tt></i> (<tt class="function">+STP</tt><i class="parameter"><tt>n</tt></i>)
+    option introduces breaks in the order of rendered steps.
+    It splits the order of rendered frames into a 'virtual' and a 'real' order.
+  </p><p>
+    'Virtual' order is the same as the traditional (used in <span class="trademark">POV-Ray</span>&#8482; 3.5) order
+    described with <tt class="function">Initial_Frame</tt>, <tt class="function">Final_Frame</tt>,
+    <tt class="function">Initial_Clock</tt>, <tt class="function">Final_Clock</tt>,
+    <tt class="function">Subset_Start_Frame</tt>, <tt class="function">Subset_End_Frame</tt>.
+    This order is what the scripts reads from <tt class="function">initial_frame</tt>, <tt class="function">clock_delta</tt>
+    and other animation related build-in tokens in SDL.
+  </p><p>
+    'Real' order is a  subset of 'virtual' order. It is every <span class="emphasis"><em>n</em></span>-th
+    frame where <span class="emphasis"><em>n</em></span> is the value of <tt class="function">Frame_Step</tt>. Selected
+    frames are reordered (with ascending or descending order) according to
+    the sign of <tt class="function">Frame_Step</tt> option.
+  </p><p>
+    <tt class="function">Frame_Step</tt> is supposed to use parallel rendering over one source
+    with one location shared between instances of renderer.
+  </p><div class="example"><a name="id2513282"></a><p class="title"><b>Example 2.1. Influence of <tt class="function">Frame_Step</tt> on generated files</b></p><p>
+      The following command line:
+      </p><pre class="screen">megapov +Iscene.pov Initial_Frame=1 Final_Frame=5 +FN</pre><p>
+      causes the creation of files in such order:
+      </p><pre class="screen">scene1.png
+scene2.png
+scene3.png
+scene4.png
+scene5.png</pre><p>
+      while when using <tt class="function">Frame_Step</tt>:
+      </p><pre class="screen">megapov +Iscene.pov Initial_Frame=1 Final_Frame=5 +FN Frame_Step=-2</pre><p>
+      causes a subset of it in the following order:
+      </p><pre class="screen">scene5.png
+scene3.png
+scene1.png</pre><p>
+    </p></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      <tt class="function">Frame_Step</tt> different than <i class="parameter"><tt>1</tt></i> works fine for
+      those animations where variables are not passed between frames when using
+      external files and where the next frame does not use values derived from a previous
+      (in the meaning of virtual order) frame by other ways.
+    </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="hdr_write"></a>2.1.2. HDR (High Dynamic Range) image output</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2512248"></a><a class="indexterm" name="id2512270"></a><p>
+    Apart from reading HDR images as image maps (see <a href="patterns.html#hdr" title="2.6.6. HDR (High Dynamic Range) image type">Section 2.6.6, &#8220;HDR (High Dynamic Range) image type&#8221;</a>)
+    MegaPOV also supports this file format for image output.  Further information
+    on this file format can be found in <a href="patterns.html#hdr" title="2.6.6. HDR (High Dynamic Range) image type">Section 2.6.6, &#8220;HDR (High Dynamic Range) image type&#8221;</a> as well.
+  </p><p>
+    The file format identification character is <tt class="function">H</tt>.
+    Writing this file format is activated by the command line option
+
+    </p><pre class="programlisting">+FH</pre><p>
+
+    or the ini option
+
+    </p><pre class="programlisting">Output_File_Type=H</pre><p>
+  </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="where.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="expressions.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">1.5. Where do I find MegaPOV? </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.2. Expressions</td></tr></table></div></body></html>

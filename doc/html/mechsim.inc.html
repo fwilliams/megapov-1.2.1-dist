@@ -1,0 +1,830 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>3.4. The 'mechsim.inc' include file</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="include.html" title="Chapter 3. MegaPOV Include files"><link rel="previous" href="mp_types.inc.html" title="3.3. The 'mp_types.inc' include file"><link rel="next" href="inc_pprocess.inc.html" title="3.5. The 'pprocess.inc' include file"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.4. The 'mechsim.inc' include file</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mp_types.inc.html">Prev</a> </td><th width="60%" align="center">Chapter 3. MegaPOV Include files</th><td width="20%" align="right"> <a accesskey="n" href="inc_pprocess.inc.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mechsim.inc"></a>3.4. The '<tt class="filename">mechsim.inc</tt>' include file</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><p>
+    This part describes the <tt class="filename">mechsim.inc</tt>
+    include file that comes with MegaPOV and contains
+    various macros simplifying the use of the mechanics simulation
+    features.
+  </p><p>
+    The <tt class="filename">mechsim.inc</tt> include file contains
+    several macros so simplify the generation of simulation
+    topologies as well as macros building <span class="trademark">POV-Ray</span>&#8482;
+    objects representing the simulation data.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="mechsim_inc_general"></a>3.4.1. general aspects</h3></div></div><div></div></div><p>
+      At the beginning of the file there are various declarations of textures
+      and other things that are used by the macros.  In most cases you can
+      override the default values by declaring the identifiers differently before
+      including the file.
+    </p><p>
+      <tt class="function">MSIM_INCLUDE_VERSION</tt>
+      <a class="indexterm" name="id2568241"></a>
+    </p><p>
+      The version number of the <tt class="filename">mechsim.inc</tt> include file.
+    </p><p>
+      <tt class="function">No_Trans</tt>
+      <a class="indexterm" name="id2568273"></a>
+    </p><p>
+      A dummy transform that can be used in the topology generation macros
+      (see <a href="mechsim.inc.html#mechsim_inc_topology" title="3.4.5. The topology generation macros">Section 3.4.5, &#8220;The topology generation macros&#8221;</a>)
+      if no transform is supposed to be used.
+    </p><p>
+      <tt class="function">No_Fixed</tt>
+      <a class="indexterm" name="id2568309"></a>
+    </p><p>
+      A dummy fixation function for topology generation macros 
+      (see <a href="mechsim.inc.html#mechsim_inc_topology" title="3.4.5. The topology generation macros">Section 3.4.5, &#8220;The topology generation macros&#8221;</a>) that does not fix any masses.
+    </p><p>
+      <tt class="function">No_Attach</tt>
+      <a class="indexterm" name="id2569215"></a>
+    </p><p>
+      A dummy attach function for topology generation macros 
+      (see <a href="mechsim.inc.html#mechsim_inc_topology" title="3.4.5. The topology generation macros">Section 3.4.5, &#8220;The topology generation macros&#8221;</a>) that does not attach any masses.
+    </p><p>
+      <tt class="function">No_Force</tt>
+      <a class="indexterm" name="id2569249"></a>
+    </p><p>
+      A dummy force function for topology generation macros 
+      (see <a href="mechsim.inc.html#mechsim_inc_topology" title="3.4.5. The topology generation macros">Section 3.4.5, &#8220;The topology generation macros&#8221;</a>) that does not apply custom forces to any masses.
+    </p><p>
+      <tt class="function">MSim_File_Decimals</tt>
+      <a class="indexterm" name="id2569283"></a>
+    </p><p>
+      The number of decimal places to be written to files for coordinates.
+      Default value is <tt class="literal">12</tt>.
+    </p><p>
+      <tt class="function">MSim_Test_Render</tt>
+      <a class="indexterm" name="id2569316"></a>
+    </p><p>
+      If <tt class="function">true</tt> reflection is turned off for the textures in
+      this include file. Default value is <tt class="function">false</tt>.
+    </p><p>
+      <tt class="function">MSim_Tex_N</tt>
+      <a class="indexterm" name="id2569356"></a>
+    </p><p>
+      Texture to be used for texturing the nodes (masses) of the simulation
+      topology.  A grey metallic texture by default.
+    </p><p>
+      <tt class="function">MSim_Tex_C</tt>
+      <a class="indexterm" name="id2569384"></a>
+    </p><p>
+      Texture to be used for texturing the connections of the simulation
+      topology.  A gold metallic texture by default.
+    </p><p>
+      <tt class="function">MSim_Tex_Mesh</tt>
+      <a class="indexterm" name="id2569411"></a>
+    </p><p>
+      Texture to be used for texturing the faces of the simulation
+      topology.  A bluish metallic texture by default.
+    </p><p>
+      <tt class="function">fn_Stress_CM</tt>
+      <a class="indexterm" name="id2569439"></a>
+    </p><p>
+      Color map function to use for visualizing the stress in
+      simulation topologies.  A color (pigment) function is used here.  It is
+      evaluated in x-direction between 0 and 1.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="mechsim_inc_const"></a>3.4.2. constants</h3></div></div><div></div></div><p>
+      Several constants are defined at the beginning of <tt class="filename">mechsim.inc</tt>.
+      They correspond to constants in the source code and can be used for selecting methods
+      and techniques in the mechsim system instead of literal values.
+    </p><p>
+      <a class="indexterm" name="id2569488"></a>
+      <a class="indexterm" name="id2569498"></a>
+      <a class="indexterm" name="id2569510"></a>
+      <a class="indexterm" name="id2569521"></a>
+      </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="function">MECHSIM_METHOD_EULER</tt> (<tt class="constant">1</tt>)</li><li><tt class="function">MECHSIM_METHOD_HEUN</tt> (<tt class="constant">2</tt>)</li><li><tt class="function">MECHSIM_METHOD_RUNGE_KUTTA4</tt> (<tt class="constant">3</tt>)</li><li><tt class="function">MECHSIM_METHOD_GRADIENT</tt> (<tt class="constant">4</tt>)</li></ul></div><p>
+
+      <a class="indexterm" name="id2569598"></a>
+      <a class="indexterm" name="id2569609"></a>
+      <a class="indexterm" name="id2569620"></a>
+      </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="function">MECHSIM_COLLISION_NONE</tt> (<tt class="constant">0</tt>)</li><li><tt class="function">MECHSIM_COLLISION_ALL</tt> (<tt class="constant">1</tt>)</li><li><tt class="function">MECHSIM_COLLISION_GROUP</tt> (<tt class="constant">2</tt>)</li></ul></div><p>
+
+      <a class="indexterm" name="id2569682"></a>
+      <a class="indexterm" name="id2569694"></a>
+      </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="function">MECHSIM_ENV_METHOD_FORCE</tt> (<tt class="constant">1</tt>)</li><li><tt class="function">MECHSIM_ENV_METHOD_IMPACT</tt> (<tt class="constant">2</tt>)</li></ul></div><p>
+
+      <a class="indexterm" name="id2569741"></a>
+      <a class="indexterm" name="id2569752"></a>
+      <a class="indexterm" name="id2569764"></a>
+      <a class="indexterm" name="id2569775"></a>
+      </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="function">MECHSIM_COLLISION_BOUNDING_NO</tt> (<tt class="constant">0</tt>)</li><li><tt class="function">MECHSIM_COLLISION_BOUNDING_AUTO</tt> (<tt class="constant">1</tt>)</li><li><tt class="function">MECHSIM_COLLISION_BOUNDING_BOX</tt> (<tt class="constant">2</tt>)</li><li><tt class="function">MECHSIM_COLLISION_BOUNDING_HASH</tt> (<tt class="constant">3</tt>)</li></ul></div><p>
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="mechsim_inc_vector_function"></a>3.4.3. The <tt class="function">Vector_Function()</tt> macro</h3></div></div><div></div></div><a class="indexterm" name="id2569874"></a><p>
+      <span class="trademark">POV-Ray</span>&#8482; does not allow to directly define custom vector functions.
+      With pigment functions it is possible to generate a vector function from
+      three float functions though.  The way this macro works makes it necessary
+      to have a limited range for the function values.
+      <tt class="function">Vector_Function()</tt> is a wrapper macro for
+      <tt class="function">Vector_Function_Range()</tt> using a default range of
+      <tt class="function">1e6</tt>.
+      If necessary this can be changed by declaring a different value for
+      <tt class="function">MSim_Fn_Range</tt> before including
+      <tt class="filename">mechsim.inc</tt>.
+    </p><p>
+      The <tt class="function">Vector_Function()</tt> macro is
+      used the following way:
+
+      </p><pre class="programlisting">#declare Fn_Vector=
+  function {
+    Vector_Function(
+      function { x },
+      function { x*x },
+      function { 0 }
+    )
+  }</pre><p>
+
+      where the three functions define the return vector's x, y and z
+      components.
+    </p><p>
+      The mechanics simulation patch uses vector functions in the
+      field feature (see <a href="global_settings.html#mechsim_field" title="2.7.4.1.6. Field forces">Section 2.7.4.1.6, &#8220;Field forces&#8221;</a>).
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="mechsim_inc_object"></a>3.4.4. The Object generation macros</h3></div></div><div></div></div><p>
+      These macros generate <span class="trademark">POV-Ray</span>&#8482; objects from the simulation data.  There are
+      macros for general topology visualization and specific macros for
+      generating meshes from patch/box/sphere topologies created with the 
+      corresponding generation macros.
+    </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_Objects"></a>3.4.4.1. MechSim_Show_Objects()</h4></div></div><div></div></div><a class="indexterm" name="id2570009"></a><div class="informalfigure"><div align="right"><img src="img/macro01.png" align="right"></div></div><p>
+        This macro generates <span class="trademark">POV-Ray</span>&#8482; shapes for all masses and connections or faces
+        from a certain range of the simulation data.
+      </p><p>
+        Depending on the value of the <tt class="function">Show_Faces</tt> parameter
+        the macro will either generate a union of cylinders and spheres representing
+        the masses and connections or a mesh with triangles representing the faces.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Start_Mass_Index</tt>,
+          <tt class="function">Start_Connection_Index</tt>,
+          <tt class="function">Start_Face_Index</tt> - the starting
+          indices of the range of simulation elements that
+          should be displayed by the macro.
+        </p></li><li><p>
+          <tt class="function">End_Mass_Index</tt>,
+          <tt class="function">End_Connection_Index</tt>,
+          <tt class="function">End_Face_Index</tt> - the end indices of the range
+          of simulation elements that should be displayed by the macro.
+          If one of this values is <tt class="function">&lt;0</tt> all elements until
+          the last one are displayed.
+        </p></li><li><p>
+          <tt class="function">Connect_Rad</tt> - the radius to use for the connections.
+          If this value is <tt class="function">&lt;0</tt> the macro uses
+          <tt class="function">0.4*</tt> the mass radius for this.  If this value
+          is 0 no cylinders are generated for the connections.
+        </p></li><li><p>
+          <tt class="function">Show_Faces</tt> - if <tt class="function">true</tt> only a mesh
+          representing the faces is generated.  If <tt class="function">false</tt>
+          connections are represented by cylinders and masses by
+          spheres.
+        </p></li><li><p>
+          <tt class="function">Stress_Fact</tt> - if <tt class="function">&gt;0</tt> the connections
+          are textured to visualize the stress.  The
+          <tt class="function">fn_Stress_CM</tt> function is used for the colors.
+          The extension from relaxed length is scaled with this
+          factor. If this value is <tt class="function">&lt;0</tt> the connections
+          are textured with <tt class="function">MSim_Tex_C</tt>.
+        </p></li><li><p>
+          <tt class="function">File_Name</tt> - file name string.  If its length is
+          zero file writing is turned off, otherwise the geometry is
+          written to a file with that name in addition.
+        </p></li></ul></div><div class="example"><a name="id2570246"></a><p class="title"><b>Example 3.1. MechSim_Show_Objects() macro usage</b></p><p>show all masses and connections:</p><pre class="programlisting">MechSim_Show_Objects(0, 0, 0, -1, -1, -1, -1, false, -1, "")</pre><p>declare an object of all faces</p><pre class="programlisting">#declare Obj=MechSim_Show_Objects(0, 0, 0, -1, -1, -1, -1, true, -1, "")</pre><p>
+          show a subset of connections and faces, texture connections
+          to visualize stress, write objects to file:
+        </p><pre class="programlisting">MechSim_Show_Objects(0, 0, 0, 100, 300, 0, -1, false, 120, "sim01.inc")</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_All_Objects"></a>3.4.4.2. MechSim_Show_All_Objects()</h4></div></div><div></div></div><a class="indexterm" name="id2570311"></a><div class="informalfigure"><div align="right"><img src="img/macro02.png" align="right"></div></div><p>
+        Variation of the <tt class="function">MechSim_Show_Objects()</tt> macro displaying
+        all elements of the current simulation data.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Connect_Rad</tt> - the radius to use for the connections.
+          If this value is <tt class="function">&lt;0</tt> the macro uses
+          <tt class="function">0.4*</tt> the mass radius for this.  If this value
+          is 0 no cylinders are generated for the connections.
+        </p></li><li><p>
+          <tt class="function">Show_Faces</tt> - if <tt class="function">true</tt> only a mesh
+          representing the faces is generated.  If <tt class="function">false</tt>
+          connections are represented by cylinders and masses by
+          spheres.
+        </p></li><li><p>
+          <tt class="function">Stress_Fact</tt> - if <tt class="function">&gt;0</tt> the connections
+          are textured to visualize the stress.  The
+          <tt class="function">fn_Stress_CM</tt> function is used for the colors.
+          The extension from relaxed length is scaled with this
+          factor. If this value is <tt class="function">&lt;0</tt> the connections
+          are textured with <tt class="function">MSim_Tex_C</tt>.
+        </p></li><li><p>
+          <tt class="function">File_Name</tt> - file name string.  If its length is
+          zero file writing is turned off, otherwise the geometry is
+          written to a file with that name in addition.
+        </p></li></ul></div><div class="example"><a name="id2570472"></a><p class="title"><b>Example 3.2. MechSim_Show_All_Objects() macro usage</b></p><p>show all masses and connections:</p><pre class="programlisting">MechSim_Show_All_Objects(-1, false, -1, "")</pre><p>declare an object of all faces:</p><pre class="programlisting">#declare Obj=MechSim_Show_All_Objects(-1, true, -1, "")</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_All_Default"></a>3.4.4.3. MechSim_Show_All_Default()</h4></div></div><div></div></div><a class="indexterm" name="id2570519"></a><div class="informalfigure"><div align="right"><img src="img/macro02.png" align="right"></div></div><p>
+        Variation of the <tt class="function">MechSim_Show_All_Objects()</tt> using default values
+        for all parameters.  If there are faces in the simulation data only faces are shown, otherwise
+        connections and masses.  No file is written.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_Grid"></a>3.4.4.4. MechSim_Show_Grid()</h4></div></div><div></div></div><a class="indexterm" name="id2570576"></a><div class="informalfigure"><div align="right"><img src="img/macro10c.png" align="right"></div></div><p>
+        This macro generates a mesh from the outer surface of a grid topology created with the
+        <tt class="function">MechSim_Generate_Grid()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid" title="3.4.5.5. MechSim_Generate_Grid()">Section 3.4.5.5, &#8220;MechSim_Generate_Grid()&#8221;</a>). 
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Start_Face_Index</tt> - the index of the first face that is
+          part of the patch.  This should be stored when the patch is
+          generated.  The other starting indices are calculated
+          internally.
+        </p></li><li><p>
+          <tt class="function">XSize, YSize, ZSize</tt> - size of the grid, number of nodes in
+          x-, y- and z-direction.
+        </p></li><li><p>
+          <tt class="function">Smooth</tt> - if <tt class="function">true</tt> normal vectors are generated
+          so the mesh is smoothed.
+        </p></li><li><p>
+          <tt class="function">UV</tt> - if <tt class="function">true</tt> uv-coordinates are generated
+          This options currently has no effect.
+        </p></li><li><p>
+          <tt class="function">Stress_Fact</tt> - if <tt class="function">&gt;0</tt> the triangles
+          of the mesh are textured on per vertex basis to visualize
+          the stress.  The <tt class="function">fn_Stress_CM</tt> function is used
+          for the colors. The connection's extension from relaxed length
+          is scaled with this factor. If this value is <tt class="function">&lt;0</tt>
+          the whole mesh is textured with <tt class="function">MSim_Tex_Mesh</tt>.
+        </p></li><li><p>
+          <tt class="function">File_Name</tt> - file name string.  If its length is
+          zero file writing is turned off, otherwise the geometry is
+          written to a file with that name in addition.
+        </p></li></ul></div><div class="example"><a name="id2570757"></a><p class="title"><b>Example 3.3. MechSim_Show_Grid() macro usage</b></p><p>show a 5x5x5 grid with smoothing:</p><pre class="programlisting">MechSim_Show_Patch(0, 5, 5, 5, true, false, -1, "")</pre><p>
+          declare an object for the grid, generate normal vectors, 
+          texture with stress visualization and write the results to a file:
+        </p><pre class="programlisting">#declare Obj=MechSim_Show_Patch(0, 50, 50, true, true, 10, "sim01.inc")</pre></div><p>
+        Here a comparison between the different methods and variations:
+      </p><div class="table"><a name="id2570798"></a><p class="title"><b>Table 3.1. MechSim_Show_Grid() variations</b></p><table summary="MechSim_Show_Grid() variations" border="0" style="border-collapse: collapse;"><colgroup><col><col><col></colgroup><tbody><tr><td style="" align="center"><div><img src="img/macro10a.png"></div></td><td style="" align="center"><div><img src="img/macro10b.png"></div></td><td style="" align="center"><div><img src="img/macro10c.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>cylinders and spheres</em></span></td><td style="" align="center"><span class="emphasis"><em>cylinders and spheres (stress visualization)</em></span></td><td style="" align="center"><span class="emphasis"><em>face triangles</em></span></td></tr><tr><td style="" align="center"><div><img src="img/macro10c.png"></div></td><td style="" align="center"><div><img src="img/macro10d.png"></div></td><td style="" align="center"><div><img src="img/macro10e.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>no smooth</em></span></td><td style="" align="center"><span class="emphasis"><em>smooth</em></span></td><td style="" align="center"><span class="emphasis"><em>stress visualization</em></span></td></tr></tbody></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_Patch"></a>3.4.4.5. MechSim_Show_Patch()</h4></div></div><div></div></div><a class="indexterm" name="id2570949"></a><div class="informalfigure"><div align="right"><img src="img/macro03c.png" align="right"></div></div><p>
+        This macro generates a mesh from the patch topology created with the
+        <tt class="function">MechSim_Generate_Patch()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Patch" title="3.4.5.13. MechSim_Generate_Patch()">Section 3.4.5.13, &#8220;MechSim_Generate_Patch()&#8221;</a>).  The mesh
+        is generated in form of the new <tt class="function">mesh2</tt> type and optionally includes
+        uv- and normal data depending on the parameters.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Start_Face_Index</tt> - the index of the first face that is
+          part of the patch.  This should be stored when the patch is
+          generated.  The other starting indices are calculated
+          internally.
+        </p></li><li><p>
+          <tt class="function">XSize, YSize</tt> - size of the patch, number of nodes in
+          x- and y-direction.
+        </p></li><li><p>
+          <tt class="function">Smooth</tt> - if <tt class="function">true</tt> normal vectors are generated
+          so the mesh is smoothed.
+        </p></li><li><p>
+          <tt class="function">UV</tt> - if <tt class="function">true</tt> uv-coordinates are generated
+          ranging from 0 to 1 in x-Direction (range in y-Direction
+          depends on the ratio of XSize to YSize).
+        </p></li><li><p>
+          <tt class="function">Stress_Fact</tt> - if <tt class="function">&gt;0</tt> the triangles
+          of the mesh are textured on per vertex basis to visualize
+          the stress.  The <tt class="function">fn_Stress_CM</tt> function is used
+          for the colors. The connection's extension from relaxed length
+          is scaled with this factor. If this value is <tt class="function">&lt;0</tt>
+          the whole mesh is textured with <tt class="function">MSim_Tex_Mesh</tt>.
+        </p></li><li><p>
+          <tt class="function">File_Name</tt> - file name string.  If its length is
+          zero file writing is turned off, otherwise the geometry is
+          written to a file with that name in addition.
+        </p></li></ul></div><div class="example"><a name="id2571142"></a><p class="title"><b>Example 3.4. MechSim_Show_Patch() macro usage</b></p><p>show a 50x50 patch with smoothing:</p><pre class="programlisting">MechSim_Show_Patch(0, 50, 50, true, false, -1, "")</pre><p>
+          declare an object for the patch, generate uv coordinates
+          and normal vectors, write the results to a file:
+        </p><pre class="programlisting">#declare Obj=MechSim_Show_Patch(0, 50, 50, true, true, -1, "sim01.inc")</pre></div><p>
+        Here a comparison between the different methods and variations:
+      </p><div class="table"><a name="id2571182"></a><p class="title"><b>Table 3.2. MechSim_Show_Patch() variations</b></p><table summary="MechSim_Show_Patch() variations" border="0" style="border-collapse: collapse;"><colgroup><col><col><col></colgroup><tbody><tr><td style="" align="center"><div><img src="img/macro03a.png"></div></td><td style="" align="center"><div><img src="img/macro03b.png"></div></td><td style="" align="center"><div><img src="img/macro03f.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>cylinders and spheres</em></span></td><td style="" align="center"><span class="emphasis"><em>face triangles</em></span></td><td style="" align="center"><span class="emphasis"><em>patch macro (stress visualization)</em></span></td></tr><tr><td style="" align="center"><div><img src="img/macro03d.png"></div></td><td style="" align="center"><div><img src="img/macro03e.png"></div></td><td style="" align="center"><div><img src="img/macro03c.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>no smooth, no uv</em></span></td><td style="" align="center"><span class="emphasis"><em>smooth</em></span></td><td style="" align="center"><span class="emphasis"><em>uv mapped</em></span></td></tr></tbody></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_Sphere"></a>3.4.4.6. MechSim_Show_Sphere()</h4></div></div><div></div></div><a class="indexterm" name="id2571334"></a><div class="informalfigure"><div align="right"><img src="img/macro11.png" align="right"></div></div><p>
+        This macro generates a mesh from the outer surface of a grid topology created with the
+        <tt class="function">MechSim_Generate_Sphere()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Sphere" title="3.4.5.18. MechSim_Generate_Sphere()">Section 3.4.5.18, &#8220;MechSim_Generate_Sphere()&#8221;</a>). 
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Start_Face_Index</tt> - the index of the first face that is
+          part of the patch.  This should be stored when the patch is
+          generated.  The other starting indices are calculated
+          internally.
+        </p></li><li><p>
+          <tt class="function">Face_Count</tt> - number of faces of the sphere.
+        </p></li><li><p>
+          <tt class="function">Smooth</tt> - if <tt class="function">true</tt> normal vectors are generated
+          so the mesh is smoothed.
+        </p></li><li><p>
+          <tt class="function">UV</tt> - if <tt class="function">true</tt> uv-coordinates are generated
+          This options currently has no effect.
+        </p></li><li><p>
+          <tt class="function">Stress_Fact</tt> - if <tt class="function">&gt;0</tt> the triangles
+          of the mesh are textured on per vertex basis to visualize
+          the stress.  This options currently has no effect.
+        </p></li><li><p>
+          <tt class="function">File_Name</tt> - file name string.  If its length is
+          zero file writing is turned off, otherwise the geometry is
+          written to a file with that name in addition.
+        </p></li></ul></div><div class="example"><a name="id2571493"></a><p class="title"><b>Example 3.5. MechSim_Show_Sphere() macro usage</b></p><p>show a sphere that is the only topology element in the current simulation:</p><pre class="programlisting">MechSim_Show_Sphere(0, mechsim:face_count, false, false, -1, "")</pre><p>
+          declare an object for the grid, generate normal vectors and write the results to a file:
+        </p><pre class="programlisting">#declare Obj=MechSim_Show_Sphere(0, mechsim:face_count, true, false, -1, "sim01.inc")</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_Con"></a>3.4.4.7. MechSim_Show_Con()</h4></div></div><div></div></div><a class="indexterm" name="id2571544"></a><p>
+        This macro generates a cylinder for a single connection.  In contrast to the other
+        macros the cylinder is generated without texture. 
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Idx</tt> - the index of the connection to generate the cylinder for.
+        </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Show_Con_VE"></a>3.4.4.8. MechSim_Show_Con_VE()</h4></div></div><div></div></div><a class="indexterm" name="id2571596"></a><p>
+        This macro generates a cylinder for a single viscoelastic connection.  In contrast to the other
+        macros the cylinder is generated without texture. 
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Idx</tt> - the index of the connection to generate the cylinder for.
+        </p></li></ul></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="mechsim_inc_topology"></a>3.4.5. The topology generation macros</h3></div></div><div></div></div><p>
+      These macros are supposed to be placed in the <tt class="function">topology{}</tt>
+      block of the <tt class="function">mechsim{}</tt> section.  They generate the masses,
+      connections and faces for certain geometries.
+    </p><p>
+      For most shapes there are low level macros that allow detailed control
+      of the properties of the generated topologies as well as higher level
+      wrapper macros that set certain parameters to default values.
+    </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_Connect_Arr"></a>3.4.5.1. Explanation of the <tt class="function">Connect_Arr</tt> parameter</h4></div></div><div></div></div><p>
+        Most of the lower level macros have a parameter named <tt class="function">Connect_Arr</tt>.  This is an
+        <tt class="function">array</tt> containing weighting factors for the different connections in.
+      </p><p>
+        The objects generated by the macros have different types of connections: axis-parallel
+        connections, 2D and 3D diagonal connections and possibly bending connections.  How
+        these connections are weighted influences the properties of the object and can be
+        controlled by the values in this array.  Which value refers to which type of connection
+        depends on the macro and is mentioned in the macro description.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_VE_Elements"></a>3.4.5.2. Explanation of the <tt class="function">VE_Elements</tt> parameter</h4></div></div><div></div></div><p>
+        The <tt class="function">VE_Elements</tt> parameter has to be specified for all macros
+        generating viscoelastic connections (see <a href="global_settings.html#mechsim_topo_viscoelastic" title="2.7.4.1.4.4. Viscoelastic connections">Section 2.7.4.1.4.4, &#8220;Viscoelastic connections&#8221;</a>).
+      </p><p>
+        It is a 2d array containing the stiffness and damping values of all the maxwell elements
+        of the viscoelastic connections.  The first index specifies the number of the maxwell element
+        (and the size of the array sets the number of maxwell elements).  The size of the array
+        in the second dimension should be 2 - the first value is the stiffness and the second the damping.
+      </p><div class="example"><a name="id2571774"></a><p class="title"><b>Example 3.6. VE_Elements array generation</b></p><p>
+          The following code generates a <tt class="function">VE_Elements</tt> array for a viscolastic connection
+          with 3 maxwell elements
+        </p><pre class="programlisting">#declare VE_Elements1=array[3][2]
+				#declare VE_Elements1[0][0]=2000;
+				#declare VE_Elements1[0][1]=240000;
+				#declare VE_Elements1[1][0]=7000;
+				#declare VE_Elements1[1][1]=12000;
+				#declare VE_Elements1[2][0]=120000;
+				#declare VE_Elements1[2][1]=1600;</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Grid_Fn"></a>3.4.5.3. MechSim_Generate_Grid_Fn()</h4></div></div><div></div></div><a class="indexterm" name="id2571819"></a><div class="informalfigure"><div align="right"><img src="img/macro04.png" align="right"></div></div><p>
+        This macro generates 3D rectangular grid of masses with connections and
+        optionally faces on the outside.  The density of the masses as well as the
+        stiffness and damping of the connections can be varied with functions.
+        Additional functions control the fixed and attached masses.
+      </p><p>
+        The generated box starts at the origin and extends in positive x, y and
+        z-direction.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">fn_Density</tt> - user defined function controlling the
+          density of the masses.  x, y and z are evaluated in [0..1]
+          range.
+        </p></li><li><p>
+          <tt class="function">fn_Stiffness</tt> - user defined function controlling the
+          stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">fn_Damping</tt> - user defined function controlling the
+          damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - if <tt class="function">true</tt> faces are generated on the
+          outside shape.
+        </p></li><li><p>
+          <tt class="function">Cube_Scale</tt> - 3D vector controlling the distances
+          in the grid. It defines the size of an elementary cell.
+        </p></li><li><p>
+          <tt class="function">Grid_Size</tt> - 3D vector containing the number of masses
+          in all three directions.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">fn_Fixed</tt> - user defined function controlling whether
+          the masses are fixed or not.  x, y and z are evaluated in [0..1].  
+          If the function value at a mass position is &gt;0 the mass is fixed.
+        </p></li><li><p>
+          <tt class="function">fn_Attach</tt> - user defined function controlling
+          the mass attachments.  x, y and z are evaluated in [0..1].  
+          The function value represents the mass attachment index.
+        </p></li><li><p>
+          <tt class="function">fn_Force</tt> - user defined function controlling
+          the custom forces.  x, y and z are evaluated in [0..1].  
+          The function value represents the mass force index.
+        </p></li><li><p>
+          <tt class="function">Connect_Arr</tt> - Array containing weights for connection
+          stiffness and damping.  Meaning of the array fields is described
+          below.
+        </p></li></ul></div><h5><a name="id2572057"></a>meaning of the 'Connect_Arr' entries:</h5><p>
+        See also <a href="mechsim.inc.html#mechsim_inc_Connect_Arr" title="3.4.5.1. Explanation of the Connect_Arr parameter">Section 3.4.5.1, &#8220;Explanation of the Connect_Arr parameter&#8221;</a>. If the first
+        entry is <tt class="literal">0</tt> no connections are generated.  The individual
+        entries are used for the following connections. Only connections up to the
+        size of the array are generated.
+      </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="literal">0</tt> - axis-parallel connections.</li><li><tt class="literal">1</tt> - the first diagonal connection in each grid rectangle.</li><li><tt class="literal">2</tt> - the second diagonal connection in each grid rectangle.</li><li><tt class="literal">3</tt> - the 3d diagonal connections.</li></ul></div><p>The following pictures illustrate the different sizes of the array:</p><div class="table"><a name="id2572139"></a><p class="title"><b>Table 3.3. MechSim_Show_Patch() variations</b></p><table summary="MechSim_Show_Patch() variations" border="0" style="border-collapse: collapse;"><colgroup><col><col><col></colgroup><tbody><tr><td style="" align="center"><div><img src="img/macro05a.png"></div></td><td style="" align="center"><div><img src="img/macro05b.png"></div></td><td style="" align="center"><div><img src="img/macro05c.png"></div></td></tr><tr><td style="" align="center"><span class="emphasis"><em>0 (first element zero)</em></span></td><td style="" align="center"><span class="emphasis"><em>array size 1</em></span></td><td style="" align="center"><span class="emphasis"><em>array size 2</em></span></td></tr><tr><td style="" align="center"><div><img src="img/macro05d.png"></div></td><td style="" align="center"><div><img src="img/macro05e.png"></div></td><td style="" align="center"> </td></tr><tr><td style="" align="center"><span class="emphasis"><em>array size 3</em></span></td><td style="" align="center"><span class="emphasis"><em>array size 4</em></span></td><td style="" align="center"> </td></tr></tbody></table></div><div class="example"><a name="id2572269"></a><p class="title"><b>Example 3.7. MechSim_Generate_Grid_Fn() macro usage</b></p><p>
+          generate a 4x4x4 masses grid with double diagonal connections
+          and increasing stiffness and damping in x-direction.
+        </p><pre class="programlisting">#declare Con_Array=array[3]
+#declare Con_Array[0]=1;
+#declare Con_Array[1]=1;
+#declare Con_Array[2]=1;
+
+#declare fn_Density=function(x, y, z) { 32000 }
+#declare fn_Stiffness=function(x, y, z) { 1000 + x*1500 }
+#declare fn_Damping=function(x, y, z) { 2000 + x*1500 }
+#declare fn_Fixed=function { -1 }
+#declare fn_Attach=function { -1 }
+
+
+MechSim_Generate_Grid_Fn(&lt;0, 0, 0&gt;, 0.08, fn_Density, fn_Stiffness, fn_Damping,
+                         true, &lt;0.4, 0.4, 0.4&gt;, &lt;4, 4, 4&gt;, No_Trans, fn_Fixed, fn_Attach, Con_Array)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Grid_Fn_VE"></a>3.4.5.4. MechSim_Generate_Grid_Fn_VE()</h4></div></div><div></div></div><a class="indexterm" name="id2572317"></a><p>
+        Variant of <tt class="function">MechSim_Generate_Grid_Fn()</tt> generating viscoelastic 
+        connections instead of normal connections.  Parameters are the same but instead of
+        <tt class="function">fn_Damping</tt> there are the following:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+          <tt class="function">VE_Elements</tt> - array with the parameters for viscoelastic connections
+          (see above for description).
+        </p></li><li><p>
+          <tt class="function">VE_Accuracy</tt> - accuracy value for viscoelastic connections.
+        </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Grid"></a>3.4.5.5. MechSim_Generate_Grid()</h4></div></div><div></div></div><a class="indexterm" name="id2572392"></a><div class="informalfigure"><div align="right"><img src="img/macro04.png" align="right"></div></div><p>This macro generates 3D rectangular grid of masses with connections and
+        optionally faces on the outside.  In contrast to the
+        <tt class="function">MechSim_Generate_Grid_Fn()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid_Fn" title="3.4.5.3. MechSim_Generate_Grid_Fn()">Section 3.4.5.3, &#8220;MechSim_Generate_Grid_Fn()&#8221;</a>)
+        the density stiffness and damping values are fixed.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Density</tt> - density of the masses.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - if <tt class="function">true</tt> faces are generated on the
+          outside shape.
+        </p></li><li><p>
+          <tt class="function">Cube_Scale</tt> - 3D vector controlling the distances
+          in the grid. It defines the size of an elementary cell.
+        </p></li><li><p>
+          <tt class="function">Grid_Size</tt> - 3D vector containing the number of masses
+          in all three directions.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">Connect_Arr</tt> - Array containing weights for connection
+          stiffness and damping.  Meaning of the array fields in described
+          in <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid_Fn" title="3.4.5.3. MechSim_Generate_Grid_Fn()">Section 3.4.5.3, &#8220;MechSim_Generate_Grid_Fn()&#8221;</a>.
+        </p></li></ul></div><div class="example"><a name="id2572593"></a><p class="title"><b>Example 3.8. MechSim_Generate_Grid() macro usage</b></p><p>
+          generate a 4x4x4 masses grid with double diagonal connections.
+        </p><pre class="programlisting">#declare Con_Array=array[3]
+#declare Con_Array[0]=1;
+#declare Con_Array[1]=1;
+#declare Con_Array[2]=1;
+
+MechSim_Generate_Grid(&lt;0, 0, 0&gt;, 0.08, 32000, 1000, 2000,
+                      true, &lt;0.4, 0.4, 0.4&gt;, &lt;4, 4, 4&gt;, No_Trans, Con_Array)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Grid_VE"></a>3.4.5.6. MechSim_Generate_Grid_VE()</h4></div></div><div></div></div><a class="indexterm" name="id2572631"></a><p>
+        Variant of <tt class="function">MechSim_Generate_Grid()</tt> generating viscoelastic 
+        connections instead of normal connections.  Parameters are the same but instead of
+        <tt class="function">Damping</tt> there are the following:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+          <tt class="function">VE_Elements</tt> - array with the parameters for viscoelastic connections
+          (see above for description).
+        </p></li><li><p>
+          <tt class="function">VE_Accuracy</tt> - accuracy value for viscoelastic connections.
+        </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Grid_Std"></a>3.4.5.7. MechSim_Generate_Grid_Std()</h4></div></div><div></div></div><a class="indexterm" name="id2572706"></a><div class="informalfigure"><div align="right"><img src="img/macro04.png" align="right"></div></div><p>
+        This macro generates 3D rectangular grid of masses with connections and
+        optionally faces on the outside.  In contrast to the
+        <tt class="function">MechSim_Generate_Grid()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid" title="3.4.5.5. MechSim_Generate_Grid()">Section 3.4.5.5, &#8220;MechSim_Generate_Grid()&#8221;</a>) all
+        connections all have the same stiffness and damping.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Density</tt> - density of the masses.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - if <tt class="function">true</tt> faces are generated on the
+          outside shape.
+        </p></li><li><p>
+          <tt class="function">Cube_Scale</tt> - 3D vector controlling the distances
+          in the grid. It defines the size of an elementary cell.
+        </p></li><li><p>
+          <tt class="function">Grid_Size</tt> - 3D vector containing the number of masses
+          in all three directions.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">Diagonal</tt> - A number controlling which diagonal connections
+          are generated in the grid  It corresponds to the array size in
+          the <tt class="function">MechSim_Generate_Grid()</tt> macro
+          (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid" title="3.4.5.5. MechSim_Generate_Grid()">Section 3.4.5.5, &#8220;MechSim_Generate_Grid()&#8221;</a>).
+        </p></li></ul></div><div class="example"><a name="id2572913"></a><p class="title"><b>Example 3.9. MechSim_Generate_Grid_Std() macro usage</b></p><p>
+          generate a 4x4x4 masses grid with double diagonal connections.
+        </p><pre class="programlisting">MechSim_Generate_Grid_Std(&lt;0, 0, 0&gt;, 0.08, 32000, 1000, 2000,
+                          true, &lt;0.4, 0.4, 0.4&gt;, &lt;4, 4, 4&gt;, No_Trans, 3)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Grid_Std_VE"></a>3.4.5.8. MechSim_Generate_Grid_Std_VE()</h4></div></div><div></div></div><a class="indexterm" name="id2572951"></a><p>
+        Variant of <tt class="function">MechSim_Generate_Grid_Std()</tt> generating viscoelastic 
+        connections instead of normal connections.  Parameters are the same but instead of
+        <tt class="function">Damping</tt> there are the following:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+          <tt class="function">VE_Elements</tt> - array with the parameters for viscoelastic connections
+          (see above for description).
+        </p></li><li><p>
+          <tt class="function">VE_Accuracy</tt> - accuracy value for viscoelastic connections.
+        </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Box"></a>3.4.5.9. MechSim_Generate_Box()</h4></div></div><div></div></div><a class="indexterm" name="id2573026"></a><div class="informalfigure"><div align="right"><img src="img/macro04.png" align="right"></div></div><p>
+        Variation of the <tt class="function">MechSim_Generate_Grid_Std()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid_Std" title="3.4.5.7. MechSim_Generate_Grid_Std()">Section 3.4.5.7, &#8220;MechSim_Generate_Grid_Std()&#8221;</a>)
+        where instead of the density of the individual masses the mass of the whole grid
+        is given.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Mass</tt> - mass of the whole grid.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - if <tt class="function">true</tt> faces are generated on the
+          outside shape.
+        </p></li><li><p>
+          <tt class="function">Cube_Scale</tt> - 3D vector controlling the distances
+          in the grid. It defines the size of an elementary cell.
+        </p></li><li><p>
+          <tt class="function">Grid_Size</tt> - 3D vector containing the number of masses
+          in all three directions.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">Diagonal</tt> - A number controlling which diagonal connections
+          are generated in the grid  It corresponds to the array size in
+          the <tt class="function">MechSim_Generate_Grid()</tt> macro
+          (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid" title="3.4.5.5. MechSim_Generate_Grid()">Section 3.4.5.5, &#8220;MechSim_Generate_Grid()&#8221;</a>).
+        </p></li></ul></div><div class="example"><a name="id2573233"></a><p class="title"><b>Example 3.10. MechSim_Generate_Box() macro usage</b></p><p>
+          generate a 4x4x4 masses grid with double diagonal connections
+          and a total mass of 20 kg.
+        </p><pre class="programlisting">MechSim_Generate_Box(&lt;0, 0, 0&gt;, 0.08, 20, 1000, 2000,
+                     true, &lt;0.4, 0.4, 0.4&gt;, &lt;4, 4, 4&gt;, No_Trans, 3)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Box_VE"></a>3.4.5.10. MechSim_Generate_Box_VE()</h4></div></div><div></div></div><a class="indexterm" name="id2573270"></a><p>
+        Variant of <tt class="function">MechSim_Generate_Box()</tt> generating viscoelastic 
+        connections instead of normal connections.  Parameters are the same but instead of
+        <tt class="function">Damping</tt> there are the following:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+          <tt class="function">VE_Elements</tt> - array with the parameters for viscoelastic connections
+          (see above for description).
+        </p></li><li><p>
+          <tt class="function">VE_Accuracy</tt> - accuracy value for viscoelastic connections.
+        </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Block"></a>3.4.5.11. MechSim_Generate_Block()</h4></div></div><div></div></div><a class="indexterm" name="id2573345"></a><div class="informalfigure"><div align="right"><img src="img/macro04.png" align="right"></div></div><p>
+        Variation of the <tt class="function">MechSim_Generate_Box()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Box" title="3.4.5.9. MechSim_Generate_Box()">Section 3.4.5.9, &#8220;MechSim_Generate_Box()&#8221;</a>)
+        where you specify two corner coordinates like for the <span class="trademark">POV-Ray</span>&#8482; 
+        <tt class="function">box{}</tt> shape instead of a <tt class="function">Cube_Scale</tt>
+        parameter.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Mass</tt> - mass of the whole grid.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - if <tt class="function">true</tt> faces are generated on the
+          outside shape.
+        </p></li><li><p>
+          <tt class="function">Start, End</tt> - Corner coordinates of the whole grid.
+        </p></li><li><p>
+          <tt class="function">Grid_Size</tt> - 3D vector containing the number of masses
+          in all three directions.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">Diagonal</tt> - A number controlling which diagonal connections
+          are generated in the grid  It corresponds to the array size in
+          the <tt class="function">MechSim_Generate_Grid()</tt> macro
+          (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Grid" title="3.4.5.5. MechSim_Generate_Grid()">Section 3.4.5.5, &#8220;MechSim_Generate_Grid()&#8221;</a>).
+        </p></li></ul></div><div class="example"><a name="id2573570"></a><p class="title"><b>Example 3.11. MechSim_Generate_Block() macro usage</b></p><p>
+          generate a unit size 4x4x4 masses grid with double diagonal connections
+          and a total mass of 20 kg.
+        </p><pre class="programlisting">MechSim_Generate_Block(&lt;0, 0, 0&gt;, 0.08, 20, 1000, 2000,
+                       true, &lt;0, 0, 0&gt;, &lt;1, 1, 1&gt;, &lt;4, 4, 4&gt;, No_Trans, 3)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Block_VE"></a>3.4.5.12. MechSim_Generate_Block_VE()</h4></div></div><div></div></div><a class="indexterm" name="id2573609"></a><p>
+        Variant of <tt class="function">MechSim_Generate_Block()</tt> generating viscoelastic 
+        connections instead of normal connections.  Parameters are the same but instead of
+        <tt class="function">Damping</tt> there are the following:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+          <tt class="function">VE_Elements</tt> - array with the parameters for viscoelastic connections
+          (see above for description).
+        </p></li><li><p>
+          <tt class="function">VE_Accuracy</tt> - accuracy value for viscoelastic connections.
+        </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Patch"></a>3.4.5.13. MechSim_Generate_Patch()</h4></div></div><div></div></div><a class="indexterm" name="id2573684"></a><div class="informalfigure"><div align="right"><img src="img/macro06.png" align="right"></div></div><p>
+        This macro generates a rectangular patch of masses with connections and
+        optionally faces forming the surface.  The masses can be fixed with help of
+        a function
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Density</tt> - density of the masses.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - if <tt class="function">true</tt> faces are generated for
+          the surface of the patch.
+        </p></li><li><p>
+          <tt class="function">Rect_Scale</tt> - 2D vector controlling the distances
+          in the grid. It defines the size of an elementary rectangle.
+        </p></li><li><p>
+          <tt class="function">Grid_Size</tt> - 2D vector containing the number of masses
+          in x and y direction.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">fn_Fixed</tt> - user defined function controlling whether
+          the masses are fixed or not.  The function is evaluated in
+          the x-y-plane between 0 and 1.  If the function value at a mass
+          position is &gt;0 the mass is fixed.
+        </p></li><li><p>
+          <tt class="function">fn_Attach</tt> - user defined function controlling the attachments
+          of the masses.  The function is evaluated in
+          the x-y-plane between 0 and 1.  The function value sets the attachment index.
+        </p></li><li><p>
+          <tt class="function">Connect_Arr</tt> - Array containing weights for connection
+          stiffness and damping.  Meaning of the array fields in described
+          below.
+        </p></li></ul></div><h5><a name="id2573896"></a>meaning of the 'Connect_Arr' entries:</h5><p>
+        See also <a href="mechsim.inc.html#mechsim_inc_Connect_Arr" title="3.4.5.1. Explanation of the Connect_Arr parameter">Section 3.4.5.1, &#8220;Explanation of the Connect_Arr parameter&#8221;</a>. The
+        following picture shows which entries in the array weight which connections. Only
+        connections up to the size of the array are generated.
+      </p><div class="figure"><a name="id2573914"></a><p class="title"><b>Figure 3.1. patch connection numbers</b></p><div><img src="img/patch01.png" alt="patch connection numbers"></div></div><div class="example"><a name="id2573931"></a><p class="title"><b>Example 3.12. MechSim_Generate_Patch() macro usage</b></p><p>
+          generate a 50x50 patch with bending and shearing stiffness.
+          No masses are fixed.
+        </p><pre class="programlisting">#declare fn_Fixed=function { -1 }
+#declare fn_Attach=function { -1 }
+#declare Con_Array=array[3]
+#declare Con_Array[0]=1;
+#declare Con_Array[1]=1;
+#declare Con_Array[2]=1;
+
+MechSim_Generate_Patch(&lt;0, 0, 0&gt;, 0.065, 8000, 10000, 0,
+                       true, &lt;0.055, 0.055&gt;, &lt;50, 50&gt;, No_Trans, fn_Fixed, fn_Attach, Con_Array)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Patch_VE"></a>3.4.5.14. MechSim_Generate_Patch_VE()</h4></div></div><div></div></div><a class="indexterm" name="id2573973"></a><p>
+        Variant of <tt class="function">MechSim_Generate_Patch()</tt> generating viscoelastic 
+        connections instead of normal connections.  Parameters are the same but instead of
+        <tt class="function">Damping</tt> there are the following:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+          <tt class="function">VE_Elements</tt> - array with the parameters for viscoelastic connections
+          (see above for description).
+        </p></li><li><p>
+          <tt class="function">VE_Accuracy</tt> - accuracy value for viscoelastic connections.
+        </p></li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Patch_Std"></a>3.4.5.15. MechSim_Generate_Patch_Std()</h4></div></div><div></div></div><a class="indexterm" name="id2574048"></a><div class="informalfigure"><div align="right"><img src="img/macro06.png" align="right"></div></div><p>
+        This macro generates a rectangular patch of masses with connections and
+        optionally faces forming the surface.  In contrast to the
+        <tt class="function">MechSim_Generate_Patch()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Patch" title="3.4.5.13. MechSim_Generate_Patch()">Section 3.4.5.13, &#8220;MechSim_Generate_Patch()&#8221;</a>) all
+        connections all have the same stiffness and damping.  Also none of the masses
+        is fixed.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Density</tt> - density of the masses.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - if <tt class="function">true</tt> faces are generated for
+          the surface of the patch.
+        </p></li><li><p>
+          <tt class="function">Rect_Scale</tt> - 2D vector controlling the distances
+          in the grid. It defines the size of an elementary rectangle.
+        </p></li><li><p>
+          <tt class="function">Grid_Size</tt> - 2D vector containing the number of masses
+          in x and y direction.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">Connect</tt> - A number controlling which connections
+          are generated in the grid  It corresponds to the array size in
+          the <tt class="function">MechSim_Generate_Patch()</tt> macro
+          (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Patch" title="3.4.5.13. MechSim_Generate_Patch()">Section 3.4.5.13, &#8220;MechSim_Generate_Patch()&#8221;</a>).
+        </p></li></ul></div><div class="example"><a name="id2574256"></a><p class="title"><b>Example 3.13. MechSim_Generate_Patch_Std() macro usage</b></p><p>
+          generate a 50x50 with bending and shearing stiffness.
+        </p><pre class="programlisting">MechSim_Generate_Patch_Std(&lt;0, 0, 0&gt;, 0.065, 8000, 10000, 0,
+                           true, &lt;0.055, 0.055&gt;, &lt;50, 50&gt;, No_Trans, 3)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Line"></a>3.4.5.16. MechSim_Generate_Line()</h4></div></div><div></div></div><a class="indexterm" name="id2574294"></a><div class="informalfigure"><div align="right"><img src="img/macro07.png" align="right"></div></div><p>
+        This macro generates a line of connected masses and can be used for
+        simulating things like ropes, chains, etc.  The masses of the line can be
+        fixed with help of a function
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Density</tt> - density of the masses.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Spacing</tt> - distance between two neighboring masses.
+        </p></li><li><p>
+          <tt class="function">Count</tt> - total number of masses.
+        </p></li><li><p>
+          <tt class="function">Direction</tt> - 3D vector defining the direction of the line
+          from the origin.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li><li><p>
+          <tt class="function">fn_Fixed</tt> - user defined function controlling whether
+          the masses are fixed or not.  The function is evaluated in
+          the x-direction between 0 and 1.  If the function value at a mass
+          position is &gt;0 the mass is fixed.
+        </p></li><li><p>
+          <tt class="function">Connect_Arr</tt> - Array containing weights for connection
+          stiffness and damping.  Meaning of the array fields in described
+          below.
+        </p></li></ul></div><h5><a name="id2574483"></a>meaning of the 'Connect_Arr' entries:</h5><p>
+        See also <a href="mechsim.inc.html#mechsim_inc_Connect_Arr" title="3.4.5.1. Explanation of the Connect_Arr parameter">Section 3.4.5.1, &#8220;Explanation of the Connect_Arr parameter&#8221;</a>. The
+        first element of the array weights the direct connections between two neighboring
+        masses.  Further values in the array weight the more distant connections that
+        introduce bending stiffness to the line.  Only connections up to the size of the
+        array are generated.
+      </p><div class="example"><a name="id2574504"></a><p class="title"><b>Example 3.14. MechSim_Generate_Line() macro usage</b></p><p>
+          generate a 10 masses line with bending stiffness.
+          No masses are fixed.
+        </p><pre class="programlisting">#declare fn_Fixed=function { -1 }
+#declare Con_Array=array[2]
+#declare Con_Array[0]=1;
+#declare Con_Array[1]=1;
+
+MechSim_Generate_Line(&lt;0, 0, 0&gt;, 0.09, 8000, 10000, 0,
+                      0.45, 10, &lt;1, 1, 1&gt;, No_Trans, fn_Fixed, Con_Array)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Line_Std"></a>3.4.5.17. MechSim_Generate_Line_Std()</h4></div></div><div></div></div><a class="indexterm" name="id2574543"></a><div class="informalfigure"><div align="right"><img src="img/macro07.png" align="right"></div></div><p>
+        This macro generates a line of connected masses and can be used for
+        simulating things like ropes, chains, etc..  In contrast to the
+        <tt class="function">MechSim_Generate_Line()</tt> macro
+        (see <a href="mechsim.inc.html#mechsim_inc_MechSim_Generate_Line" title="3.4.5.16. MechSim_Generate_Line()">Section 3.4.5.16, &#8220;MechSim_Generate_Line()&#8221;</a>)  only
+        shortest distance connections are generated.  Also none of the masses
+        is fixed.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Density</tt> - density of the masses.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the connections.
+        </p></li><li><p>
+          <tt class="function">Spacing</tt> - distance between two neighboring masses.
+        </p></li><li><p>
+          <tt class="function">Count</tt> - total number of masses.
+        </p></li><li><p>
+          <tt class="function">Direction</tt> - 3D vector defining the direction of the line
+          from the origin.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li></ul></div><div class="example"><a name="id2574715"></a><p class="title"><b>Example 3.15. MechSim_Generate_Line() macro usage</b></p><p>
+           generate a 10 masses line.
+        </p><pre class="programlisting">MechSim_Generate_Line(&lt;0, 0, 0&gt;, 0.09, 8000, 10000, 0,
+                      0.45, 10, &lt;1, 1, 1&gt;, No_Trans)</pre></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="mechsim_inc_MechSim_Generate_Sphere"></a>3.4.5.18. MechSim_Generate_Sphere()</h4></div></div><div></div></div><a class="indexterm" name="id2574752"></a><div class="informalfigure"><div align="right"><img src="img/macro12.png" align="right"></div></div><p>
+        This macro generates a sphere shaped grid of connected masses with
+        an additional mass in the center and all surface masses connected to it.
+        This shape can be used for simulating balls that rotate realistically
+        and can deform as well.  The masses are generated by subdividing an
+        icosahedron.
+      </p><div class="itemizedlist"><p class="title"><b>parameters:</b></p><ul type="disc"><li><p>
+          <tt class="function">Velocity</tt> - vector defining the starting velocity
+          of all masses.
+        </p></li><li><p>
+          <tt class="function">Radius</tt> - radius of all masses.
+        </p></li><li><p>
+          <tt class="function">Density</tt> - density of the surface masses.
+        </p></li><li><p>
+          <tt class="function">Stiffness</tt> - stiffness of the surface connections.
+        </p></li><li><p>
+          <tt class="function">Damping</tt> - damping of the surface connections.
+        </p></li><li><p>
+          <tt class="function">Density2</tt> - density of the center mass.
+        </p></li><li><p>
+          <tt class="function">Stiffness2</tt> - stiffness of the center connections.
+        </p></li><li><p>
+          <tt class="function">Damping2</tt> - damping of the center connections.
+        </p></li><li><p>
+          <tt class="function">Faces</tt> - Generate faces on the surface?
+        </p></li><li><p>
+          <tt class="function">Division</tt> - Icosahedron subdivision depth.
+        </p></li><li><p>
+          <tt class="function">BRadius</tt> - radius of the whole ball.
+        </p></li><li><p>
+          <tt class="function">Transf</tt> - Transform to be applied to all mass positions.
+        </p></li></ul></div><div class="example"><a name="id2574948"></a><p class="title"><b>Example 3.16. MechSim_Generate_Sphere() macro usage</b></p><p>
+          generate a sphere with 43 masses with surface faces.
+        </p><pre class="programlisting">MechSim_Generate_Sphere(&lt;0, 0, 0&gt;, 0.08, 32000, 1600, 2000, 32000, 1600, 2000, true, 1, 0.9, No_Trans)</pre></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mp_types.inc.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="include.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="inc_pprocess.inc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.3. The 'mp_types.inc' include file </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.5. The 'pprocess.inc' include file</td></tr></table></div></body></html>

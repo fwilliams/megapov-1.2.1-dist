@@ -1,0 +1,63 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>5.6. Multi-format Documentation with DocBook</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="internals.html" title="Chapter 5. Internals"><link rel="previous" href="internals_expressions.html" title="5.5. Expressions"><link rel="next" href="appendices.html" title="Chapter 6. Appendices"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.6. Multi-format Documentation with DocBook</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="internals_expressions.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Internals</th><td width="20%" align="right"> <a accesskey="n" href="appendices.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="multiformat_documentation"></a>5.6. Multi-format Documentation with DocBook</h2></div></div><div></div></div><p>
+    DocBook is a set of definitions (DTD) for either
+    <a href="http://www.oasis-open.org/committees/docbook/xml/" target="_top">XML</a> and
+    <a href="http://www.oasis-open.org/committees/docbook/sgml/" target="_top">SGML</a>
+    languages particularly well-suited for books and papers about computer hardware and software.
+  </p><p>
+    Its over ten years long history proved its flexibility and usability in many projects.
+    In particular DocBook is used in O'Reilly, xfree86, GNOME, KDE, FreeBSD,
+    The Linux Documentation Project, PHP...
+  </p><p>
+    DocBook format is platform independent, concerned on meaning and different parts can be developed
+    independently so since MegaPOV 1.0 DocBook is also used for the MegaPOV documentation.
+    Usually features included in MegaPOV are included in whole package together with original
+    documentation delivered by the author of a particular patch. It would speedup MegaPOV creation if
+    the authors of patches could deliver their documentation in DocBook format. Such documentation is free from decoration,
+    Java Script effects and other additions. Following chapter is filled with guidelines for those authors who want to
+    speedup our documentation creation. Our experience can also help you to create
+    your own documentation for other projects.
+  </p><p>
+    Before you will start work with DocBook it could be good to make review on:
+    </p><div class="itemizedlist"><ul type="disc" compact><li><a href="http://www.docbook.org/" target="_top">DocBook: The Definitive Guide.</a></li><li><a href="http://www.dpawson.co.uk/docbook/" target="_top">DocBook FAQ</a></li><li><a href="http://supportweb.cs.bham.ac.uk/documentation/tutorials/docsystem/build/tutorials/docbooksys/docbooksyshome.html" target="_top">Installing And Using DocBook</a></li></ul></div><p>
+    to recognize features of DocBook and its syntax.
+    No doubts it is much easier to play with DocBook when you have some HTML experience.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="docbook_environment"></a>5.6.1. Environment for DocBook documentation</h3></div></div><div></div></div><p>
+      To work with DocBook you have to setup your environment for it. First thing you may be interested
+      is definition of DocBook (DTD). MegaPOV uses XML (http://www.oasis-open.org/committees/docbook/xml/4.2/docbook-xml-4.2.zip)
+      version because SGML one will be dropped in the future. 
+    </p><p>
+      In order to get good environment you have to collect tools for:
+      </p><div class="itemizedlist"><ul type="disc" compact><li><p>
+            validating:
+            </p><div class="itemizedlist"><ul type="circle" compact><li>XMLLINT - http://www.jclark.com/sp/nsgmls.htm</li><li>XMLLINT - http://xmlsoft.org/xmldtd.html</li><li>XMLVALID - http://www.elcel.com/products/xmlvalid.html</li></ul></div><p>
+            In case of MegaPOV XMLVALID because it seems the most stable and fastest but it is available
+            only for Windows console.
+          </p></li><li><p>
+            XSLT processing and converting into other formats:
+            </p><div class="itemizedlist"><ul type="circle" compact><li>XSLTPROC - http://xmlsoft.org/XSLT/</li><li>SAXON - http://saxon.sourceforge.net/</li><li>XALAN - http://xml.apache.org/xalan-j/</li></ul></div><p>
+            In case of MegaPOV either XSLTPROC and SAXON are used. In case of PDF output also
+            FOP (http://xml.apache.org/fop/) was used.
+          </p></li></ul></div><p>
+      Other free XML tools can be found at http://www.garshol.priv.no/download/xmltools/.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="docbook_editing"></a>5.6.2. Editing DocBook documentation</h3></div></div><div></div></div><p>
+      You do not need any special tool to edit DocBook files. Any text or HTML editor is enough. Some
+      editors has some support for XML files (like Win-POV) however it is not required.
+    </p><p>
+      For simple examples of DocBook files please look at:
+      </p><div class="itemizedlist"><ul type="disc" compact><li>http://www.docbook.org/tdg/en/html/ch04.html#simple.document</li><li>http://xslt-process.sourceforge.net/docbook-example.xml</li></ul></div><p>
+      It is not purpose of this documentation to describe how DocBook document should look like however
+      in order to get better understanding of DocBook syntax complete sources of this documentation are
+      available within MegaPOV site.
+    </p><p>
+      For simpler usage <tt class="filename">book.xml</tt> introduces set of entities with:
+      </p><div class="itemizedlist"><ul type="disc" compact><li>names of persons</li><li>names of keywords and options</li><li>references to main parts</li></ul></div><p>
+      Maintaining it that way makes editing easier because we can then simple change markup for
+      all tokens in all places editing only one file. Also patch writer can use those entities to make it easier
+      to connect various documentations from various patch writers into one documentation.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="docbook_conversion"></a>5.6.3. Converting DocBook documents</h3></div></div><div></div></div><p>
+      In order to convert DocBook documentation into different formats you need ready for use style-sheets and templates
+      available within http://docbook.sourceforge.net/projects/xsl/ repository. They delivers XSLT files to perform
+      conversion into several formats. Conversion achieved this way is not perfect because authors can't decide what is
+      your favorite appearance of documentation. You have to use so called "customization layer" over their files.
+      MegaPOV has own customization layer. You can find it (<tt class="filename">*.xsl</tt>) where whole sources of documentation are.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="internals_expressions.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="internals.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="appendices.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5.5. Expressions </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 6. Appendices</td></tr></table></div></body></html>

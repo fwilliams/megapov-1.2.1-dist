@@ -1,0 +1,100 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>3.5. The 'pprocess.inc' include file</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="include.html" title="Chapter 3. MegaPOV Include files"><link rel="previous" href="mechsim.inc.html" title="3.4. The 'mechsim.inc' include file"><link rel="next" href="tone_mapping.inc.html" title="3.6. The 'tone_mapping.inc' include file"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.5. The 'pprocess.inc' include file</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mechsim.inc.html">Prev</a> </td><th width="60%" align="center">Chapter 3. MegaPOV Include files</th><td width="20%" align="right"> <a accesskey="n" href="tone_mapping.inc.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="inc_pprocess.inc"></a>3.5. The '<tt class="filename">pprocess.inc</tt>' include file</h2></div><div><div class="author"><h3 class="author"><span class="firstname">W&#322;odzimierz</span> <span class="othername">ABX</span> <span class="surname">Skiba</span></h3></div></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="post_proc_macros"></a>3.5.1. Macros with effects</h3></div></div><div></div></div><p>
+      Because using functions is not equally easy to every user, some predefined post processing
+      effects can be used in the form of macros with user-friendly syntax (like every other
+      functionality of the <span class="trademark">POV-Ray</span>&#8482;).
+    </p><p>
+      To use these macros with post process effects, the include file <tt class="filename">pprocess.inc</tt>
+      must be included. Several of these macros have a syntax similar to the old MegaPOV post process, so
+      they may be familiar to you.
+    </p><p>
+      Following macros are available to the user:
+    </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="post_proc_clipping"></a>3.5.1.1. Clipping colors</h4></div></div><div></div></div><p>
+        </p><pre class="synopsis"><tt class="function">post_process</tt> { PP_Clip_Colors(color_min,color_max) }</pre><p>
+        Clips all colors in the image to the range color_min and color_max
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="pp_color_matrix"></a>3.5.1.2. Color matrix</h4></div></div><div></div></div><p>
+        </p><pre class="synopsis"><tt class="function">post_process</tt> { PP_Color_Matrix(Array) }
+      
+// Runs the color through a 3*3 matrix expressed in Array.
+// The equation is:
+// R = r*AA + g*AB + b*AC
+// G = r*BA + g*BB + b*BC
+// B = r*CA + g*CB + b*CC
+// and Array means
+// array[9]{AA, AB, AC, BA, BB, BC, CA, CB, CC}</pre><p>
+        Combination of colors.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="pp_convolution_matrix"></a>3.5.1.3. Convolution matrix</h4></div></div><div></div></div><p>
+        </p><pre class="synopsis"><tt class="function">post_process</tt> { PP_Convolution_Matrix(XDim,YDim,Divisor,Leveling,Matrix) }</pre><p>
+        Multiplies the pixel and the adjacent pixels (in the area defined by the matrix size)
+        by the respective values in the matrix, adds the results together and divides by Divisor to 
+        get an average color. A leveling value can be added in before the final division.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="pp_depth"></a>3.5.1.4. Depth</h4></div></div><div></div></div><p>
+        </p><pre class="synopsis"><tt class="function">post_process</tt> { PP_Depth(Field_Start,Field_Depth) }</pre><p>
+        The image is converted to a gray-scale image with the gray-value of the pixel depending
+        of the depth location in the scene.
+      </p><p>
+        Field_Start specifies the beginning of the focal range in units from the camera.
+      </p><p>
+        Field_Depth specifies the length of the focal range.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="pp_find_edges"></a>3.5.1.5. Finding edges</h4></div></div><div></div></div><p>
+        </p><pre class="synopsis"><tt class="function">post_process</tt> {
+  PP_Find_Edges(Depth_Thresh,Normal_Thresh,Color_Thresh,Line_Radius,Sharpness,Pigment)
+}</pre><p>
+        This post process effect finds the edges in an image using depth, normal, and color information.
+        Separate thresholds are specified for each of the three methods of edge detection.
+        </p><div class="itemizedlist"><ul type="disc" compact><li>Depth_Thresh: range: 0 to infinity. An edge is detected if the difference of
+          depth (of the first intersection) in two consecutive pixels exceeds this value.</li><li>Normal_Thresh: range: 0 to 1. Zero represents normal vectors pointing in
+          the same direction, 0.5 means a 90 degree difference, and 1.0 means the normal vectors point
+          in opposite directions.</li><li>Color_Thresh: range: 0 to 1. Zero means no color difference, 1 means the
+          opposite color. The color channels (red, green, and blue) are differenced separately and
+          the results are averaged to produce the final difference.</li></ul></div><p>
+      </p><p>
+        The width of the lines is controlled by the "Line_Radius" parameter.
+      </p><p>
+         The sharpness of the lines is controlled by the "Sharpness" parameter. A
+         sharpness of 1.0 yields nicely anti-aliased lines. A sharpness value of 0.0 leads to blurry
+         lines when larger radii are used, and a sharpness value of greater than 1.0 begins to remove
+         anti-aliasing from the lines.
+      </p><p>
+         The color of the line is controlled by the pigment specified. This pigment is evaluated over
+         the range of &lt;x,y&gt; = &lt;0,0&gt; ... &lt;1,1&gt; (with z=0) over the full size of the image.
+         Using solid  colors is usually a good idea, unless special effects are desired.
+      </p><div class="example"><a name="id2581130"></a><p class="title"><b>Example 3.17. Find edge macro</b></p><pre class="programlisting">PP_Find_Edges( 1.0, 0.3, 0.15, 2, 1.0, rgb 0 )</pre></div><p>
+         Finds edges wherever there is a depth difference greater than 1.0, a normal difference greater
+         than  0.3 (about 60 degrees), or a color difference of 0.15. It uses a line radius of 2.0, with
+         black (rgb 0) antialiased (sharpness 1.0) lines.
+      </p><p>
+        The PP_Find_Edges macro is a straight implementation of the functionality of the effect available
+        in previous versions of MegaPOV. In fact this macro is a wrapper to the more functional
+        macro PP_Find_Edges_Back():
+        </p><pre class="synopsis"><tt class="function">post_process</tt> {
+  PP_Find_Edges_Back(
+    Depth_Thresh,Normal_Thresh,Color_Thresh,Line_Radius,Sharpness,Pigment,
+    Background,Background_Filter,Width,Height
+  )
+}</pre><p>
+        This macro adds four more parameters:
+      </p><p>
+        Background: a pigment as replacement to be placed between edges instead of the original rendering.
+      </p><p>
+        Background_Filter: pigment with a filter value for weighting between the "Background"
+        parameter and the "Pigment" parameter.
+      </p><p>
+        Width,Height: the image sizes to make the parameter "Line_Radius" relative to the image area.
+        It is usually <tt class="function">image_width</tt> and <tt class="function">image_height</tt> but can be something different in case
+        somebody wants a special effect like larger rectangles instead of lines.
+      </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="shared_effects"></a>3.5.2. Shared predefined effects</h3></div></div><div></div></div><p>
+      Macros mentioned in earlier sections are prefixed with 'PP_' on purpose.
+      Include file <tt class="filename">pprocess.inc</tt> for those macros with respective equivalents
+      for camera_view and referenced post processing. For example:
+      </p><pre class="programlisting">// create clipping effect of the rendering output
+<tt class="function">post_process</tt> { PP_Clip_Colors(COLOR_MIN,COLOR_MAX) }
+
+// create clipping effect of another post processing stage
+<tt class="function">post_process</tt> { PP_Clip_Colors_Ref(Nth,COLOR_MIN,COLOR_MAX) }
+
+// create clipping effect of another camera output
+<tt class="function">post_process</tt> { PP_Clip_Colors_Cam(CAMERA,COLOR_MIN,COLOR_MAX) }
+
+// create a pigment with clipping of the other camera output
+<tt class="function">#declare</tt> Pigment = Pig_Clip_Colors_Cam(CAMERA,COLOR_MIN,COLOR_MAX) }</pre><p>
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mechsim.inc.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="include.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="tone_mapping.inc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.4. The 'mechsim.inc' include file </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.6. The 'tone_mapping.inc' include file</td></tr></table></div></body></html>

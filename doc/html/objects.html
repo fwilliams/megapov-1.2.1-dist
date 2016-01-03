@@ -1,0 +1,190 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2.4. Objects</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="references.html" title="Chapter 2. MegaPOV References"><link rel="previous" href="camera.html" title="2.3. Camera"><link rel="next" href="effects.html" title="2.5. Effects"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.4. Objects</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="camera.html">Prev</a> </td><th width="60%" align="center">Chapter 2. MegaPOV References</th><td width="20%" align="right"> <a accesskey="n" href="effects.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="objects"></a>2.4. Objects</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="common_features"></a>2.4.1. Common features</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="inside_bounding"></a>2.4.1.1. Bounding used in inside tests</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Micha</span> <span class="surname">Riser</span></h3></div></div></div><div></div></div><a class="indexterm" name="id2525183"></a><p>
+    With MegaPOV, in every test using <tt class="function">Inside</tt> of objects
+    the bounding object has now priority. It first tests if the point is inside the bounding.
+    If it is not then it knows that it can already decide that the point is
+    outside (if the object is not inversed) or that the point is inside (if the
+    object is inversed).
+  </p><p>
+    This should increase rendering speed of complicated CSG objects, since it could eliminate
+    a lot of computing steps. The inside test is firstly done for the bounding object. Only when
+    this test is inside the bounding, the tests against each of the objects composing the CSG object
+    will be done.
+  </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="text"></a>2.4.2. Text</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="text_align"></a>2.4.2.1. Text enhancements</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Yvo &amp; René</span> <span class="surname">Smellenbergh</span></h3></div></div></div><div></div></div><p>
+	Based on the text enhancement idea of Jamis Buck and Noel Bundy, but modified and extended.
+  </p><p>
+	Syntax is:
+	</p><pre class="synopsis"><tt class="function">text</tt> {
+  <i class="parameter"><tt>the usual text stuff</tt></i>
+  <i class="parameter"><tt>...</tt></i>
+  [ <tt class="function">h_align_left</tt> | <tt class="function">h_align_center</tt> | <tt class="function">h_align_right</tt> ]
+  [ <tt class="function">v_align_top</tt> | <tt class="function">v_align_center</tt> | <tt class="function">v_align_bottom</tt> ]
+}</pre><p>
+  </p><p>
+	<tt class="function">h_align_left</tt><a class="indexterm" name="id2525128"></a>
+	By adding this keyword to the text block, the text string (including horizontal offset) is aligned horizontally so that its most
+	left point touches the y-axis. This is identical to the default alignment.
+  </p><p>
+	<tt class="function">h_align_center</tt><a class="indexterm" name="id2526627"></a>
+	By adding this keyword to the text block, the text string (including horizontal offset) is aligned horizontally so that it extends
+	equally on both sides of the y-axis.
+  </p><p>
+	<tt class="function">h_align_right</tt><a class="indexterm" name="id2526650"></a>
+	By adding this keyword to the text block, the text string (including horizontal offset) is aligned horizontally so that its most
+	right point touches the y-axis.
+  </p><p>
+	<tt class="function">v_align_top</tt><a class="indexterm" name="id2526673"></a>
+	By adding this keyword to the text block, the  text string (including vertical offset) is aligned vertically so that its highest
+	point touches the x-axis.
+  </p><p>
+	<tt class="function">v_align_center</tt><a class="indexterm" name="id2526696"></a>
+	By adding this keyword to the text block, the text string (including vertical offset) is aligned vertically so that its middle
+	height sits on the x-axis.
+  </p><p>
+	<tt class="function">v_align_bottom</tt><a class="indexterm" name="id2526719"></a>
+	By adding this keyword to the text block, the text string (including vertical offset) is aligned vertically so that its lowest point
+	sits on the x-axis.
+  </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+    When no alignment is specified, the <span class="trademark">POV-Ray</span>&#8482; defaults are used. Horizontally to the left and vertically on the base line.
+   </p><p>
+	The old keyword "position" of previous MegaPOV versions is no longer supported.
+  </p></td></tr></table></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="cloth"></a>2.4.3. Cloth simulation</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Christophe</span> <span class="surname">Bouffartigue</span></h3></div></div></div><div></div></div><p>
+    <tt class="function">simcloth</tt> allows to simulate cloth in MegaPOV. The cloth patch is rectangular, and interacts with its
+    environment (gravity, some obstructing objects, wind, ...).
+  </p><p>Syntax is:
+    </p><pre class="synopsis">  <tt class="function">simcloth</tt> {
+    [ <tt class="function">environment</tt> <i class="parameter"><tt>OBJECT-IDENTIFIER</tt></i> ]
+    [ <tt class="function">friction</tt> <i class="parameter"><tt>FLOAT</tt></i> ]
+    [ <tt class="function">gravity</tt> <i class="parameter"><tt>VECTOR</tt></i> ]
+    [ <tt class="function">wind</tt> { <i class="parameter"><tt>PIGMENT</tt></i> } ]
+    [ <tt class="function">viscosity</tt> <i class="parameter"><tt>FLOAT</tt></i> ]
+    [ <tt class="function">neighbors</tt> <i class="parameter"><tt>0</tt></i> | <i class="parameter"><tt>1</tt></i> ]
+    [ <tt class="function">internal_collision</tt> <tt class="function">on</tt> | <tt class="function">off</tt> ]
+    [ <tt class="function">damping</tt> <i class="parameter"><tt>FLOAT</tt></i> ]
+    [ <tt class="function">intervals</tt> <i class="parameter"><tt>FLOAT</tt></i> ]
+    [ <tt class="function">iterations</tt> <i class="parameter"><tt>INTEGER</tt></i> ]
+    <tt class="function">input</tt> <i class="parameter"><tt>STRING</tt></i>
+    [ <tt class="function">output</tt> <i class="parameter"><tt>STRING</tt></i> ]
+    [ <tt class="function">mesh_output</tt> <i class="parameter"><tt>STRING</tt></i> ]
+    [ <tt class="function">smooth_mesh</tt> <tt class="function">on</tt> | <tt class="function">off</tt> ]
+    [ <tt class="function">uv_mesh</tt> <tt class="function">on</tt> | <tt class="function">off</tt> ]
+  }</pre><p>
+  </p><p>
+    <tt class="function">environment</tt>   is followed by an object identifier. The object should be declared before <tt class="function">simcloth</tt> {}.
+    This object defines the environment that will interact with the cloth. Although any object can be used, it is recommended
+    to use objects which have well-defined interiors.
+  </p><p>
+    <tt class="function">friction</tt>  is a coefficient specifying energy loss when the cloth touches the environment.
+    A low value (&lt;= 0) means a lot of friction and strongly slows the movement of the cloth.
+    A high value (&gt;= 1) will allow the cloth to slide over the objects (but not to bounce off ...).
+    Default value is 1.0
+   </p><p>
+     <tt class="function">gravity</tt>  Specifies the direction and the strength of gravity. The default value is &lt;0, 0, 0&gt;.
+   </p><p>
+     <tt class="function">wind</tt>  A pigment is used to define the direction and strength of the wind in every space location.
+     At a given point, the wind is defined by the red, green and blue components of the pigment at this point.
+     You can explicitly declare the pigment, or use an already declared identifier. Don't forget that the color
+     components can take any value you want (negative ones, greater than one, ...)
+   </p><p>
+     <tt class="function">viscosity</tt>  Specifies the influence of the wind and air friction on the cloth. The default value
+     is 0 (no influence).
+   </p><p>
+     <tt class="function">neighbors</tt>  Specifies the number of neighbors that are joined by springs at each point. <tt class="function">neighbors</tt> 0
+     is for 8 neighbors (faster but rougher calculation), and <tt class="function">neighbors</tt> 1 (default value) is for 24 neighbors
+     (slower calculation, but better results).
+   </p><p>
+     <tt class="function">internal_collision</tt>  Activates or deactivates internal collision management (cloth against itself). This
+     problem is handled by added springs between points that are too close together. System instability probability
+     is increased, and you must, most often, decrease the intervals parameter (see below). Deactivated by default
+     (warning: much longer parsing when activated).
+   </p><p>
+     <tt class="function">damping</tt>  General energy loss parameter, it limits the accumulation of the model approximations and
+     errors. A value lower than 0.95 (default value) is strongly recommended.
+   </p><p>
+     <tt class="function">intervals</tt>  specifies the time interval between each iteration. Keep it low. Default value is 0.05.
+   </p><p>
+     <tt class="function">iterations</tt>  It's the number of iterations to calculate.
+   </p><p>
+     <tt class="function">input</tt> Filename of the starting *.cth file. The only required parameter, since you need a cloth to start with.
+     For a complete description of the *.cth file format, see below.
+   </p><p>
+     <tt class="function">output</tt>  Filename of the ending *.cth file. If this parameter is specified, the result of the simulation
+     is saved. Useful for animations, or for a multi-stage calculation.
+   </p><p>
+     <tt class="function">mesh_output</tt>  Allow the program to output a file (with specified name), containing tons of triangles,
+     corresponding to the cloth points after the simulation. It allows you to save the result of a simulation, in
+     a format usable by other <span class="trademark">POV-Ray</span>&#8482; versions (official or unofficial).
+   </p><p>
+     <tt class="function">smooth_mesh</tt> Activate or deactivate the creation of smooth_triangle's if the mesh_output option is activated.
+     Deactivated by default.
+   </p><p>
+     <tt class="function">uv_mesh</tt>  Activates or deactivates uv coordinates within the triangle (or smooth_triangle) if the mesh_output
+     option is activated. UV coordinates go from  &lt;0, 0&gt; to &lt;1, 1&gt;. Deactivated by default.
+   </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527541"></a>2.4.3.1. Description of the .cth file format:</h4></div></div><div></div></div><p>
+       The file format is simple: the first line describes the cloth dimensions (number of points <i class="parameter"><tt>n1</tt></i> and
+       <i class="parameter"><tt>n2</tt></i>, normalized length between 2 neighbors <i class="parameter"><tt>nlng</tt></i>), and the springs strength
+       <i class="parameter"><tt>ks</tt></i>. The other lines describe the location in space and velocity of each point. All values (3 for
+       location, 3 for speed) are separated by commas, and each line is terminated by a comma as well.
+     </p><p>
+       Then, there are the constraints definitions. Constraints are 3 coefficients (1 for each axis) that will control
+       the velocity vector of a given point of the cloth. It will be possible, for instance, to slow down a corner of the
+       cloth along one axis, to completely stop it along another axis, and let it free along the last one. A constraint is
+       defined by an integer (index), and 3 floating point coefficients, representing the constraint
+       (respectively on x, y, z axis), all this on the same line and separated by commas. The index is the rank of the
+       point (beginning at 0) in order of declaration of the cloth points. Constraints can be declared in any order.
+     </p><p>
+       You could see the cloth as 2 arrays of vectors Points[n1][n2], and Velocity[n1][n2], and its constraints
+       <tt class="function">Index</tt><i class="parameter"><tt>n</tt></i>, <tt class="function">coef</tt><i class="parameter"><tt>n</tt></i>.
+       The <tt class="filename">*.cth</tt> file will look like this:
+     </p><pre class="programlisting">n1, n2, nlng, ks,
+Points[0][0], Velocity[0][0],
+Points[0][1], Velocity[0][1],
+...
+Points[0][n2-1], Velocity[0][n2-1],
+Points[1][0], Velocity[1][0],
+Points[1][1], Velocity[1][1],
+...
+Points[1][n2-1], Velocity[1][n2-1],
+Points[2][0], Velocity[2][0],
+...
+...
+Points[n1-1][n2-1], Velocity[n1-1][n2-1],
+Index1, coef1[x], coef1[y], coef1[z],
+Index2, coef2[x], coef2[y], coef2[z],
+Index3, coef3[x], coef3[y], coef3[z],</pre><p>
+      For an example of a macro writing such a file (see <a href="tutorials.html#writecloth" title="4.1.1.1.1. Writing a *.cth file">Section 4.1.1.1.1, &#8220;Writing a *.cth file&#8221;</a>).
+    </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="isosurface"></a>2.4.4. Isosurface</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="iso_message"></a>2.4.4.1. Control of max gradient message</h4></div><div><div class="author"><h3 class="author"><span class="firstname">Yvo &amp; René</span> <span class="surname">Smellenbergh</span></h3></div></div></div><div></div></div><p>
+	In <span class="trademark">POV-Ray</span>&#8482; 3.5 the messages concerning the <tt class="function">max_gradient</tt> follow a heuristic method to be displayed.
+	This means that the message only appears when the difference with the set <tt class="function">max_gradient</tt> is more
+	than a certain percentage. Also when using a loop with hundreds of isosurfaces which have different
+	<tt class="function">max_gradient</tt>'s, you need to wait after the render for all those messages to be displayed: this can
+	take several minutes. Basically, you cannot control these messages.
+  </p><p>
+	In MegaPOV 1.0 you can use the keyword <tt class="function">message</tt><a class="indexterm" name="id2524518"></a> to control the message flow:
+	</p><div class="itemizedlist"><ul type="disc" compact><li><tt class="function">message</tt> <tt class="function">on</tt>  will always show all max_gradient messages</li><li><tt class="function">message</tt> <tt class="function">off</tt>  will never show a max_gradient message</li><li>without a <tt class="function">message</tt> keyword the default heuristic method will be used</li></ul></div><p>
+	This keyword is used in the <tt class="function">isosurface</tt>{} block and should be used after the <tt class="function">function</tt>{} block and before any material.
+  </p><p>
+  By using conditional expressions, you can now control messages in a loop.
+  </p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="light"></a>2.4.5. Light Sources</h3></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="area_light_mtl"></a>2.4.5.1. Area Light <tt class="function">max_trace_level</tt></h4></div><div><div class="author"><h3 class="author"><span class="firstname">Christoph</span> <span class="surname">Hormann</span></h3></div></div></div><div></div></div><p>
+	Normally area lights are handled as area lights in all situations.  This means that 
+  every shadow ray test against an area light source is sampled across the area of the 
+  light source.  This patch allows to specify a <tt class="function">max_trace_level</tt> for the area 
+  light which turns off the soft shadows above the specified trace level. 
+  </p><p>Syntax is:
+    <a class="indexterm" name="id2528712"></a>
+    </p><pre class="synopsis"><tt class="function">light_source</tt> {
+  <i class="parameter"><tt>LOCATION</tt></i>, <i class="parameter"><tt>COLOR</tt></i>
+  [LIGHT_MODIFIERS...]
+  <tt class="function">max_trace_level</tt> <i class="parameter"><tt>INTEGER</tt></i>
+}</pre><p>
+  </p><p>
+    If you for example specify:
+    </p><pre class="programlisting"><tt class="function">light_source</tt> {
+  &lt;1.0,2.0,2.0&gt;
+  color rgb 1.0
+  area_light 0.5*x 0.5*y 9,9 jitter adaptive 1 circular orient
+  <tt class="function">max_trace_level</tt> 1
+}</pre><p>
+
+    this will only result in soft shadows on directly visible surfaces.  In reflections, 
+    refractions and radiosity the light source will be treated as a point light.
+  </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="camera.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="references.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="effects.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.3. Camera </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.5. Effects</td></tr></table></div></body></html>

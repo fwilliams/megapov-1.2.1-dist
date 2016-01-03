@@ -1,0 +1,180 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2.5. Effects</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="references.html" title="Chapter 2. MegaPOV References"><link rel="previous" href="objects.html" title="2.4. Objects"><link rel="next" href="patterns.html" title="2.6. Textures and patterns"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.5. Effects</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="objects.html">Prev</a> </td><th width="60%" align="center">Chapter 2. MegaPOV References</th><td width="20%" align="right"> <a accesskey="n" href="patterns.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="effects"></a>2.5. Effects</h2></div></div><div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="glow"></a>2.5.1. Glow</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Chris</span> <span class="surname">Huff</span></h3></div></div></div><div></div></div><p>
+	This atmospheric glow effect makes a fast-rendering glow effect. It is based on the light source glow effect from
+	POV-AFX, written by Marcos Fajardo, but has been heavily modified.
+  </p><p>Syntax is:
+	<a class="indexterm" name="id2527066"></a>
+	<a class="indexterm" name="id2527077"></a>
+	</p><pre class="synopsis"><tt class="function">glow</tt> {
+  <tt class="function">type</tt> <i class="parameter"><tt>0 | 1 | 2 | 3</tt></i>
+  <tt class="function">location</tt> <i class="parameter"><tt>VECTOR</tt></i>
+  <tt class="function">size</tt> <i class="parameter"><tt>FLOAT</tt></i>
+  <tt class="function">radius</tt> <i class="parameter"><tt>FLOAT</tt></i>
+  <tt class="function">fade_power</tt> <i class="parameter"><tt>FLOAT</tt></i>
+  <tt class="function">color</tt> <i class="parameter"><tt>COLOR</tt></i>
+  <i class="parameter"><tt>TRANSFORMATIONS</tt></i>
+}</pre><p>
+	You can specify glows individually, or attached to a light_source. If created in a light source, they will be
+	automatically initialized with the light's position and color (though transforming the light source will not give the
+	expected result).
+  </p><p>
+	Choose a glow <tt class="function">type</tt><a class="indexterm" name="id2528475"></a>
+	from 0, 1, 2 or 3. Type 2 and 3 glows are not completely implemented yet, but 2 will be
+	based on the exp() function and 3 will simulate a sphere with constant density.
+  </p><p>
+	The <tt class="function">size</tt><a class="indexterm" name="id2528498"></a>
+	keyword adjusts the scale of the glow effect. It is not an absolute size, just a scaling amount (because
+	some glows are infinite). It does not quite work properly yet, it causes strange effects with changing distances of
+	objects behind the glow.
+  </p><p>
+	The <tt class="function">radius</tt><a class="indexterm" name="id2528522"></a>
+	keyword specifies a clipping radius confining the glow to a circular area perpendicular to the ray. If
+	the glow is still visible at this radius, it will make a sudden transition.
+  </p><p>
+	The <tt class="function">fade_power</tt><a class="indexterm" name="id2528545"></a>
+	keyword allows you to provide an exponent to adjust the falloff with.
+  </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      A glow is not an object, it is an atmospheric effect. Therefore glows cannot be used in CSG operations.
+    </p><p>
+      Transformations on a glow only affect the <tt class="function">location</tt> vector. So will <tt class="function">scale</tt> not change the size or shape
+      of a glow, but scale the location coordinates.
+    </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="motion_blur"></a>2.5.2. Motion blur</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Nathan</span> <span class="surname">Kopp</span></h3></div></div></div><div></div></div><p>
+    A <tt class="function">motion_blur</tt> object is created by averaging many transformed copies of
+    that object. Because only part of the image has to go through some extra calculations, this
+    internal motion blur is usually faster than averaging whole images with an external program.
+  </p><p>
+    This patch only does <span class="emphasis"><em>per-object</em></span> motion blur. The camera cannot be blurred
+    using this method.
+  </p><p>
+    Also lights can be blurred using this method: the performance is comparable to the performance
+    of area lights.
+  </p><p>
+    To initialize motion blur, add the following to your <tt class="function">global_settings</tt> block:
+</p><pre class="synopsis">  <tt class="function">global_settings</tt> {
+    <tt class="function">motion_blur</tt> SAMPLES, SHUTTER-TIME
+  }</pre><p>
+    <span class="emphasis"><em>SAMPLES</em></span> is the number of time-frames that will be sampled. More samples
+    will give smoother results, but will take longer to render.
+  </p><p>  
+    <span class="emphasis"><em>SHUTTER-TIME</em></span> is the amount of time the shutter is open in POV-clock
+    units. Depending on the specified type, this time interval will be centered around, or added
+    to the clock value for the current frame.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+        Especially in animations it will give more natural results when this value is kept close
+        to the <tt class="function">clock_delta</tt> value. You could #declare Shutter_time = <tt class="function">clock_delta</tt>*Small_factor;
+      </p></td></tr></table></div><p>
+  </p><p>To create a Motion Blur object, use the following syntax:
+	  <a class="indexterm" name="id2529633"></a>
+	  <a class="indexterm" name="id2529644"></a>
+	  </p><pre class="synopsis">  <tt class="function">motion_blur</tt> {
+    <tt class="function">type</tt> <i class="parameter"><tt>0</tt></i> | <i class="parameter"><tt>1</tt></i>
+    OBJECT | LIGHT-SOURCE
+    OBJECT-MODIFIERS
+  }</pre><p>
+  	<span class="emphasis"><em>Type 0</em></span> will oscillate the motion blur around the current clock value. Half of
+  	the <span class="emphasis"><em>SHUTTER-TIME</em></span> value is subtracted from, the other half added to that
+  	clock value. Type 0 is the default.
+  </p><p>
+    <span class="emphasis"><em>Type 1</em></span>	will add the full <span class="emphasis"><em>SHUTTER-TIME</em></span> value to the
+    current clock value.
+  </p><p>
+    Motion blur is triggered by the keyword <tt class="function">clock</tt>. Any modifier in the <tt class="function">motion_blur</tt> block
+    that contains the <tt class="function">clock</tt> keyword will show a blurring effect on that modifier.
+  </p><p>
+    Example:
+</p><pre class="programlisting">  <tt class="function">motion_blur</tt> {
+    <tt class="function">sphere</tt> { 0, 1  <tt class="function">material</tt> { My_material <tt class="function">rotate</tt> x*<tt class="function">clock</tt>}}
+    <tt class="function">translate</tt> x*<tt class="function">clock</tt>
+  }</pre><p>
+    Here the <tt class="function">clock</tt> keyword within the material will trigger a rotational blurring of this
+    material and the <tt class="function">clock</tt> keyword within the motion_blur block will trigger a motion blur
+    in the translation of the sphere.
+  </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="icons/note.gif"></td><th align="left">Note</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      A motion_blur object contains many copies of the blurred object (one copy for each time
+      sample). For this reason, adding this kind of motion blur can use a lot of memory.
+      Be careful of this. (Remember that multiple copies of mesh objects do not use much memory, though.)
+    </p></td></tr></table></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="icons/important.gif"></td><th align="left">Important</th></tr><tr><td colspan="2" align="left" valign="top"><p>
+      The blurring is achieved by parsing the contents of the motion_blur object (everything
+      between the curly braces) many times (once for each time sample). Anything outside of the
+      motion_blur block is only parsed once. This means that only one copy gets created of any
+      item declared outside the blur object. And this static copy is applied to each copy of the
+      motion-blurred object.
+    </p></td></tr></table></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="fur"></a>2.5.3. Fur</h3></div><div><div class="author"><h3 class="author"><span class="firstname">Thomas</span> <span class="surname">Willhalm</span></h3></div></div></div><div></div></div><p>
+    The fur patch extends media to generate faked three dimensional fur. This is done by "filling"
+    a media container with a new scattering type <i class="parameter"><tt>6</tt></i>. The light is scattered inside the
+    container approximately like a lot of hairs would scatter them. Furthermore, the density is varied between
+    dense regions ("Here is a hair.") and sparse regions ("Space between the hairs").
+  </p><p>The syntax is:
+    <a class="indexterm" name="id2529272"></a>
+    <a class="indexterm" name="id2529282"></a>
+    <a class="indexterm" name="id2529293"></a>
+    <a class="indexterm" name="id2529304"></a>
+    <a class="indexterm" name="id2529315"></a>
+    <a class="indexterm" name="id2529325"></a>
+    <a class="indexterm" name="id2529336"></a>
+    <a class="indexterm" name="id2529347"></a>
+    <a class="indexterm" name="id2529358"></a>
+    <a class="indexterm" name="id2529369"></a>
+    <a class="indexterm" name="id2529380"></a>
+    <a class="indexterm" name="id2529390"></a>
+    <a class="indexterm" name="id2529401"></a>
+    <a class="indexterm" name="id2529412"></a>
+    <a class="indexterm" name="id2529423"></a>
+    <a class="indexterm" name="id2529434"></a>
+    <a class="indexterm" name="id2529444"></a>
+    <a class="indexterm" name="id2529455"></a>
+</p><pre class="synopsis"><tt class="function">scattering</tt> { 6, COLOUR
+	[ <tt class="function">structure</tt> { OBJECT_TYPE } ]
+	[ <tt class="function">ratio</tt> FLOAT ]
+	[ <tt class="function">falloff</tt> FLOAT ]
+	[ <tt class="function">frequency</tt> FLOAT ]
+	[ <tt class="function">diffuse</tt> FLOAT ]
+	[ <tt class="function">reflection</tt> FLOAT ]
+	[ <tt class="function">reflection_exponent</tt> FLOAT ]
+	[ <tt class="function">force</tt> VECTOR ]
+	[ <tt class="function">waves</tt> FLOAT ]
+	[ <tt class="function">pigment</tt> PIGMENT ]
+}
+
+OBJECT_TYPE:
+  <tt class="function">sphere</tt> { VECTOR, FLOAT } |
+  <tt class="function">torus</tt> { FLOAT, FLOAT } |
+  <tt class="function">box</tt> { VECTOR, VECTOR } |
+  <tt class="function">cylinder</tt> { VECTOR, VECTOR, FLOAT } |
+  <tt class="function">cone</tt> { VECTOR, VECTOR, FLOAT } |
+  <tt class="function">plane</tt> { VECTOR, FLOAT } |
+  <tt class="function">smooth_triangle</tt> { VECTOR, VECTOR, VECTOR, VECTOR, VECTOR, VECTOR }</pre><p>
+  </p><p>
+    In order to simulate fur, we need a <tt class="function">structure</tt> to which we attach the hairs.
+    The <tt class="function">structure</tt> provides the positions and directions in which the hairs grow.
+    The possible object types <tt class="function">sphere</tt>, <tt class="function">torus</tt>, <tt class="function">box</tt>, <tt class="function">cylinder</tt>,
+    <tt class="function">cone</tt>, <tt class="function">plane</tt>, and <tt class="function">smooth_triangle</tt> and their respective parameters
+    are known from <span class="trademark">POV-Ray</span>&#8482;. Remark however, that the provided <tt class="function">structure</tt> is not
+    necessarily tied to the type of container you use. You are free to fill a (complicated)
+    container with a different (approximating) structure. The default structure is a sphere
+    at the origin with radius 1.
+  </p><p>
+    With the next three parameters you can influence the way hairs are grown. The <tt class="function">ratio</tt>
+    is the ratio between hairs and empty space (default: <i class="parameter"><tt>0.3</tt></i>). The
+    <tt class="function">falloff</tt> value describes how fast the density changes from dense (hair) to sparse
+    (space). It you change the default value <i class="parameter"><tt>0.9</tt></i>, you can create sharper
+    hairs or more fluffy fur. The <tt class="function">frequency</tt> (default 200.0) determines the scale of the
+    fur (lots of thin hairs vs. fewer thicker hairs).
+  </p><p>
+    The next three parameters describe how light is reflected in the media. The <tt class="function">diffuse</tt>
+    component is similar to the diffuse reflection in usual textures. The default value however
+    is <i class="parameter"><tt>5.0</tt></i>. The <tt class="function">reflection</tt> component creates highlights on the
+    hairs. The default reflection is <i class="parameter"><tt>1.0</tt></i>. The appearance of the reflection
+    can be modified by the <tt class="function">reflection_exponent</tt> varying from bright spots to soft areas.
+    The default exponent is <i class="parameter"><tt>1.0</tt></i>.
+  </p><p>
+    With the parameter <tt class="function">force</tt> you can simulate a force pulling the hairs in one direction.
+    Applications include gravity and wind. The vector that you provide determines the direction and
+    the strength of the force.
+  </p><p>
+    Curly fur can be created by setting the parameter <tt class="function">waves</tt>. The larger this parameter is,
+    the bigger the turbulence of the hairs.
+  </p><p>
+    Last but not least the fur patch provides a convenient way of setting a pigment of the fur.
+    If you're modelling a tiger or a cow, you can realize the colors by using pigment.
+    The default value is the usual colour of the media. Using a <tt class="function">pigment</tt> overrides this colour.
+  </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="objects.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="references.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="patterns.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.4. Objects </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.6. Textures and patterns</td></tr></table></div></body></html>

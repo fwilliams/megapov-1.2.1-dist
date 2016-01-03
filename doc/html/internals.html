@@ -1,0 +1,260 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 5. Internals</title><link rel="stylesheet" href="megapov.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1"><link rel="home" href="index.html" title="MegaPOV Documentation"><link rel="up" href="index.html" title="MegaPOV Documentation"><link rel="previous" href="tutorials_hdri.html" title="4.3. HDRI (High dynamic range illumination)"><link rel="next" href="binaries.html" title="5.2. Binaries"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 5. Internals</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="tutorials_hdri.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="binaries.html">Next</a></td></tr></table><hr></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="internals"></a>Chapter 5. Internals</h2></div></div><div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="internals.html#sources">5.1. Sources</a></span></dt><dd><dl><dt><span class="section"><a href="internals.html#architecture">5.1.1. Understanding the POV-Ray source structure</a></span></dt><dt><span class="section"><a href="internals.html#patching">5.1.2. Creating your own patches</a></span></dt></dl></dd><dt><span class="section"><a href="binaries.html">5.2. Binaries</a></span></dt><dd><dl><dt><span class="section"><a href="binaries.html#windows_compile">5.2.1. compiling on Windows systems</a></span></dt><dt><span class="section"><a href="binaries.html#mac_compile">5.2.2. compiling on Macintosh systems</a></span></dt><dt><span class="section"><a href="binaries.html#unix_compile">5.2.3. compiling on Unix systems</a></span></dt></dl></dd><dt><span class="section"><a href="parser.html">5.3. Parser</a></span></dt><dd><dl><dt><span class="section"><a href="parser.html#internals_tokens">5.3.1. Adding tokens</a></span></dt></dl></dd><dt><span class="section"><a href="internals_patterns.html">5.4. Patterns</a></span></dt><dd><dl><dt><span class="section"><a href="internals_patterns.html#internals_mem_patterns">5.4.1. Reducing memory usage</a></span></dt></dl></dd><dt><span class="section"><a href="internals_expressions.html">5.5. Expressions</a></span></dt><dd><dl><dt><span class="section"><a href="internals_expressions.html#internals_polynomials">5.5.1. Polynomial solver</a></span></dt></dl></dd><dt><span class="section"><a href="multiformat_documentation.html">5.6. Multi-format Documentation with DocBook</a></span></dt><dd><dl><dt><span class="section"><a href="multiformat_documentation.html#docbook_environment">5.6.1. Environment for DocBook documentation</a></span></dt><dt><span class="section"><a href="multiformat_documentation.html#docbook_editing">5.6.2. Editing DocBook documentation</a></span></dt><dt><span class="section"><a href="multiformat_documentation.html#docbook_conversion">5.6.3. Converting DocBook documents</a></span></dt></dl></dd></dl></div><p>
+    With increasing raytracing experience and knowledge about algorithms
+    you may want to change/fix some features or add new ones to the core
+    sources of <span class="trademark">POV-Ray</span>&#8482; or MegaPOV. You may also want modify sources
+    when you want to move a slowly parsed SDL macro to faster C/C++
+    code within <span class="trademark">POV-Ray</span>&#8482;.
+  </p><p>
+    The following section is our effort to write down the conclusions
+    we made from our experience in writing patches compatible with
+    <span class="trademark">POV-Ray</span>&#8482; architecture with portable documentation and merging those
+    made by others.  If you are new to <span class="trademark">POV-Ray</span>&#8482; or patch writing you
+    should bear in mind we have a long term experience with <span class="trademark">POV-Ray</span>&#8482;
+    and you probably can learn something useful from the things written
+    here.  If you are an experienced patch writer do not hesitate to
+    vary the rules where you think this is appropriate.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="sources"></a>5.1. Sources</h2></div></div><div></div></div><a class="indexterm" name="id2598984"></a><p>
+    Working with sources of <span class="trademark">POV-Ray</span>&#8482; 3.6 or MegaPOV
+    requires some basic knowledge about:
+    </p><div class="itemizedlist"><ul type="disc" compact><li>POV-SDL usage</li><li>C and C++ programming</li><li>3D math</li><li>raytracing terms and algorithms</li></ul></div><p>
+    Although <span class="trademark">POV-Ray</span>&#8482; and MegaPOV sources can be considered
+    as a nice lesson in programming and raytracing it is not recommended
+    for beginners in programming and computer graphics to try modifying it.
+    There are relatively complex relations between the different parts and
+    changing something without knowing exactly what you do is likely to cause 
+    problems, even if it compiles and works well in first tests. Please do not 
+    waste time asking for detailed explanations when answer seems obvious in 
+    the above categories.
+    Try to find some online tutorials or just buy a comprehensive book and most 
+    important: study the source code.
+    Below information is gathered mainly to highlight <span class="trademark">POV-Ray</span>&#8482; source
+    specific aspects.
+  </p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="architecture"></a>5.1.1. Understanding the <span class="trademark">POV-Ray</span>&#8482; source structure</h3></div></div><div></div></div><a class="indexterm" name="id2600273"></a><p>
+      Sources of MegaPOV are based on the <span class="trademark">POV-Ray</span>&#8482; sources distributed
+      officially by <span class="trademark">POV-Team</span>&#8482;. The basis for the modifications included in
+      MegaPOV 1.1 is the source of the official 3.6.0 version.
+      Filenames usually already give a hint on the purpose and most files contain a short
+      description in the header on their purpose. Each <tt class="filename">*.cpp</tt>
+      filename is delivered with appropriate <tt class="filename">*.h</tt>
+      header file.
+    </p><p>
+      All files located in the <tt class="filename">/source</tt> directory in the
+      archives can be considered as part of the following categories:
+      </p><div class="itemizedlist"><ul type="disc" compact><li><p>
+            The <tt class="filename">patches</tt> subdirectory contains all new files for features introduced in MegaPOV:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">patches/patches.h</tt> - this file enables the individual patches of MegaPOV</li><li><tt class="filename">patches/clothray.cpp</tt></li><li><tt class="filename">patches/glow.cpp</tt></li><li><tt class="filename">patches/mechsim.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Common structures and definitions:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">frame.h</tt></li><li><tt class="filename">vector.h</tt></li><li><tt class="filename">[platform]/config.h</tt> - located in platform specific directory</li></ul></div><p>
+          </p></li><li><p>
+            Object definitions:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">bezier.cpp</tt></li><li><tt class="filename">blob.cpp</tt></li><li><tt class="filename">boxes.cpp</tt></li><li><tt class="filename">cones.cpp</tt></li><li><tt class="filename">csg.cpp</tt></li><li><tt class="filename">discs.cpp</tt></li><li><tt class="filename">fpmetric.cpp</tt></li><li><tt class="filename">fractal.cpp</tt></li><li><tt class="filename">hcmplx.cpp</tt></li><li><tt class="filename">hfield.cpp</tt></li><li><tt class="filename">isosurf.cpp</tt></li><li><tt class="filename">lathe.cpp</tt></li><li><tt class="filename">mesh.cpp</tt></li><li><tt class="filename">objects.cpp</tt></li><li><tt class="filename">planes.cpp</tt></li><li><tt class="filename">poly.cpp</tt></li><li><tt class="filename">polygon.cpp</tt></li><li><tt class="filename">prism.cpp</tt></li><li><tt class="filename">quadrics.cpp</tt></li><li><tt class="filename">quatern.cpp</tt></li><li><tt class="filename">sor.cpp</tt></li><li><tt class="filename">spheres.cpp</tt></li><li><tt class="filename">sphsweep.cpp</tt></li><li><tt class="filename">super.cpp</tt></li><li><tt class="filename">torus.cpp</tt></li><li><tt class="filename">triangle.cpp</tt></li><li><tt class="filename">truetype.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Lighting and other "visible" effects:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">atmosph.cpp</tt></li><li><tt class="filename">lightgrp.cpp</tt></li><li><tt class="filename">lighting.cpp</tt></li><li><tt class="filename">media.cpp</tt></li><li><tt class="filename">photons.cpp</tt></li><li><tt class="filename">point.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Radiosity:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">octree.cpp</tt></li><li><tt class="filename">radiosit.cpp</tt></li><li><tt class="filename">rad_data.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Texturing:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">image.cpp</tt></li><li><tt class="filename">interior.cpp</tt></li><li><tt class="filename">normal.cpp</tt></li><li><tt class="filename">pattern.cpp</tt></li><li><tt class="filename">pigment.cpp</tt></li><li><tt class="filename">texture.cpp</tt></li><li><tt class="filename">txttest.cpp</tt> - place for own texturing experiments</li><li><tt class="filename">warps.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Raytracing helpers:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">bbox.cpp</tt></li><li><tt class="filename">bcyl.cpp</tt></li><li><tt class="filename">bsphere.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Builtin benchmark:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">benchmark.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Math helpers with operation on different types of data:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">chi2.cpp</tt></li><li><tt class="filename">colour.cpp</tt></li><li><tt class="filename">colutils.cpp</tt></li><li><tt class="filename">matrices.cpp</tt></li><li><tt class="filename">polysolv.cpp</tt></li><li><tt class="filename">splines.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Parser routines:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">express.cpp</tt></li><li><tt class="filename">parse.cpp</tt></li><li><tt class="filename">parsestr.cpp</tt></li><li><tt class="filename">parstxtr.cpp</tt></li><li><tt class="filename">tokenize.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            IO routines for various formats:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">file_pov.cpp</tt></li><li><tt class="filename">gif.cpp</tt></li><li><tt class="filename">gifdecod.cpp</tt></li><li><tt class="filename">histogra.cpp</tt></li><li><tt class="filename">iff.cpp</tt></li><li><tt class="filename">jpeg_pov.cpp</tt></li><li><tt class="filename">pgm.cpp</tt></li><li><tt class="filename">png_pov.cpp</tt></li><li><tt class="filename">ppm.cpp</tt></li><li><tt class="filename">targa.cpp</tt></li><li><tt class="filename">tiff_pov.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Functions Virtual Machine implementation together with internal functions:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">fncode.cpp</tt></li><li><tt class="filename">fnintern.cpp</tt></li><li><tt class="filename">fnpovfpu.cpp</tt></li><li><tt class="filename">fnsyntax.cpp</tt></li><li><tt class="filename">function.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            Rendering process:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">ray.cpp</tt></li><li><tt class="filename">render.cpp</tt></li><li><tt class="filename">renderio.cpp</tt></li><li><tt class="filename">renderctrl.cpp</tt></li><li><tt class="filename">camera.cpp</tt></li><li><tt class="filename">lbuffer.cpp</tt></li><li><tt class="filename">vbuffer.cpp</tt></li><li><tt class="filename">vlbuffer.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            general program routines:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">optout.cpp</tt></li><li><tt class="filename">povray.cpp</tt></li><li><tt class="filename">pov_mem.cpp</tt></li><li><tt class="filename">pov_util.cpp</tt></li><li><tt class="filename">statspov.cpp</tt></li><li><tt class="filename">userdisp.cpp</tt></li><li><tt class="filename">userio.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            the <tt class="filename">base</tt> subdirectory contains routines for
+            file input/output as well as string and option handling.
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">base/configbase.h</tt></li><li><tt class="filename">base/fileinputoutput.cpp</tt></li><li><tt class="filename">base/platformbase.h</tt></li><li><tt class="filename">base/pointer.h</tt></li><li><tt class="filename">base/pov_err.h</tt></li><li><tt class="filename">base/povms.cpp</tt></li><li><tt class="filename">base/povmscpp.cpp</tt></li><li><tt class="filename">base/povmsgid.h</tt></li><li><tt class="filename">base/processoptions.cpp</tt></li><li><tt class="filename">base/stringutilities.cpp</tt></li><li><tt class="filename">base/textstream.cpp</tt></li><li><tt class="filename">base/textstreambuffer.cpp</tt></li></ul></div><p>
+          </p></li><li><p>
+            the <tt class="filename">frontend</tt> subdirectory contains the default
+            frontend:
+            </p><div class="itemizedlist"><ul type="circle" compact><li><tt class="filename">frontend/configfrontend.h</tt></li><li><tt class="filename">frontend/defaultplatformbase.cpp</tt></li><li><tt class="filename">frontend/defaultrenderfrontend.cpp</tt></li><li><tt class="filename">frontend/messageoutput.cpp</tt></li><li><tt class="filename">frontend/processrenderoptions.cpp</tt></li><li><tt class="filename">frontend/renderfrontend.cpp</tt></li></ul></div><p>
+          </p></li></ul></div><p>
+    </p><p>
+      As mentioned above the <tt class="filename">config.h</tt> configuration file
+      is located in a platform specific directory. This directory is usually
+      named like the target platform (like <tt class="filename">windows</tt>,
+      <tt class="filename">unix</tt> etc.). There are also
+      other files located in that directory: implementation of GUI, binary
+      resources (like icons), implementation of some (protected) IO
+      operations and other platform specific solutions.
+    </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="patching"></a>5.1.2. Creating your own patches</h3></div></div><div></div></div><p>
+      Extending <span class="trademark">POV-Ray</span>&#8482; with new features is something that requires
+      significant skills (see <a href="internals.html#sources" title="5.1. Sources">Section 5.1, &#8220;Sources&#8221;</a>), experience and time.
+    </p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="patching_planning"></a>5.1.2.1. Planning a patch</h4></div></div><div></div></div><p>
+        There are many different reasons for modifying the <span class="trademark">POV-Ray</span>&#8482; source.
+        Most important are the fixing of bugs and extending <span class="trademark">POV-Ray</span>&#8482; with new features.
+      </p><p>
+        When fixing a bug it should be considered what is the right, expected behavior 
+        of the program, the fix should establish this.  In many cases patches introduced
+        as a bugfix are in fact feature extensions or only superficial fixes that do not 
+        solve the underlying problem.
+      </p><p>
+        When you are planning a new feature you should first think about how it
+        should fit into the rest of <span class="trademark">POV-Ray</span>&#8482; features.  A good patch can be used 
+        quite universally, not only for the purpose it was originally developed for.  
+        Do not try to reinvent the wheel but make use of existing
+        techniques that already exist in the <span class="trademark">POV-Ray</span>&#8482; source.  For things like status
+        output and file reading use functions existing in <span class="trademark">POV-Ray</span>&#8482;.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="markup"></a>5.1.2.2. Markup - key to usable patches</h4></div></div><div></div></div><p>
+        It is hard to describe good guidelines for the actual coding of a patch.
+        Every programmer has own habits and methods
+        including indention, placing of braces, inserting white spaces,
+        favorite naming scheme. But there are some common rules <span class="trademark">POV-Ray</span>&#8482;
+        patch writers usually follow.
+        Here is our effort for a brief summary - mainly meant as a starting
+        aid for beginning patch writers.
+      </p><p>
+        When coding make use of existing helper functions in <span class="trademark">POV-Ray</span>&#8482; like those
+        in <tt class="filename">vector.h</tt>.  Try to reduce changes in existing code
+        to avoid damaging existing features.
+      </p><p>
+        Usually, people put something like
+        <tt class="function">#define <i class="parameter"><tt>MY_PATCH</tt></i></tt>
+        in a commonly used file:
+        </p><div class="itemizedlist"><ul type="disc" compact><li><tt class="filename">patches/patches.h</tt> - for general patches (this file is introduced in MegaPOV and included within <tt class="filename">frame.h</tt> so no need to add it to the rest of the sources).</li><li><tt class="filename">frame.h</tt> - for general patches in case you are patching plain <span class="trademark">POV-Ray</span>&#8482; and don not want to add a <tt class="filename">patches.h</tt> file.</li><li><tt class="filename">[platform]/config.h</tt> - for platform specific changes (when compiler requires replacement for missed functions or needs to customize rendering engine to cooperate with shell of platform)</li></ul></div><p>
+        Now you should enclose all patch-specific code in
+        <tt class="function">#ifdef ... [<span class="optional">#else ...</span>] #endif</tt>
+        blocks, so removing (commenting)
+        <tt class="function">/* #define <i class="parameter"><tt>MY_PATCH</tt></i> */</tt>
+        causes compilation without your patch,
+        and the modifications you make are clearly visible.
+        Optional <tt class="function">#else ...</tt> is suggested when you are
+        making replacement for existing code (i.e. for bug fixes).
+      </p><p>
+        The most common system for patch naming are uppercased words separated
+        with underscores. Names are usually concatenated with word
+        <i class="parameter"><tt>PATCH</tt></i> somehow.
+        In world of Apple mixed case variable names without
+        underscores like <i class="parameter"><tt>MyPatch</tt></i> are also popular.
+      </p><div class="example"><a name="id2602022"></a><p class="title"><b>Example 5.1. Typical patch markup</b></p><p>
+          <tt class="filename">patches.h</tt>:
+          </p><pre class="programlisting">...
+#define <i class="parameter"><tt>FAST_SQR_PATCH</tt></i>
+...</pre><p>
+        </p><p>
+          <tt class="filename">some_file.cpp</tt>:
+          </p><pre class="programlisting">...
+#ifdef <i class="parameter"><tt>FAST_SQR_PATCH</tt></i>
+  // new code
+  <tt class="varname">Value</tt> = <tt class="function">sqr</tt>( <tt class="varname">Parameter</tt> );
+#else
+  // old code
+  <tt class="varname">Value</tt> = <tt class="varname">Parameter</tt> * <tt class="varname">Parameter</tt>;
+#endif
+...</pre><p>
+        </p></div><p>
+        Some additions can be also compiler specific changes required by
+        lack of some builtin C function or different naming.
+        In such cases you can use predefined compiler specific macros
+        together with your own markup. Each compiler delivers several
+        predefined macros (see <a href="binaries.html" title="5.2. Binaries">Section 5.2, &#8220;Binaries&#8221;</a>).
+        </p><pre class="programlisting">#ifdef __DJGPP__
+  // some compiler specific code
+#else
+  // code for other compilers
+#endif
+
+#if defined( __WATCOMC__ ) &amp;&amp; defined( MY_PATCH)
+  // code here
+#end</pre><p>
+      </p><p>
+        Of course it is a little bit more work to maintain changes this way
+        but on the other hand it is also much more readable and allows to
+        prepare two binaries for comparison.
+        It is also much more easier to port your changes into other compilations
+        like MegaPOV then.
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="coding"></a>5.1.2.3. Coding - stay portable</h4></div></div><div></div></div><p>
+        Apart from the markup it is important to keep modifications
+        portable.  Patches using compiler specific features or functions from a
+        proprietary library won't make it into a patch collection like
+        MegaPOV.
+      </p><p>
+        When you add new elements to the POV-Ray scene description language
+        it is a good idea to keep it consistent with the existing syntax.
+        Even if you think a certain syntax would be much easier to use it is
+        very likely to cause much confusion for the user when it differs from
+        existing similar functions.
+      </p><p>
+        Some useful information about portability aspects can be found on
+        <a href="http://predef.sourceforge.net/" target="_top">http://predef.sourceforge.net/</a>.
+      </p><p>
+        If you are unsure about a certain aspect of your patch implementation
+        better ask (see <a href="where.html#discussion" title="1.5.3. Discussions">Section 1.5.3, &#8220;Discussions&#8221;</a>).
+      </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="sharing"></a>5.1.2.4. Sharing patches</h4></div></div><div></div></div><p>
+        Once a patch is finished you may want to share this patch with the
+        <span class="trademark">POV-Ray</span>&#8482; Community. Doing this in a wise way can make your patch
+        popular and included in other unofficial custom compilations
+        like MegaPOV is. So before you upload your changes somewhere
+        first check if:
+        </p><div class="itemizedlist"><ul type="disc" compact><li>
+              every difference between your modified source and base source
+              is somehow marked (with <tt class="function">#ifdef</tt>) so other
+              users can understand where the code is modified.
+           </li><li>
+              no line from the old source is removed.
+            </li><li>
+              all necessary headers are included in files
+              (this is common omission when precompiled headers are used)
+            </li><li>
+              in case your sources contain more then one patch, be sure
+              that one change does not require code from the
+              other patch to work.  If one patch depends on the other
+              this should be clearly indicated.
+            </li><li>
+              most important: Your patch is well documented both in the source
+              and for the user.  Even if this means quite some work it is probably
+              the most critical point for a patch to become successful
+              on the long run or not.
+            </li></ul></div><p>
+      </p><p>
+        When your modifications are validated then it is time to publish it.
+        There are some common methods in publishing patches:
+        </p><div class="itemizedlist"><ul type="disc" compact><li>
+              releasing differences in <span class="application">diff</span>
+              format - this is a very popular method however it works well
+              only when changes are moved between very similar packages.
+              It is most important to mention on what basis the modification
+              is made.  To make sure the modification can still be used some
+              time later this is usually not the optimal solution (except for
+              really small modifications).
+            </li><li>
+              releasing all files affected by changes for particular patch -
+              it is very good method because everyone can easily merge it with
+              files with own modifications.
+            </li><li>
+              releasing a snapshot of all files in your working directory -
+              this method guarantees that you do not omit any change however
+              it requires detailed comparison of all files for those who want
+              to merge the patch.
+            </li><li>
+              releasing a detailed description of all changes with explanation
+              why, what, where and how things were changed - this
+              "do it yourself" method makes your patch highly portable
+              because it is easy to understand and nearly independent from the
+              source basis but it requires a larger effort.
+            </li></ul></div><p>
+        It is hard to tell which method is the best. The choose of particular
+        method depends on free time, complexity of changes and used sources.
+      </p></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="tutorials_hdri.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="binaries.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.3. HDRI (High dynamic range illumination) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 5.2. Binaries</td></tr></table></div></body></html>
